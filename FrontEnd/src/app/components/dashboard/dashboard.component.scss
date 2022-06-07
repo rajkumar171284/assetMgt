@@ -1,0 +1,114 @@
+.container-fluid {
+    background: #f5f5f5;
+}
+
+.listed-charts {
+    margin-bottom: 5px;
+    padding: 5px 0;
+    position: relative;
+}
+
+.mapped-close {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    z-index: 3;
+}
+
+.listed-charts img {
+    height: 50px;
+    margin-top: 6px; filter: brightness(0) invert(1); 
+}
+
+.Widget-block .listed-charts {
+    // background: rgba(0,0,0,.7);
+    background:rgba(255, 255, 255, 0.3);
+    border: 1px solid #fff;
+
+    mat-card-subtitle ,mat-card-content{
+        color: #fff !important
+    }
+}
+
+.widget-panel {
+    background-color: #4834d4;
+    background-image: linear-gradient(315deg, #4834d4 0%, #0c0c0c 74%);
+    height: 100vh;
+    overflow: hidden;
+
+}
+
+.widget-panel mat-label {
+    color: #fff
+}
+
+.listed-charts mat-card-content {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.listed-charts mat-card-subtitle {
+    margin-bottom: 0;
+}
+
+.mappedList {
+    height: 300px;
+}
+
+
+// drag/drop
+
+.example-container {
+    width: 400px;
+    max-width: 100%;
+    margin: 0 25px 25px 0;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.example-list {
+    border: solid 1px #ccc;
+    min-height: 60px;
+    // background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    // display: block;
+}
+
+.example-box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    cursor: move;
+    background: white;
+    font-size: 14px;
+}
+
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+        0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+    border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

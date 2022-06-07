@@ -1,0 +1,106 @@
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="col-md-9 ">
+
+
+      <div class="container mt-3 " style="padding-left:0px;padding-right:0px;">
+        
+
+          <div class="row pb-4" cdkDropList #doneMovieList="cdkDropList" [cdkDropListData]="MoviesWatched"
+            [cdkDropListConnectedTo]="[doneMovieList]" class="" (cdkDropListDropped)="onDrop($event)">
+            
+            <div class="row">
+              <div class="col-md-6 example-list2 "  *ngFor="let List of MoviesWatched" cdkDrag>
+                <!-- {{moviesWatched}} -->
+                <mat-card class="listed-charts mappedList" color="primary">
+                  <span class="mapped-close">
+                    <mat-icon (click)="removeRequest(List)" color="warn">delete_outline</mat-icon>
+
+                  </span>
+  
+                  <!-- <mat-card-subtitle>
+                    {{getRequestDetails(List,'n')}}
+                  </mat-card-subtitle> -->
+                  <!-- <mat-card-content> -->
+                    <!-- {{getRequestDetails(List,'d')}} -->
+  
+                    <!-- <img class="" src="assets/{{getRequestDetails(List,'n')}}-outline-chart.png" /> -->
+                    <app-plotly  pMap="{{getRequestDetails(List,'n')}}"></app-plotly>
+
+  
+                  <!-- </mat-card-content> -->
+                </mat-card>
+  
+              </div>
+            </div>
+
+          </div>
+        
+      </div>
+
+
+    </div>
+
+
+    <div class="widget-panel col-md-3">
+      <div class="sticky-top">
+
+        <mat-toolbar style="background-color: transparent;text-align:right" color="none">
+
+          <button mat-raised-button color="primary" (click)="openDialog()" class="demo-button">
+            Create Widget
+          </button>
+
+        </mat-toolbar>
+       
+        <mat-grid-list color="primary" cols="2" rowHeight="2:2">
+          <mat-label>Available Widget</mat-label>
+
+
+          <div cdkDropList #moviesList="cdkDropList" [cdkDropListData]="MoviesList"
+            [cdkDropListConnectedTo]="[doneMovieList]" class="example-list2" (cdkDropListDropped)="onDrop($event)">
+            <div class="Widget-block" [cdkDragData]="List" *ngFor="let List of MoviesList" cdkDrag>
+
+              <!-- {{List}} -->
+              <mat-card class="listed-charts" color="primary">
+
+                <span class="mapped-close">
+                  <mat-icon (click)="editRequest(List)" color="primary">edit</mat-icon>
+                  <mat-icon (click)="removeRequest(List)" color="warn">delete_outline</mat-icon>
+                  
+
+                </span>
+                <mat-card-subtitle>
+                  {{getRequestDetails(List,'l')}}
+                </mat-card-subtitle>
+                <mat-card-content>
+                  {{getRequestDetails(List,'d')}}
+
+                  <img class="" src="assets/{{getRequestDetails(List,'n')}}-outline-chart.png" />
+                  
+
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+
+
+          <!-- <mat-card class="listed-charts" color="primary" *ngFor="let a of dataSource">
+
+            <mat-card-subtitle>{{a.NAME}}</mat-card-subtitle>
+            <mat-card-content>{{a.CHART_DATA}}
+              <img class="" src="assets/{{a.NAME}}-outline-chart.png" />
+              <mat-icon (click)="removeRequest(a)" color="warn">delete_outline</mat-icon>
+
+            </mat-card-content>
+          </mat-card> -->
+
+
+
+        </mat-grid-list>
+      </div>
+
+    </div>
+  </div>
+</div>

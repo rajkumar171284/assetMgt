@@ -1,0 +1,59 @@
+* { box-sizing: border-box }
+
+body{
+  margin:0;
+  padding:0;
+  color: white;
+  font-family:sans-serif;
+/*   font-size:160%; */
+}
+div{
+    padding: 4% 10%;
+}
+header, footer{
+  background-color:#002848;
+  min-height: 40px;
+}
+.one{
+  background-color: #013A6B;
+  background-image: -webkit-linear-gradient(30deg, #013A6B 50%, #004E95 50%);
+  min-height: 100vh;
+}
+.two{
+  background-color: #34ADFF;
+  background-image: -webkit-linear-gradient(150deg, #34ADFF 35%, #4CBFFF 35%);
+  min-height: 400px;
+}
+
+.three{
+  background-color: #EFEEEF;
+  min-height: 260px;
+}
+.four{
+  background-color: #E0E0E0;
+  min-height: 260px;
+}
+.five{
+  background-color: #EFEEEF;
+  min-height: 260px;
+}
+
+.six{
+  background-color: #34ADFF;
+  background-image: -webkit-linear-gradient(30deg, #34ADFF 45%, #4CBFFF 45%);
+  min-height: 400px;
+}
+.seven{
+  background-color: #013A6B;
+  background-image: -webkit-linear-gradient(150deg, #013A6B 35%, #004E95 35%);
+  min-height: 200px;
+}
+
+  .example-full-width {
+    width: 100%;
+  }
+  .myform{
+    background: rgba(255,255,255,.3);
+  }
+  mat-label{color:#fff}
+  

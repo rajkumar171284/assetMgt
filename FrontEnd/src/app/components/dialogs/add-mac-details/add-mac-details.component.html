@@ -1,0 +1,74 @@
+<mat-toolbar color="primary">
+    <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
+        {{typeName && typeName.PID?'Enter MAC details':'Add New MAC'}}
+    </mat-grid-list>
+
+</mat-toolbar>
+
+<form class="form-container" [formGroup]="newForm">
+
+    <mat-grid-list cols="1" rowHeight="2:1">
+        <div class="row mt-2">
+            <div *ngIf="!typeName" class="col-md-2 offset-md-10">
+                <div class="p-2">
+                    <button (click)="addMAC($event)" mat-button>
+                        <mat-icon>library_add</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-10 offset-md-1">
+                <ng-container formArrayName="MAC_DETAILS">
+
+                    <ng-container *ngFor="let item of MAC_DETAILS.controls; let i = index">
+
+                        <div class="row addr-row" [formGroupName]="i">
+                            <div class="col-md-6">
+                                <mat-form-field>
+                                    <mat-label>NAME</mat-label>
+                                    <input matInput formControlName="MAC_NAME" placeholder="" type="text"
+                                        class="example-right-align">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-6">
+                                <mat-form-field>
+                                    <mat-label>ADDRESS</mat-label>
+                                    <input matInput formControlName="MAC_ADDRESS" placeholder="" type="text"
+                                        class="example-right-align">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-6">
+                                <mat-form-field>
+                                    <mat-label>LOCATION</mat-label>
+                                    <input matInput formControlName="LOCATION" placeholder="" type="text"
+                                        class="example-right-align">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-6">
+                                <div>
+                                    <mat-label>STATUS</mat-label>
+                                </div>
+
+                                <mat-radio-group formControlName="MAC_STATUS" aria-label="Select an option">
+                                    <mat-radio-button [value]="macActive">Active</mat-radio-button>
+                                    <mat-radio-button [value]="macInactive">In Active</mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+            
+        </div>
+
+
+    </mat-grid-list>
+    <mat-grid-list  cols="10">
+        <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
+
+        <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
+
+
+    </mat-grid-list>
+
+
+</form>

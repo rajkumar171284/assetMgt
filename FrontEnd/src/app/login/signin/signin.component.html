@@ -1,0 +1,41 @@
+<div class="one">
+
+        <div class="container">
+            <div class="row">
+                <div class="myform col-md-6 offset-md-3">
+                    <form [formGroup]="logForm" (ngSubmit)="logIn()">
+
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Username</mat-label>
+                        <input type="text" matInput class="text-white" formControlName="LOGIN_NAME" placeholder="" autocomplete="off">
+                        <!-- <mat-hint>Errors appear instantly!</mat-hint>
+                        <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                          Please enter a valid email address
+                        </mat-error>
+                        <mat-error *ngIf="emailFormControl.hasError('required')">
+                          Email is <strong>required</strong>
+                        </mat-error> -->
+                    </mat-form-field>
+
+                    <mat-form-field class="example-full-width" >
+                        <mat-label>Password</mat-label>
+                        <input type="password" matInput class="text-white" formControlName="PASSWORD" placeholder="">
+
+
+                    </mat-form-field>
+                    <div class="example-full-width text-center">
+                        <button mat-raised-button [disabled]="!logForm.valid" color="warn" type="submit" >Login</button>
+
+                    </div>
+                    <!-- <mat-form-field class="example-full-width text-center" appearance="fill"> -->
+
+
+
+                    <!-- </mat-form-field> -->
+                </form>
+
+                </div>
+            </div>
+        </div>
+
+</div>

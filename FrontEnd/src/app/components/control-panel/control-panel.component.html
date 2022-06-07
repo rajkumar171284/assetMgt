@@ -1,0 +1,28 @@
+<mat-toolbar color="secondary">
+
+  <button mat-raised-button color="primary" (click)="openDialog()" class="demo-button">
+    Add New
+  </button>
+
+</mat-toolbar>
+<mat-tab-group #tabGroup mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
+  <mat-tab label="Connection Types">
+    <app-asset-connections-type [tabIndex]="updateConn"></app-asset-connections-type>
+  </mat-tab>
+
+  <mat-tab label="Sensors">
+    <app-sensors [tabIndex]="updateSensor"></app-sensors>
+  </mat-tab>
+
+  <mat-tab label="Asset">
+    <app-asset-type [tabIndex]="updateAsset"></app-asset-type>
+  </mat-tab>
+
+
+  <mat-tab label="Asset Configuration">
+
+    <app-config [tabIndex]="updateConfig" (dialogClose)="dialogClose($event)"></app-config>
+  </mat-tab>
+  <!-- <mat-tab label="Second"> Content 2 </mat-tab>
+    <mat-tab label="Third"> Content 3 </mat-tab> -->
+</mat-tab-group>

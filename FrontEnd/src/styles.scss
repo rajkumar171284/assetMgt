@@ -1,0 +1,48 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+.mat-tab-label, .mat-tab-label-content{
+    color:#444 !important;
+  }
+  .mat-header-cell{
+    text-transform: uppercase;
+  }
+  .form-container{
+    // display: flex;
+    justify-content: center;
+  }
+  .demo-table ,.inner-tbl{
+    width: 100%;
+  }
+  .btn-layer{
+    display: flex;
+    justify-content: right;
+  }
+  .inner-tbl tr th{
+    background: #39395f;font-size: xx-small;text-transform: uppercase;
+    color:#fff;font-weight: 300;padding: 10px;
+  }
+  .inner-tbl tr td{
+    background: #d3d3ff;
+    color:#000;
+    border-bottom:1px solid #ddd;padding: 10px;
+  }
+  .form-container{
+    margin-top: 1em;
+}
+.title-center {
+    flex: 1 1 auto;
+  }
+  .form-container mat-label{
+  text-transform: uppercase;
+  }
+  .form-container button{
+    margin-right: 8px;
+  }
+  .demo-table {
+    width: 100%;
+  }
+
+  

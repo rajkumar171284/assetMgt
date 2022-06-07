@@ -1,0 +1,46 @@
+<mat-toolbar color="primary">
+    <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
+        {{typeName && typeName.PID?'Edit Asset':'Add New Asset'}}
+    </mat-grid-list>
+    
+</mat-toolbar>
+<form class="form-container" [formGroup]="newForm">
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>Asset NAME</mat-label>
+            <input formControlName="NAME" matInput placeholder="" type="text" class="example-right-align">
+           </mat-form-field>
+
+    </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>Asset Type</mat-label>
+            <!-- <input formControlName="ASSET_TYPE" matInput placeholder="" type="text" class="example-right-align"> -->
+           
+            <mat-select formControlName="ASSET_TYPE">
+
+                <mat-option *ngFor="let key of assetTypes" [value]="key">
+                    {{key}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+    </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>COMPONENTS(optional)</mat-label>
+            <input formControlName="COMPONENTS" matInput placeholder="" type="text" class="example-right-align">
+           </mat-form-field>
+    </mat-grid-list>
+    <mat-grid-list cols="10">
+        <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
+
+        <button mat-raised-button (click)="confirmClose()"  color="warn">Cancel</button>
+
+
+        </mat-grid-list>
+
+</form>

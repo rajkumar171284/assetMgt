@@ -1,0 +1,16 @@
+<!-- <div class="row">
+    <div class="col-md-6 result2">
+        
+        <plotly-plot  [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true"
+            (hover)="hover($event)" (mouseleave)="mouseLeave($event)"></plotly-plot>
+
+    </div>
+    <div class="col-md-6">
+
+        <plotly-plot [data]="(interactivePlotSubject$ | async)" [layout]="graph2.layout" [useResizeHandler]="true">
+        </plotly-plot>
+    </div>
+
+</div> -->
+<plotly-plot  [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true"
+(hover)="hover($event)" (mouseleave)="mouseLeave($event)"></plotly-plot>
