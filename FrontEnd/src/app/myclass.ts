@@ -11,3 +11,15 @@ Sub_Category_Sensor_Type:string ,
 Sensor_Data_Type:string,
 MAC_Address:string  
 }
+export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: false },
+{ name: 'MAPS', file: 'map-widget', isSelected: false },
+{ name: 'Highlights', file: 'highlight-widget', isSelected: false },
+{ name: 'TABLE', file: 'table-widget', isSelected: false },
+
+];
+
+
+export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false },
+{ name: 'Line', file: 'line-chart', isSelected: false },
+{ name: 'Donut', file: 'donut-chart', isSelected: false },
+{ name: 'Pie', file: 'pie-chart', isSelected: false }];

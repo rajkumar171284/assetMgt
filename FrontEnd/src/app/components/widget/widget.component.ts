@@ -12,6 +12,7 @@ import { map, startWith } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
+import {_widgetTYPE,_chartTYPE} from '../../myclass';
 
 export interface Fruit {
   name: string;
@@ -24,18 +25,8 @@ export interface Fruit {
   providers: [AuthService]
 })
 export class WidgetComponent implements OnInit {
-  widgetType = [{ name: 'CHARTS', file: 'chart-widget', isSelected: false },
-  { name: 'MAPS', file: 'map-widget', isSelected: false },
-  { name: 'Highlights', file: 'highlight-widget', isSelected: false },
-  { name: 'TABLE', file: 'table-widget', isSelected: false },
-
-  ];
-
-
-  chartTypes = [{ name: 'Bar', file: 'bar-chart', isSelected: false },
-  { name: 'Line', file: 'line-chart', isSelected: false },
-  { name: 'Donut', file: 'donut-chart', isSelected: false },
-  { name: 'Pie', file: 'pie-chart', isSelected: false }];
+  widgetType = _widgetTYPE;
+  chartTypes = _chartTYPE;
 
   widgetState = false;
   panelOpenState = true;
