@@ -160,7 +160,8 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
-      console.log(this.Values)
+      // console.log(this.Values)
+      this.Values.CONFIG_NAME =this.Values.CONFIG_NAME.toUpperCase();
       this.dataService.addAssetConfig(this.Values).subscribe(res => {
         console.log(res)
         this.dialogClose.emit(true);

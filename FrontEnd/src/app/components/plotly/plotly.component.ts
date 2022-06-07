@@ -83,7 +83,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
     let value4: any = []
     let xCol: any = [];
 
-    this.dataService.getMACstatus({}).subscribe(res => {
+    this.dataService.getAllMACstatus().subscribe(res => {
       console.log(res)
       this.ref.detectChanges();
       if (res && res.data.length > 0) {

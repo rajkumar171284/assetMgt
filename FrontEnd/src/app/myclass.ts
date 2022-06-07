@@ -1,15 +1,15 @@
-export interface config{
-Asset_Name:string , 
-Asset_Type:string , 
-// Use_Type:string , 
-Industrial_Type:string , 
-Industrial_Data_source:string , 
-Connection_Type:string , 
-Tracking_Device_Type:string , 
-Sensor_Type:string , 
-Sub_Category_Sensor_Type:string , 
-Sensor_Data_Type:string,
-MAC_Address:string  
+export interface config {
+    Asset_Name: string,
+    Asset_Type: string,
+    // Use_Type:string , 
+    Industrial_Type: string,
+    Industrial_Data_source: string,
+    Connection_Type: string,
+    Tracking_Device_Type: string,
+    Sensor_Type: string,
+    Sub_Category_Sensor_Type: string,
+    Sensor_Data_Type: string,
+    MAC_Address: string
 }
 export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: false },
 { name: 'MAPS', file: 'map-widget', isSelected: false },
@@ -23,3 +23,10 @@ export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false }
 { name: 'Line', file: 'line-chart', isSelected: false },
 { name: 'Donut', file: 'donut-chart', isSelected: false },
 { name: 'Pie', file: 'pie-chart', isSelected: false }];
+
+export const _assetTypes = ['Security',
+'Activity Trackers',
+'Industrial Security and Safety',
+' Augmented Reality',
+'Motion Detection'
+]

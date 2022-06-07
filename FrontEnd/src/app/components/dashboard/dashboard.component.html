@@ -7,17 +7,19 @@
       <div class="container mt-3 " style="padding-left:0px;padding-right:0px;">
         
 
-          <div class="row pb-4" cdkDropList #doneMovieList="cdkDropList" [cdkDropListData]="MoviesWatched"
+          <div class="row pb-4" cdkDropList #doneMovieList="cdkDropList" [cdkDropListData]="draggedWidget"
             [cdkDropListConnectedTo]="[doneMovieList]" class="" (cdkDropListDropped)="onDrop($event)">
             
             <div class="row">
-              <div class="col-md-6 example-list2 "  *ngFor="let List of MoviesWatched" cdkDrag>
-                <!-- {{moviesWatched}} -->
-                <mat-card class="listed-charts mappedList" color="primary">
-                  <span class="mapped-close">
+              <div [ngClass]="{'col-md-12 ':List=='0','col-md-6':List!='0'}"  class=" example-list2 "  *ngFor="let List of draggedWidget" cdkDrag>
+                <mat-card [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="listed-charts mappedList" color="primary">
+                  <!-- {{List}} -->
+                  <span *ngIf="List" class="mapped-close">
                     <mat-icon (click)="removeRequest(List)" color="warn">delete_outline</mat-icon>
 
                   </span>
+
+
   
                   <!-- <mat-card-subtitle>
                     {{getRequestDetails(List,'n')}}
@@ -26,7 +28,22 @@
                     <!-- {{getRequestDetails(List,'d')}} -->
   
                     <!-- <img class="" src="assets/{{getRequestDetails(List,'n')}}-outline-chart.png" /> -->
-                    <app-plotly  pMap="{{getRequestDetails(List,'n')}}"></app-plotly>
+                    <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')=='HIGHLIGHTS'">
+
+                      <app-highlights [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-highlights>
+
+                    </div>
+                    <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='TABLE'">
+
+                      <app-table [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-table>
+
+                    </div>
+                    <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='MAPS'">
+
+                     <app-map></app-map>
+
+                    </div>
+                    <!-- <app-{{getRequestDetails(List,'WIDGET_TYPE')}}  pMap="{{getRequestDetails(List,'n')}}"></app-getRequestDetails(List,'WIDGET_TYPE')> -->
 
   
                   <!-- </mat-card-content> -->
@@ -58,11 +75,10 @@
           <mat-label>Available Widget</mat-label>
 
 
-          <div cdkDropList #moviesList="cdkDropList" [cdkDropListData]="MoviesList"
+          <div cdkDropList #moviesList="cdkDropList" [cdkDropListData]="undraggedWidget"
             [cdkDropListConnectedTo]="[doneMovieList]" class="example-list2" (cdkDropListDropped)="onDrop($event)">
-            <div class="Widget-block" [cdkDragData]="List" *ngFor="let List of MoviesList" cdkDrag>
+            <div class="Widget-block" [cdkDragData]="List" *ngFor="let List of undraggedWidget" cdkDrag>
 
-              <!-- {{List}} -->
               <mat-card class="listed-charts" color="primary">
 
                 <span class="mapped-close">
@@ -72,12 +88,12 @@
 
                 </span>
                 <mat-card-subtitle>
-                  {{getRequestDetails(List,'l')}}
+                  {{getRequestDetails(List,'n')}} of {{getRequestDetails(List,'config')}}
                 </mat-card-subtitle>
                 <mat-card-content>
                   {{getRequestDetails(List,'d')}}
 
-                  <img class="" src="assets/{{getRequestDetails(List,'n')}}-outline-chart.png" />
+                  <img class="" src="assets/{{getRequestDetails(List,'IMG')}}.png" />
                   
 
                 </mat-card-content>

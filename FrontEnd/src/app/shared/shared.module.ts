@@ -69,11 +69,16 @@ import { WidgetComponent } from '../components/widget/widget.component';
 import { AddMacDetailsComponent } from '../components/dialogs/add-mac-details/add-mac-details.component';
 import { PlotlyComponent } from '../components/plotly/plotly.component';
 
+// widgets
+import { HighlightsComponent } from '../widgets/highlights/highlights.component';
+
+
 import * as PlotlyJS from 'plotly.js-dist-min';
 import { PlotlyModule } from 'angular-plotly.js';
 import { MacReportsComponent } from '../components/mac-reports/mac-reports.component';
 import { ReportsComponent } from '../components/reports/reports.component';
-
+import { TableComponent } from '../widgets/table/table.component';
+import {MapComponent} from '../widgets/map/map.component';
 PlotlyModule.plotlyjs = PlotlyJS;
 
 @NgModule({
@@ -86,7 +91,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     AssetTypeComponent,TooltipComponent, DashboardComponent, WidgetComponent,
     AddMacDetailsComponent,
     PlotlyComponent,
-    MacReportsComponent,ReportsComponent
+    MacReportsComponent,ReportsComponent, TableComponent,
+    HighlightsComponent,MapComponent
   ],
   imports: [
     CommonModule,PlotlyModule,

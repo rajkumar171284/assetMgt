@@ -29,7 +29,8 @@ export class MacReportsComponent implements OnInit, OnChanges {
 
   getAllMACdata() {
 
-    this.dataService.getMACstatus({}).subscribe(res => {
+  
+    this.dataService.getAllMACstatus().subscribe(res => {
       console.log(res)
 
       this.dataSource = res.data;

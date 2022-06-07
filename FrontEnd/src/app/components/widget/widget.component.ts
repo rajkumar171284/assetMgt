@@ -43,7 +43,7 @@ export class WidgetComponent implements OnInit {
   mapChoosen=false;
 
   options: any[] = [];
-  options2: any[] = ['Status', 'Location'];
+  options2: any[] = ['Status', 'Location','COUNT'];
   newForm: FormGroup = this.fb.group({
     PID: [''],
     WIDGET_TYPE: ['', Validators.required],
@@ -52,6 +52,7 @@ export class WidgetComponent implements OnInit {
     CHART_TYPE: [this.mapChoosen?Validators.required:null],
     WIDGET_DATA: ['', Validators.required],
     ASSET_CONFIG_ID: ['', Validators.required],
+    WIDGET_IMG:'',
     SQL_QUERY: [],
     IS_DRAGGED: 0
 
@@ -59,7 +60,7 @@ export class WidgetComponent implements OnInit {
 
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     private _snackBar: MatSnackBar, @Inject(MAT_DIALOG_DATA) public data: any) {
-    // this.newForm = 
+    
     console.log(data)
     if (data && data.PID) {
       const type = this.chartTypes.filter(x => {
@@ -92,7 +93,8 @@ export class WidgetComponent implements OnInit {
     })
     a.isSelected = this.isSelected;
     this.newForm.patchValue({
-      CHART_NAME: a.name.toLowerCase()
+      CHART_NAME: a.name.toLowerCase(),
+      WIDGET_IMG:a.file
     })
 
 
@@ -105,7 +107,9 @@ export class WidgetComponent implements OnInit {
     a.isSelected = isSelected;
 
     this.newForm.patchValue({
-      WIDGET_TYPE: a.name.toUpperCase()
+      WIDGET_TYPE: a.name.toUpperCase(),
+      WIDGET_IMG:a.file
+
     })
 
     // to check only maps

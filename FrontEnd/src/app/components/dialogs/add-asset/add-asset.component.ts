@@ -4,6 +4,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../../components/tooltip/tooltip.component';
+import {_assetTypes} from '../../../myclass';
 const tbl_name = 'asset_tbl_';
 @Component({
   selector: 'app-add-asset',
@@ -15,21 +16,7 @@ export class AddAssetComponent implements OnInit {
   newForm: FormGroup;
   public typeName: any;
 
-  assetTypes = [{ name: 'Security', table_name: `${tbl_name}Security` },
-
-  { name: 'Activity Trackers' }, {
-    name:
-
-      'Industrial Security and Safety '
-  }, {
-    name:
-
-      ' Augmented Reality  '
-  }, {
-    name:
-
-      'Motion Detection'
-  }]
+  assetTypes = _assetTypes
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
 
@@ -68,6 +55,8 @@ export class AddAssetComponent implements OnInit {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
+      this.Values.NAME =this.Values.NAME.toUpperCase();
+      this.Values.ASSET_TYPE =this.Values.ASSET_TYPE.toUpperCase();
       // console.log(this.Values)
       this.dataService.addAsset(this.Values).subscribe(res => {
         console.log(res)
