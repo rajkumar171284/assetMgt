@@ -4,7 +4,7 @@
 
 .listed-charts {
     margin-bottom: 5px;
-    padding: 5px 0;
+    padding: 0;
     position: relative;
 }
 .minWidgetHight{
@@ -40,9 +40,6 @@
 .widget-panel {
     background-color: #4834d4;
     background-image: linear-gradient(315deg, #4834d4 0%, #0c0c0c 74%);
-    height: 100vh;
-    overflow: hidden;
-
 }
 
 .widget-panel mat-label {
@@ -59,7 +56,7 @@
 }
 
 .mappedList {
-    height: 280px;
+    // height: 280px;
 }
 
 

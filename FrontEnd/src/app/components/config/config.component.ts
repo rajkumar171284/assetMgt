@@ -124,5 +124,18 @@ export class ConfigComponent implements OnInit,OnChanges {
       this.expandItem(item);
     });
   }
+  editDeviceItem(e: Event, item: any) {
+    e.stopPropagation();
+    const dialogRef = this.dialog.open(AddMacDetailsComponent, {
+      width: '800px',
+      data: item
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      this.expandItem(item);
+    });
+
+  }
 
 }

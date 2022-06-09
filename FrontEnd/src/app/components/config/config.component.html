@@ -80,11 +80,12 @@
                     </div>
             <table class="inner-tbl">
               <tr>
-                <th>SNO</th>
-                <th>mac name</th>
-                <th>mac address</th>
+                <th>PID</th>
+                <th>device name</th>
+                <th>device address/ID</th>
                 <th>location</th>
                 <th>status</th>
+                <th></th>
               </tr>
               <tr *ngFor="let item of element.macArray">
                 <td>{{item.PID}}</td>
@@ -96,6 +97,11 @@
                 <td>{{item.LOCATION}}</td>
                 <td>
                   {{item.MAC_STATUS?'Active':'Inactive'}}
+                </td>
+                <td>
+                  <button (click)="editDeviceItem($event,item)" mat-raised-button>
+                    <mat-icon color="primary">edit</mat-icon>
+                  </button>
                 </td>
               </tr>
             </table>

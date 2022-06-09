@@ -16,7 +16,7 @@
                     </button>
                 </div>
             </div>
-            <div class="col-md-10 offset-md-1">
+            <div class="col-md-10 offset-md-1 p-3">
                 <ng-container formArrayName="MAC_DETAILS">
 
                     <ng-container *ngFor="let item of MAC_DETAILS.controls; let i = index">
@@ -25,8 +25,15 @@
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <mat-label>NAME</mat-label>
-                                    <input matInput formControlName="MAC_NAME" placeholder="" type="text"
-                                        class="example-right-align">
+                                    <!-- <input matInput formControlName="MAC_NAME" placeholder="" type="text"
+                                        class="example-right-align"> -->
+                                        <mat-select formControlName="MAC_NAME">
+                    
+                                            <mat-option *ngFor="let key of deviceType" [value]="key">
+                                                {{key}}
+                                            </mat-option>
+                        
+                                        </mat-select>
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
@@ -36,6 +43,20 @@
                                         class="example-right-align">
                                 </mat-form-field>
                             </div>
+                            
+                            <!-- <div class="col-md-6">
+                                <mat-form-field>
+                                    <mat-label>ASSET</mat-label>
+                                    <mat-select formControlName="DEVICE_TYPE">
+                    
+                                        <mat-option *ngFor="let key of deviceType" [value]="key">
+                                            {{key}}
+                                        </mat-option>
+                    
+                                    </mat-select>
+                    
+                                </mat-form-field>
+                            </div> -->
                             <div class="col-md-6">
                                 <mat-form-field>
                                     <mat-label>LOCATION</mat-label>
@@ -63,7 +84,7 @@
 
     </mat-grid-list>
     <mat-grid-list  cols="10">
-        <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
+        <button (click)="typeName?updateData():confirmData()" mat-raised-button color="primary">Save</button>
 
         <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
 

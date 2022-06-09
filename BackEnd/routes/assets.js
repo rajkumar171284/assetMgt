@@ -13,7 +13,7 @@ router.post('/addAssetConfig', (req, res) => {
     let sql;
     let todo;
     let errMessage;
-    let MAC_DETAILS=[]
+    let MAC_DETAILS = []
     if (req.body.PID) {
         // update
         // console.log('update')
@@ -104,37 +104,38 @@ router.post('/addMACByConfigID', (req, res) => {
 
 
 })
-// MAC update
-router.post('/updateMACByConfigID', (req, res) => {
+router.post('/updateDeviceByID', (req, res) => {
     let sql;
     let todo;
-    let errMessage;
     const MAC_DETAILS = req.body.MAC_DETAILS;
+    let errMessage = 'updated';
+     
 
-    MAC_DETAILS.map(item => {
-        sql = 'UPDATE mac_tbl SET MAC_NAME=?,MAC_ADDRESS=?,MAC_STATUS=?,LOCATION=?,MODIFY_BY=?,MODIFY_DATE=? WHERE PID=?'
-        todo = [item.MAC_NAME, item.MAC_ADDRESS, item.MAC_STATUS, item.LOCATION, req.body.CREATED_BY, new Date(), item.PID]
-        db.query(sql, todo, (err, result) => {
-            // console.log(result)
-            if (err) {
-                throw err;
-                return res.status(400).send({
-                    msg: err
-                });
-            }
-            else {
-                res.send({
-                    data: result,
-                    status: 200,
-                    msg: errMessage
-                })
+    sql = "UPDATE mac_tbl SET MAC_NAME=?,MAC_ADDRESS=?, MAC_STATUS=?, LOCATION=?, MODIFY_BY=?, MODIFY_DATE=? WHERE PID=?";
+    todo = [MAC_DETAILS[0].MAC_NAME, MAC_DETAILS[0].MAC_ADDRESS, MAC_DETAILS[0].MAC_STATUS, MAC_DETAILS[0].LOCATION, req.body.CREATED_BY, new Date(), MAC_DETAILS[0].PID];
+    // todo = [MAC_DETAILS.map(item => [item.MAC_NAME, item.MAC_ADDRESS, item.MAC_STATUS, item.LOCATION, req.body.CREATED_BY, new Date(), item.PID])]
+// console.log(todo)
+    db.query(sql, todo, (err, result) => {
 
-            }
-        })
+        if (err) {
+            console.log(result,err)
+
+            // throw err;
+            return res.status(400).send({
+                msg: err
+            });
+        }
+        else {
+            res.send({
+                data: result,
+                status: 200,
+                msg: errMessage
+            })
+
+        }
     })
-
-
 })
+
 
 router.post('/getAllMACdetails', (req, res) => {
 

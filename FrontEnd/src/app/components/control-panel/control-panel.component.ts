@@ -56,7 +56,7 @@ export class ControlPanelComponent implements OnInit {
       });
     } else if (this.tabIndex === tabLabel.Configuration) {
       const dialogRef=this.dialog.open(AddAssetConfigComponent, {
-        width: '900px',
+        // width: '1000px',
         data: null
       });
       dialogRef.afterClosed().subscribe(result => {

@@ -6,7 +6,6 @@ import { map } from 'rxjs';
 const options = {
   headers: new HttpHeaders()
 }
-const contineoURL='https://apps.contineo.world/contineo-vehicletracking-api/vtsdataparser?event=ignition_on&lat=13.0345&longitude=80.34566&speed=80km&altitude=23.09&date=07/06/2022-03:05:03&batteryLevel=90%&temp=32C&firmware=v10.09&configuration=2.09&odometer=234556km';
 @Injectable({
   providedIn: 'root'
 })
@@ -53,8 +52,14 @@ export class AuthService {
       return response;
     }))
   }
-  updateMACByConfigID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/updateMACByConfigID`,params, options).pipe(map(response => {
+  // updateDeviceByID(params: any): Observable<any> {
+  //   return this.http.post(`${environment.url}/asset/updateDeviceByID`,params, options).pipe(map(response => {
+  //     return response;
+  //   }))
+  // }
+  
+  updateDeviceByID(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/asset/updateDeviceByID`,params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -148,12 +153,12 @@ export class AuthService {
       return response;
     }))
   }
-  getContineo(): Observable<any> {
-    return this.http.post(`${contineoURL}`, options).pipe(map(response => {
+  getLiveLocationByCity(params: any): Observable<any> {
+    params.LOCATION= params.LOCATION.toLowerCase();
+    return this.http.post(`${environment.vtsURL}${params.LOCATION}/loc`, options).pipe(map(response => {
       return response;
     }))
   }
-
 
   
 }

@@ -218,13 +218,13 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   updateConfig(){
 
   }
-  async updateMACDetails(){
+  async updateDeviceDetails(){
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
       console.log(this.Values)
-      this.dataService.updateMACByConfigID(this.Values).subscribe(res => {
+      this.dataService.updateDeviceByID(this.Values).subscribe(res => {
         console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();

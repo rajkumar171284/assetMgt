@@ -10,8 +10,8 @@
           <div class="row pb-4" cdkDropList #doneMovieList="cdkDropList" [cdkDropListData]="draggedWidget"
             [cdkDropListConnectedTo]="[doneMovieList]" class="" (cdkDropListDropped)="onDrop($event)">
             
-            <div class="row">
-              <div [ngClass]="{'col-md-12 ':List=='0','col-md-6':List!='0'}"  class=" example-list2 "  *ngFor="let List of draggedWidget" cdkDrag>
+            <div class="row ">
+              <div [ngClass]="{'col-md-12 ':List=='0'||getRequestDetails(List,'WIDGET_TYPE')=='MAPS','col-md-6':List!='0'}"  class="mb-2 example-list2 "  *ngFor="let List of draggedWidget" cdkDrag>
                 <mat-card [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="listed-charts mappedList" color="primary">
                   <!-- {{List}} -->
                   <span *ngIf="List" class="mapped-close">
@@ -40,7 +40,7 @@
                     </div>
                     <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='MAPS'">
 
-                     <app-map></app-map>
+                     <app-map [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-map>
 
                     </div>
                     <!-- <app-{{getRequestDetails(List,'WIDGET_TYPE')}}  pMap="{{getRequestDetails(List,'n')}}"></app-getRequestDetails(List,'WIDGET_TYPE')> -->

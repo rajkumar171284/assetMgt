@@ -26,7 +26,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   getAllMACdata() {
 
-    this.dataService.getMACstatusByAssetConfigID(this.WIDGET_REQUEST).subscribe(res => {
+    this.dataService.getMACByConfigID({PID:this.WIDGET_REQUEST.ASSET_CONFIG_ID}).subscribe(res => {
       console.log(res)
      
       this.dataSource=res.data.map((res:any)=>res);

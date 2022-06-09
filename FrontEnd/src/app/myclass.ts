@@ -29,4 +29,5 @@ export const _assetTypes = ['Security',
 'Industrial Security and Safety',
 ' Augmented Reality',
 'Motion Detection'
-]
+];
+export const _deviceType=["IMEI","MAC ADDRESS"]

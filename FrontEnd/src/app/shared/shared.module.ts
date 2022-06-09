@@ -80,6 +80,7 @@ import { ReportsComponent } from '../components/reports/reports.component';
 import { TableComponent } from '../widgets/table/table.component';
 import {MapComponent} from '../widgets/map/map.component';
 PlotlyModule.plotlyjs = PlotlyJS;
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -140,7 +141,8 @@ PlotlyModule.plotlyjs = PlotlyJS;
     MatTreeModule,
     OverlayModule,
     PortalModule,
-    ScrollingModule, HttpClientModule
+    ScrollingModule, HttpClientModule,
+    LeafletModule
   ]
 })
 export class SharedModule { }
