@@ -12,5 +12,16 @@
     </div>
 
 </div> -->
+<div>
+    <mat-form-field>
+        <mat-label>Plot by</mat-label>       
+        <mat-select formControlName="PLOT_TYPE">
+            <mat-option *ngFor="let key of filterBy" [value]="key">
+                {{key}}
+            </mat-option>
+
+        </mat-select>
+    </mat-form-field>
+</div>
 <plotly-plot  [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true"
 (hover)="hover($event)" (mouseleave)="mouseLeave($event)"></plotly-plot>

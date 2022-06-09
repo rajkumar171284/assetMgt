@@ -22,7 +22,9 @@ export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: 
 export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false },
 { name: 'Line', file: 'line-chart', isSelected: false },
 { name: 'Donut', file: 'donut-chart', isSelected: false },
-{ name: 'Pie', file: 'pie-chart', isSelected: false }];
+{ name: 'Pie', file: 'pie-chart', isSelected: false },
+{ name: 'scatter', file: 'scatter-chart', isSelected: false }
+];
 
 export const _assetTypes = ['Security',
 'Activity Trackers',

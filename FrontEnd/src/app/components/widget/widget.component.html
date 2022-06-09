@@ -82,7 +82,7 @@
         <mat-expansion-panel (opened)="panelOpenState3 = true" (closed)="panelOpenState3 = false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Data Label
+                    {{getChartStatus()==true?'Plot by':'Track by'}}
                 </mat-panel-title>
 
             </mat-expansion-panel-header>

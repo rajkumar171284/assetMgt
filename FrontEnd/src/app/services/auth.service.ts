@@ -52,6 +52,11 @@ export class AuthService {
       return response;
     }))
   }
+  getDeviceCurrStatusByConfigID(params: any): Observable<any> {
+    return this.http.get(`${environment.url}/asset/getDeviceCurrStatusByConfigID/${params.ASSET_CONFIG_ID}`, options).pipe(map(response => {
+      return response;
+    }))
+  }
   // updateDeviceByID(params: any): Observable<any> {
   //   return this.http.post(`${environment.url}/asset/updateDeviceByID`,params, options).pipe(map(response => {
   //     return response;

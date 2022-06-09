@@ -43,10 +43,12 @@
                      <app-map [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-map>
 
                     </div>
-                    <!-- <app-{{getRequestDetails(List,'WIDGET_TYPE')}}  pMap="{{getRequestDetails(List,'n')}}"></app-getRequestDetails(List,'WIDGET_TYPE')> -->
+                    <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='CHARTS'">
 
-  
-                  <!-- </mat-card-content> -->
+                      <app-plotly [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-plotly>
+ 
+                     </div>
+
                 </mat-card>
   
               </div>

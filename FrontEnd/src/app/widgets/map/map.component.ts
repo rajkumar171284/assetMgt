@@ -8,11 +8,11 @@ var deviceIcon = L.icon({
   iconUrl: 'assets/vts.png',
   shadowUrl: 'assets/vts.png',
 
-  iconSize:     [38, 55], // size of the icon
-  // shadowSize:   [50, 64], // size of the shadow
-  // iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-  // shadowAnchor: [4, 62],  // the same for the shadow
-  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  iconSize: [38, 55], // size of the icon
+  shadowSize:   [50, 64], // size of the shadow
+  iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+  shadowAnchor: [4, 62],  // the same for the shadow
+  popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
 });
 @Component({
   selector: 'app-map',
@@ -94,10 +94,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   labelMessage: any;
   labelMessage2: any;
   deviceType: string = '';
-  markerArr:any=[];
-  myMap:any;
-  defaultLat:any=11.505;
-  defaultLng:any=-0.09;
+  markerArr: any = [];
+  myMap: any;
+  defaultLat: any = 11.505;
+  defaultLng: any = -0.09;
   constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -121,13 +121,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   getAllDevice() {
     this.dataService.getMACByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
       console.log('highlights', res)
+      this.ref.checkNoChanges();
       if (res && res.data) {
         this.WIDGET_REQUEST.MAC_COUNT = res.data.length;
         if (res.data.length > 0) {
           this.deviceType = res.data[0].MAC_NAME;
 
-          if (this.WIDGET_REQUEST.WIDGET_DATA == "COUNT") {
-            this.labelMessage = `Total Count`
+          if (this.WIDGET_REQUEST.WIDGET_TYPE!='CHARTS' && this.WIDGET_REQUEST.WIDGET_DATA == "COUNT") {
+            this.labelMessage = `Total Count`;
+            this.getStatusAndCount(res);
 
           } else if (this.WIDGET_REQUEST.WIDGET_DATA == "STATUS") {
             this.labelMessage = `Active`;
@@ -140,36 +142,58 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
               return a.MAC_STATUS === 0
             })
             this.WIDGET_REQUEST.inactiveCount = inactive.length > 0 ? inactive.length : 0;
+            this.getStatusAndCount(res);
+          }
+          else if (this.WIDGET_REQUEST.WIDGET_DATA == "LOCATION") {
+            // 
+            this.getCurrDeviceByLabel()
+
+
 
           }
 
-          // collect location -active only
-          const resultArr = res.data.filter((item: any) => {
-            return item.MAC_STATUS === 1;
-          })
-          forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response:any) => {
-            console.log(response)
-            this.markerArr = response;
-            if(response && response.length>0){
-              this.defaultLat=response[0].latitude;
-               this.defaultLng=response[0].longitude;
-              //  let view=L.setView([this.defaultLat, this.defaultLng], 5).addTo(this.myMap);
-
-            }
-            for (let m of this.markerArr) {
-              let marker = L.marker([m.latitude,m.longitude], {icon: deviceIcon})
-              .bindPopup(m.deviceId)
-              .addTo(this.myMap);
-            }
-            L.marker([51.5, -0.09], {icon: deviceIcon}).addTo(this.myMap).bindPopup("I am a green leaf.");
-            L.marker([51.495, -0.083], {icon: deviceIcon}).addTo(this.myMap).bindPopup("I am a red leaf.");
-            L.marker([51.49, -0.1], {icon: deviceIcon}).addTo(this.myMap).bindPopup("I am an orange leaf.");
-          })
         }
-        this.ref.detectChanges();
+        
       }
 
     })
+  }
+
+  getStatusAndCount(res: any) {
+    // collect location -active only
+    const resultArr = res.data.filter((item: any) => {
+      return item.MAC_STATUS === 1;
+    })
+    forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response: any) => {
+      console.log(response)
+      this.markerArr = response;
+      if (response && response.length > 0) {
+        this.defaultLat = response[0].latitude;
+        this.defaultLng = response[0].longitude;
+        //  let view=L.setView([this.defaultLat, this.defaultLng], 5).addTo(this.myMap);
+
+      }
+      for (let m of this.markerArr) {
+        let marker = L.marker([m.latitude, m.longitude], { icon: deviceIcon })
+          .bindPopup(m.deviceId)
+          .addTo(this.myMap);
+      }
+      L.marker([51.5, -0.09], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a green leaf.");
+      L.marker([51.495, -0.083], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a red leaf.");
+      L.marker([51.49, -0.1], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am an orange leaf.");
+    })
+  }
+
+  getCurrDeviceByLabel() {
+    console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
+    this.dataService.getDeviceCurrStatusByConfigID(this.WIDGET_REQUEST).subscribe(result => {
+      console.log(result)
+      if(result && result.data.length>0){
+        // get x axes as  
+        
+      }
+    })
+
   }
 
 }

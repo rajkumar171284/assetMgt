@@ -109,16 +109,16 @@ router.post('/updateDeviceByID', (req, res) => {
     let todo;
     const MAC_DETAILS = req.body.MAC_DETAILS;
     let errMessage = 'updated';
-     
+
 
     sql = "UPDATE mac_tbl SET MAC_NAME=?,MAC_ADDRESS=?, MAC_STATUS=?, LOCATION=?, MODIFY_BY=?, MODIFY_DATE=? WHERE PID=?";
     todo = [MAC_DETAILS[0].MAC_NAME, MAC_DETAILS[0].MAC_ADDRESS, MAC_DETAILS[0].MAC_STATUS, MAC_DETAILS[0].LOCATION, req.body.CREATED_BY, new Date(), MAC_DETAILS[0].PID];
     // todo = [MAC_DETAILS.map(item => [item.MAC_NAME, item.MAC_ADDRESS, item.MAC_STATUS, item.LOCATION, req.body.CREATED_BY, new Date(), item.PID])]
-// console.log(todo)
+    // console.log(todo)
     db.query(sql, todo, (err, result) => {
 
         if (err) {
-            console.log(result,err)
+            console.log(result, err)
 
             // throw err;
             return res.status(400).send({
@@ -525,9 +525,76 @@ router.get('/getAllMACstatus', (req, res) => {
                 status: 200
             })
     })
-
-
 })
 
+// history
+router.post('/addDeviceHistory', (req, res) => {
+    let sql;
+    let todo;
+    let errMessage;
+    sql = `INSERT INTO device_history_tbl(PID, ASSET_CONFIG_ID, DEVICE_ID, VALUE, STATUS, LATITUDE,LONGITUDE, LOCATION, LAST_UPDATE_TIME) VALUES (?,?,?,?,?,?,?,?,?)`;
+    todo = ['', req.body.ASSET_CONFIG_ID, req.body.DEVICE_ID, req.body.VALUE, req.body.STATUS, req.body.LATITUDE, req.body.LONGITUDE, req.body.LOCATION, new Date()];
+    errMessage = 'added'
+    db.query(sql, todo, (err, result, fields) => {
+        if (err) {
+            throw err;
+            return res.status(400).send({
+                msg: err
+            });
+        }
+        else {
+            // if update config
+            res.send({
+                data: result,
+                status: 200,
+                msg: `Record ${errMessage},successfully`
+            })
 
-module.exports = router;
+
+        }
+    })
+})
+
+router.get('/getDeviceCurrStatusByConfigID/:ASSET_CONFIG_ID', (req, res) => {
+    let sql;
+    let sql2;
+    let sql3;
+    sql = `SELECT * FROM device_history_tbl WHERE ASSET_CONFIG_ID=?`
+    let todo = [req.params.ASSET_CONFIG_ID]
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+            sql2 = `SELECT DISTINCT DEVICE_ID FROM device_history_tbl`
+
+        db.query(sql2, (err2, result2) => {
+            if (err2) throw err2;
+            else
+                sql3 = `SELECT DISTINCT LOCATION FROM device_history_tbl`
+            db.query(sql3, (err3, result3) => {
+                if (err3) throw err3;
+                else
+                    res.send({
+                        data: result,
+                        status: 200,
+                        totalDevice: result2,
+                        Locations:result3
+                    })
+                })
+            })
+        })
+    })
+    router.post('/getDeviceCurrStatusByDeviceID', (req, res) => {
+        let sql;
+        sql = `SELECT * FROM device_history_tbl WHERE DEVICE_ID=? ORDER BY LAST_UPDATE_TIME`;
+        let todo = [res.body.DEVICE_ID]
+        db.query(sql, todo, (err, result) => {
+            if (err) throw err;
+            else
+                res.send({
+                    data: result,
+                    status: 200
+                })
+        })
+    })
+
+    module.exports = router;

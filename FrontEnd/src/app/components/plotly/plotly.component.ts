@@ -3,6 +3,7 @@ import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface xcol {
   MAC_ADDRESS_ID: number
@@ -15,9 +16,20 @@ interface xcol {
 
 })
 export class PlotlyComponent implements OnInit, OnChanges {
-  chartName:any;
+  newForm: FormGroup = this.fb.group({
+
+    // SENSOR_TYPE_ID: ['', Validators.required],
+    // CATEGORY_NAME: ['', Validators.required],
+    PLOT_TYPE: [''],
+  })
+  @Input() WIDGET_REQUEST: any;
+  labelMessage: any;
+  labelMessage2: any;
+  deviceType: string = '';
+  chartName: any;
   @Input('pMap') pMap: any;
   @Input() name: any;
+  filterBy: any[] = ['SPEED', 'KM'];
   // @Input() xAxes: any;
   public data: any;
   public layOut: any;
@@ -32,7 +44,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
       { x: [], y: [], type: '' },
     ],
     layout: {
-      width: 420, height: 300,marginLeft:-20,
+      width: 420, height: 300, marginLeft: -20,
       title: ''
     }
   };
@@ -48,7 +60,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
 
-  constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
+  constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) { }
   monthsData: any = [
     '9:00:00',
     '9:30:00',
@@ -69,7 +81,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
     '18:00:00',
 
   ];
-  chartCatg:any='scatter';
+  chartCatg: any = 'scatter';
   ngOnInit(): void {
   }
 
@@ -109,7 +121,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
 
         })
         let item: any = [{ x: unique, y: value, type: this.chartCatg },
-        { x: unique, y: value2, type: this.chartCatg},
+        { x: unique, y: value2, type: this.chartCatg },
         { x: unique, y: value3, type: this.chartCatg },
         { x: unique, y: value4, type: this.chartCatg }]
         this.graph1.data = item;
@@ -123,13 +135,142 @@ export class PlotlyComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes, this.pMap)
+    if (this.WIDGET_REQUEST) {
+      this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
+      console.log('chart req:', this.WIDGET_REQUEST)
+      if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS' && this.WIDGET_REQUEST.WIDGET_DATA == "COUNT") {
+        this.labelMessage = `Total Count`;
 
-    if(this.pMap=='line' ||this.pMap==''){
-      this.chartCatg='scatter';
+        this.getCurrDeviceByLabel()
+
+
+      }
+    }
+
+  }
+
+  async getCurrDeviceByLabel() {
+    console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
+    this.dataService.getDeviceCurrStatusByConfigID(this.WIDGET_REQUEST).subscribe(result => {
+      console.log(result)
+      if (result && result.data.length > 0) {
+        // get x axes as  
+        this.ref.detectChanges();
+        const deviceIDs = result.totalDevice.map((item: any) => item.DEVICE_ID);
+        for (let a of result.totalDevice) {
+          a.totalSpeed = 0;
+          a.totalKM = 0;
+          result.data.filter((x: any) => {
+            return x.DEVICE_ID == a.DEVICE_ID;
+          }).map((resp: any) => {
+            const value = JSON.parse(resp.VALUE);
+            a.totalSpeed = a.totalSpeed + value.speed;
+            a.totalKM = a.totalKM + value.odometer;
+          })
+        }
+        console.log(result)
+        if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
+          this.pieChart(result)
+        } else {
+
+          // default
+          this.newForm.patchValue({
+            PLOT_TYPE: this.filterBy[0]
+          })
+          console.log(this.newForm.value)
+          const myform = this.newForm.value;
+          if (myform) {
+
+
+          }
+
+          this.xAndYaxesChart(result)
+        }
+
+
+
+      }
+    })
+
+  }
+
+  xAndYaxesChart(result: any) {
+
+    for (let el of result.totalDevice) {
+      let xData;
+
+      if(this.newForm.value.PLOT_TYPE=='SPEED'){
+        xData=el.totalSpeed;
+      }else if(this.newForm.value.PLOT_TYPE=='KM'){
+        xData=el.totalKM
+      }
+      let item: any = {
+        x: [`D${el.DEVICE_ID}`], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ?this.newForm.value.PLOT_TYPE.toUpperCase() : ''
+      }
+      this.graph1.data.push(item)
+
+    }
+
+    // let item: any = [{ x: deviceIDs, y: value, type: this.chartCatg },
+    // { x: unique, y: value2, type: this.chartCatg},
+    // { x: unique, y: value3, type: this.chartCatg },
+    // { x: unique, y: value4, type: this.chartCatg }
+    // ]
+    // this.graph1.data = item;
+    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
+    console.log(this.graph1)
+  }
+
+  pieChart(result: any) {
+
+    let itemValue = result.totalDevice.map((z: any) => z.totalSpeed);
+    let itemID = result.totalDevice.map((z: any) => `D${z.DEVICE_ID}`)
+    var traceA = {
+      type: "pie",
+      values: itemValue,
+      labels: itemID,
+      hole: 0.25,
+      pull: [0.1, 0, 0, 0, 0],
+      direction: 'clockwise',
+      marker: {
+        colors: ['#CDDC39', '#673AB7', '#F44336', '#00BCD4', '#607D8B'],
+        line: {
+          color: 'black',
+          width: 1
+        }
+      },
+      textfont: {
+        family: 'Lato',
+        color: 'white',
+        size: 18
+      },
+      hoverlabel: {
+        bgcolor: 'black',
+        bordercolor: 'black',
+        font: {
+          family: 'Lato',
+          color: 'white',
+          size: 18
+        }
+      }
+    };
+
+    this.data = [traceA];
+
+    var layout = {
+      title: "Area Under Forest for Different Countries"
+    };
+    this.graph1.data = this.data;
+    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
+
+  }
+  oldCall() {
+    if (this.pMap == 'line' || this.pMap) {
+      this.chartCatg = 'scatter';
       this.getData()
 
-    }else{
-      this.chartCatg=this.pMap
+    } else {
+      this.chartCatg = this.pMap
       this.getData()
 
     }

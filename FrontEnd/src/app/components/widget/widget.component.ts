@@ -40,16 +40,16 @@ export class WidgetComponent implements OnInit {
   // auto
   // myControl = new FormControl();
   // myControlType = new FormControl();
-  mapChoosen=false;
+  chartChoosen=false;
 
   options: any[] = [];
-  options2: any[] = ['Status', 'Location','COUNT'];
+  options2: any[] = ['Status', 'Location','COUNT','Trend'];
   newForm: FormGroup = this.fb.group({
     PID: [''],
     WIDGET_TYPE: ['', Validators.required],
-    isMAPSelected: false,
-    CHART_NAME: [this.mapChoosen?Validators.required:null],
-    CHART_TYPE: [this.mapChoosen?Validators.required:null],
+    isChartSelected: false,
+    CHART_NAME: [this.chartChoosen?Validators.required:null],
+    CHART_TYPE: [this.chartChoosen?Validators.required:null],
     WIDGET_DATA: ['', Validators.required],
     ASSET_CONFIG_ID: ['', Validators.required],
     WIDGET_IMG:'',
@@ -113,16 +113,16 @@ export class WidgetComponent implements OnInit {
     })
 
     // to check only maps
-    const isMAPSelected = this.widgetType.filter((item: any, index) => {
+    const isChartSelected = this.widgetType.filter((item: any, index) => {
       return item.isSelected === true && index == 0;
     })
-    if (isMAPSelected.length > 0) {
-      this.mapChoosen = true;
+    if (isChartSelected.length > 0) {
+      this.chartChoosen = true;
     } else {
-      this.mapChoosen = false;
+      this.chartChoosen = false;
     }
     this.newForm.patchValue({
-      isMAPSelected: this.mapChoosen
+      isChartSelected: this.chartChoosen
     })
 
   }
@@ -141,7 +141,6 @@ export class WidgetComponent implements OnInit {
       console.log(this.Values)
       this.dataService.addChartRequest(this.Values).subscribe(res => {
         console.log(res)
-        // this.dialogClose.emit(true);
         this.confirmClose();
         this.openSnackBar()
       })
@@ -157,15 +156,21 @@ export class WidgetComponent implements OnInit {
   }
   confirmClose() {
     this.dialog.closeAll()
-
+    this.chartChoosen=false;
+    this.chartTypes.forEach(item => {
+      item.isSelected = false;
+    })
+    this.widgetType.forEach(item => {
+      item.isSelected = false;
+    })
   }
 
   getChartStatus() {
-    return this.newForm.get('isMAPSelected')?.value;
+    return this.newForm.get('isChartSelected')?.value;
   }
 
   get chartStatus() {
-    const status = this.newForm.controls['isMAPSelected'];
+    const status = this.newForm.controls['isChartSelected'];
     console.log(status)
     return status;
   }
