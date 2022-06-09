@@ -19,7 +19,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
   newForm: FormGroup = this.fb.group({
 
     // SENSOR_TYPE_ID: ['', Validators.required],
-    // CATEGORY_NAME: ['', Validators.required],
+    PLOT_XAXES: [''],
     PLOT_TYPE: [''],
   })
   @Input() WIDGET_REQUEST: any;
@@ -30,6 +30,8 @@ export class PlotlyComponent implements OnInit, OnChanges {
   @Input('pMap') pMap: any;
   @Input() name: any;
   filterBy: any[] = ['SPEED', 'KM'];
+
+  filterXaxes: any[]=['DEVICE','LOCATION'];
   // @Input() xAxes: any;
   public data: any;
   public layOut: any;
@@ -59,7 +61,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
   };
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
-
+  widgetResponse: any;
   constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) { }
   monthsData: any = [
     '9:00:00',
@@ -96,11 +98,11 @@ export class PlotlyComponent implements OnInit, OnChanges {
     let xCol: any = [];
 
     this.dataService.getAllMACstatus().subscribe(res => {
-      console.log(res)
+      // console.log(res)
       this.ref.detectChanges();
       if (res && res.data.length > 0) {
         const unique = [...new Set(res.data.map((item: any) => item.MAC_ADDRESS))]; // [ 'A', 'B']
-        console.log(unique)
+        // console.log(unique)
         res.data.forEach((item: any) => {
 
           xDate.push(item.CREATED_DATE);
@@ -134,7 +136,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
     })
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes, this.pMap)
+    // console.log(changes, this.pMap)
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
       console.log('chart req:', this.WIDGET_REQUEST)
@@ -152,11 +154,11 @@ export class PlotlyComponent implements OnInit, OnChanges {
   async getCurrDeviceByLabel() {
     console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
     this.dataService.getDeviceCurrStatusByConfigID(this.WIDGET_REQUEST).subscribe(result => {
-      console.log(result)
+      // console.log(result)
       if (result && result.data.length > 0) {
+        this.widgetResponse = result;
         // get x axes as  
         this.ref.detectChanges();
-        const deviceIDs = result.totalDevice.map((item: any) => item.DEVICE_ID);
         for (let a of result.totalDevice) {
           a.totalSpeed = 0;
           a.totalKM = 0;
@@ -175,14 +177,11 @@ export class PlotlyComponent implements OnInit, OnChanges {
 
           // default
           this.newForm.patchValue({
-            PLOT_TYPE: this.filterBy[0]
+            PLOT_TYPE: this.filterBy[0],
+            PLOT_XAXES:this.filterXaxes[0]
           })
           console.log(this.newForm.value)
-          const myform = this.newForm.value;
-          if (myform) {
 
-
-          }
 
           this.xAndYaxesChart(result)
         }
@@ -196,20 +195,58 @@ export class PlotlyComponent implements OnInit, OnChanges {
 
   xAndYaxesChart(result: any) {
 
-    for (let el of result.totalDevice) {
+    let plotArray:any=[];
+    if (this.newForm.value.PLOT_XAXES == 'DEVICE') {
+      for (let a of result.totalDevice) {
+        a.key=`D${a.DEVICE_ID}`;
+        a.totalSpeed = 0;
+        a.totalKM = 0;
+        result.data.filter((x: any) => {
+          return x.DEVICE_ID == a.DEVICE_ID;
+        }).map((resp: any) => {
+          const value = JSON.parse(resp.VALUE);
+          a.totalSpeed = a.totalSpeed + value.speed;
+          a.totalKM = a.totalKM + value.odometer;
+        })
+        plotArray.push(a)
+      }
+    } else {
+      // loc axes
+      for (let a of result.Locations) {
+        a.key=a.LOCATION;
+        a.totalSpeed = 0;
+        a.totalKM = 0;
+        result.data.filter((x: any) => {
+          return x.LOCATION == a.LOCATION;
+        }).map((resp: any) => {
+          const value = JSON.parse(resp.VALUE);
+          a.totalSpeed = a.totalSpeed + value.speed;
+          a.totalKM = a.totalKM + value.odometer;
+         
+        })
+        plotArray.push(a)
+      }
+    }
+
+    // 
+    let newArr: any = [];
+    for (let el of plotArray) {
       let xData;
 
-      if(this.newForm.value.PLOT_TYPE=='SPEED'){
-        xData=el.totalSpeed;
-      }else if(this.newForm.value.PLOT_TYPE=='KM'){
-        xData=el.totalKM
+      if (this.newForm.value.PLOT_TYPE == 'SPEED') {
+        xData = el.totalSpeed;
+      } else if (this.newForm.value.PLOT_TYPE == 'KM') {
+        xData = el.totalKM
       }
+      console.log(xData, this.newForm.value.PLOT_TYPE)
       let item: any = {
-        x: [`D${el.DEVICE_ID}`], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ?this.newForm.value.PLOT_TYPE.toUpperCase() : ''
+        x: [el.key], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ? this.WIDGET_REQUEST.CHART_NAME.toLowerCase() : ''
       }
-      this.graph1.data.push(item)
+      newArr.push(item)
 
     }
+
+    this.graph1.data = newArr;
 
     // let item: any = [{ x: deviceIDs, y: value, type: this.chartCatg },
     // { x: unique, y: value2, type: this.chartCatg},
@@ -217,7 +254,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
     // { x: unique, y: value4, type: this.chartCatg }
     // ]
     // this.graph1.data = item;
-    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
+    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
     console.log(this.graph1)
   }
 
@@ -345,6 +382,12 @@ export class PlotlyComponent implements OnInit, OnChanges {
   // Reset to default when hovering stops
   mouseLeave(event: Event): void {
     this.interactivePlotSubject$.next(this.graph2.data);
+  }
+
+  onFilterChange() {
+    this.xAndYaxesChart(this.widgetResponse)
+
+
   }
 
 }

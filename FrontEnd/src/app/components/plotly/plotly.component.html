@@ -13,15 +13,26 @@
 
 </div> -->
 <div>
+    <form class="form-container p-2" [formGroup]="newForm">
     <mat-form-field>
         <mat-label>Plot by</mat-label>       
-        <mat-select formControlName="PLOT_TYPE">
+        <mat-select placeholder="Select Unit" (selectionChange)="onFilterChange()" formControlName="PLOT_TYPE">
             <mat-option *ngFor="let key of filterBy" [value]="key">
                 {{key}}
             </mat-option>
 
         </mat-select>
     </mat-form-field>
+    <mat-form-field>
+        <mat-label>Select xAxes</mat-label>       
+        <mat-select placeholder="Select xAxes"  (selectionChange)="onFilterChange()" formControlName="PLOT_XAXES">
+            <mat-option *ngFor="let key of filterXaxes" [value]="key">
+                {{key}}
+            </mat-option>
+
+        </mat-select>
+    </mat-form-field>
+</form>
 </div>
 <plotly-plot  [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true"
 (hover)="hover($event)" (mouseleave)="mouseLeave($event)"></plotly-plot>
