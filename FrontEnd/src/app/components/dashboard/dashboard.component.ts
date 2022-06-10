@@ -28,6 +28,7 @@ class chartitem {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  isWidgetOpen=true;
   dragStatus: number = 0;
   constructor(public dialog: MatDialog, private dataService: AuthService,private ref:ChangeDetectorRef) { }
   dataSource: chartItem[] = [];
@@ -165,10 +166,12 @@ export class DashboardComponent implements OnInit {
         return value[0].WIDGET_TYPE?value[0].WIDGET_TYPE.toUpperCase():'';
       }
       
-      
-
-      
+    
     }
+  }
+
+  closePanel(){
+
   }
 
 }

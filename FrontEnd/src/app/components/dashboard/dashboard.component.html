@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row">
 
-    <div class="col-md-9 ">
+    <div [ngClass]="{'col-md-9':isWidgetOpen,'col-md-12':!isWidgetOpen}" class=" ">
 
 
       <div class="container mt-3 " style="padding-left:0px;padding-right:0px;">
@@ -62,7 +62,12 @@
     </div>
 
 
-    <div class="widget-panel col-md-3">
+    <div *ngIf="isWidgetOpen" [ngClass]="{'col-md-3':isWidgetOpen}" class="widget-panel ">
+
+      <span class="closed">
+        <mat-icon color="primary" (click)="closePanel();isWidgetOpen=false">close</mat-icon>
+
+      </span>
       <div class="sticky-top">
 
         <mat-toolbar style="background-color: transparent;text-align:right" color="none">

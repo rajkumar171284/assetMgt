@@ -40,6 +40,10 @@
 .widget-panel {
     background-color: #4834d4;
     background-image: linear-gradient(315deg, #4834d4 0%, #0c0c0c 74%);
+    position: relative;
+}
+.closed{
+    position: absolute;top:5px;right:5px;z-index: 99;
 }
 
 .widget-panel mat-label {
