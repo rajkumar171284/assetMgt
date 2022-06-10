@@ -8,7 +8,8 @@
       display: flex;
     justify-content: space-around;
     align-items: center;
-    background: #6387c3 !important;
+    // background: #6387c3 !important;
+    background: linear-gradient(45deg,#6387c3,#7ca9f4) !important;
 }
 .my-card-header{
     position: absolute;width: 100%;z-index: 2;top:0;left:0;right:0;

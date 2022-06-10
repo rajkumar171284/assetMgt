@@ -43,7 +43,7 @@ export class WidgetComponent implements OnInit {
   chartChoosen=false;
 
   options: any[] = [];
-  options2: any[] = ['Status', 'Location','COUNT','Trend'];
+  options2: any[] = ['Status', 'Location','COUNT'];
   newForm: FormGroup = this.fb.group({
     PID: [''],
     WIDGET_TYPE: ['', Validators.required],
