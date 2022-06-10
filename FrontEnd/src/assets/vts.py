@@ -119,6 +119,12 @@ def speed():
     speedData = random.randint(0,150)
     return speedData
 
+batterydata = 0
+def battery():
+    global batterydata
+    batterydata = random.randint(1,100)
+    return batterydata
+
 imeiVal = ""
 def imeiUpdate():
     global imeiVal
@@ -151,6 +157,7 @@ def loc_chennai():
         "reportedMilliSeconds":int(round(time.time() * 1000)),
         "speed":speed(),
         "altitude":speed(),
+        "battery":battery(),
         "odometer":17737+speedData
         }
         #print(data)
@@ -175,6 +182,7 @@ def loc_mumbai():
         "reportedMilliSeconds":int(round(time.time() * 1000)),
         "speed":speed(),
         "altitude":speed(),
+        "battery":battery(),
         "odometer":17737+speedData
         }
         #print(data)

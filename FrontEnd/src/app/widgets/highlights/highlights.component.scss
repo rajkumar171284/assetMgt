@@ -195,8 +195,13 @@ mat-card-content{
     font-size: 1.5em;color:#444;margin-bottom: 10px;justify-content:center;
 }
 .sub-hdr{
-    font-size: 1.2em;
-    letter-spacing: 2PX;color:#fff !important;    margin-bottom: 20px;
+    font-size: 2em;
+    letter-spacing: 2PX;
+    color: #fff !important;
+    margin-bottom: 40px;
+    // border-bottom: 2px solid #fff;
+    padding-bottom: 4px;
+
 }
 .img-box,.c-time11,.c-time21{
     display: flex;

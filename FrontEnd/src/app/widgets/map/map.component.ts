@@ -1,19 +1,19 @@
 import { Component, OnInit, AfterViewInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
-import { forkJoin } from 'rxjs';
+import { forkJoin, interval } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
 declare let L: any;
-var deviceIcon = L.icon({
-  iconUrl: 'assets/vts.png',
-  shadowUrl: 'assets/vts.png',
+// var deviceIcon = L.icon({
+//   iconUrl: 'assets/vts.png',
+//   shadowUrl: 'assets/ignition-off.png',
 
-  iconSize: [38, 55], // size of the icon
-  shadowSize:   [50, 64], // size of the shadow
-  iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-  shadowAnchor: [4, 62],  // the same for the shadow
-  popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
-});
+//   iconSize: [38, 55], // size of the icon
+//   shadowSize:   [32, 34], // size of the shadow
+//   iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+//   shadowAnchor: [4, 107],  // the same for the shadow
+//   popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+// });
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -111,11 +111,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
   ngAfterViewInit(): void {
-    this.myMap = L.map('map').setView([this.defaultLat, this.defaultLng], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 8,
-      attribution: '© OpenStreetMap'
-    }).addTo(this.myMap);
+    var mapOptions = {
+      center: [17.385044, 78.486671],
+      zoom: 4
+    }
+    this.myMap = new L.map('map', mapOptions);
+    var layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+    this.myMap.addLayer(layer);
+    // this.myMap = L.map('map').setView([this.defaultLat, this.defaultLng], 5);
+    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //   maxZoom: 8,
+    //   attribution: '© OpenStreetMap'
+    // }).addTo(this.myMap);
   }
 
   getAllDevice() {
@@ -127,9 +134,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
         if (res.data.length > 0) {
           this.deviceType = res.data[0].MAC_NAME;
 
-          if (this.WIDGET_REQUEST.WIDGET_TYPE!='CHARTS' && this.WIDGET_REQUEST.WIDGET_DATA == "COUNT") {
+          if (this.WIDGET_REQUEST.WIDGET_TYPE != 'CHARTS' && this.WIDGET_REQUEST.WIDGET_DATA == "COUNT") {
             this.labelMessage = `Total Count`;
-            this.getStatusAndCount(res);
+
 
           } else if (this.WIDGET_REQUEST.WIDGET_DATA == "STATUS") {
             this.labelMessage = `Active`;
@@ -142,30 +149,38 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
               return a.MAC_STATUS === 0
             })
             this.WIDGET_REQUEST.inactiveCount = inactive.length > 0 ? inactive.length : 0;
-            this.getStatusAndCount(res);
-          }
-          else if (this.WIDGET_REQUEST.WIDGET_DATA == "LOCATION") {
-            // 
-            this.getCurrDeviceByLabel()
 
+          }
+          else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS') {
+
+            const intervalTime = interval(3000);
+            intervalTime.subscribe(()=>{
+              this.getCurrDeviceByLabel(res)
+            })
+
+            // this.getCurrDeviceByLabel(res);
 
 
           }
 
         }
-        
+
       }
 
     })
   }
 
-  getStatusAndCount(res: any) {
+
+
+  getCurrDeviceByLabel(res: any) {
+    console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
+
     // collect location -active only
     const resultArr = res.data.filter((item: any) => {
       return item.MAC_STATUS === 1;
     })
     forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response: any) => {
-      console.log(response)
+      // console.log(response)
       this.markerArr = response;
       if (response && response.length > 0) {
         this.defaultLat = response[0].latitude;
@@ -173,26 +188,31 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
         //  let view=L.setView([this.defaultLat, this.defaultLng], 5).addTo(this.myMap);
 
       }
+      console.log('markerArr', this.markerArr)
+      let mIndex = 0;
       for (let m of this.markerArr) {
-        let marker = L.marker([m.latitude, m.longitude], { icon: deviceIcon })
-          .bindPopup(m.deviceId)
-          .addTo(this.myMap);
-      }
-      L.marker([51.5, -0.09], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a green leaf.");
-      L.marker([51.495, -0.083], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a red leaf.");
-      L.marker([51.49, -0.1], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am an orange leaf.");
-    })
-  }
+        var deviceIcon = L.icon({
+          iconUrl: 'assets/vts.png',
+          shadowUrl: this.markerArr[mIndex].ignitionStatus == 'OFF' ? 'assets/ignition-off.png' : '',
 
-  getCurrDeviceByLabel() {
-    console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
-    this.dataService.getDeviceCurrStatusByConfigID(this.WIDGET_REQUEST).subscribe(result => {
-      console.log(result)
-      if(result && result.data.length>0){
-        // get x axes as  
-        
+          iconSize: [38, 55], // size of the icon
+          shadowSize: [32, 34], // size of the shadow
+          iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+          shadowAnchor: [4, 107],  // the same for the shadow
+          popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+        let marker = L.marker([this.markerArr[mIndex].latitude, this.markerArr[mIndex].longitude], { icon: deviceIcon })
+          .bindPopup(this.markerArr[mIndex].deviceId).addTo(this.myMap);
+          this.myMap.panTo(new L.LatLng(this.markerArr[mIndex].latitude, this.markerArr[mIndex].longitude));
+          this.myMap.setZoom(16);
+        mIndex++;
+
       }
+      // L.marker([51.5, -0.09], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a green leaf.");
+      // L.marker([51.495, -0.083], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a red leaf.");
+      // L.marker([51.49, -0.1], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am an orange leaf.");
     })
+
 
   }
 

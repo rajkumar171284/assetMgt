@@ -170,7 +170,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
             a.totalKM = a.totalKM + value.odometer;
           })
         }
-        console.log(result)
+        // console.log(result)
         if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
           this.pieChart(result)
         } else {
@@ -180,7 +180,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
             PLOT_TYPE: this.filterBy[0],
             PLOT_XAXES:this.filterXaxes[0]
           })
-          console.log(this.newForm.value)
+          // console.log(this.newForm.value)
 
 
           this.xAndYaxesChart(result)
@@ -238,7 +238,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
       } else if (this.newForm.value.PLOT_TYPE == 'KM') {
         xData = el.totalKM
       }
-      console.log(xData, this.newForm.value.PLOT_TYPE)
+      // console.log(xData, this.newForm.value.PLOT_TYPE)
       let item: any = {
         x: [el.key], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ? this.WIDGET_REQUEST.CHART_NAME.toLowerCase() : ''
       }
