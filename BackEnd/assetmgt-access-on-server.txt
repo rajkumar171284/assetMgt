@@ -1,0 +1,4 @@
+User : ped2
+Pwd : Isl@2022
+
+mongo -host 10.1.1.42 -port 27017 -u asset -p asset -authenticationDatabase assetmgt
