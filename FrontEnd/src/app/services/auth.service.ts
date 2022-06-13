@@ -41,7 +41,14 @@ export class AuthService {
       return response;
     }))
   }
-  // mac details
+  // device details
+
+  
+  getAllLocationsByConfigID(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/asset/getLocationsByConfigID`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
   getMACByConfigID(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/getMACdetailsByConfigID`,params, options).pipe(map(response => {
       return response;

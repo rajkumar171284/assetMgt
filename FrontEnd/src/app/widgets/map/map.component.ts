@@ -4,16 +4,7 @@ import { forkJoin, interval } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
 declare let L: any;
-// var deviceIcon = L.icon({
-//   iconUrl: 'assets/vts.png',
-//   shadowUrl: 'assets/ignition-off.png',
 
-//   iconSize: [38, 55], // size of the icon
-//   shadowSize:   [32, 34], // size of the shadow
-//   iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-//   shadowAnchor: [4, 107],  // the same for the shadow
-//   popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
-// });
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -32,15 +23,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   // });
 
-  // Marker for the top of Mt. Ranier
-  // summit = marker([46.8523, -121.7603], {
-  //   icon: icon({
-  //     iconSize: [25, 31],
-  //     iconAnchor: [13, 21],
-  //     iconUrl: 'leaflet/marker-icon.png',
-  //     shadowUrl: 'leaflet/marker-shadow.png'
-  //   })
-  // });
+
 
   // Marker for the parking lot at the base of Mt. Ranier trails
   // paradise = marker([46.78465227596462, -81.74141269177198], {
@@ -98,6 +81,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   myMap: any;
   defaultLat: any = 11.505;
   defaultLng: any = -0.09;
+  cityLocations: any = [];
+  isCitySelected = false;
+
   constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -124,14 +110,52 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
     //   attribution: '© OpenStreetMap'
     // }).addTo(this.myMap);
   }
+  getLocationsByConfigID() {
+    this.dataService.getAllLocationsByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
+      console.log('map loc', res)
+      if (res && res.data) {
+        this.cityLocations = res.data.map((city: any) => {
+          city.isSelected = false;
+          city.LOCATION = city.LOCATION.toUpperCase()
+          return city;
+        });
+        this.ref.detectChanges();
+        // console.log(this.cityLocations)
+      }
+    })
 
+  }
+  showByCity(a: any) {
+    if (a) {
+
+      for (let item of this.cityLocations) {
+        item.isSelected = false;
+      };
+      const index = this.cityLocations.findIndex((item: any) => {
+        return item.LOCATION == a.LOCATION;
+      })
+      if (index != -1) {
+        this.cityLocations[index].isSelected = true;
+      }
+      this.isCitySelected = true;
+      const city = this.markerArr.filter((item: any) => {
+        return item.region.toUpperCase() == a.LOCATION;
+      })
+      this.myMap.panTo(new L.LatLng(city[0].latitude, city[0].longitude));
+      this.myMap.setZoom(16);
+    }
+
+  }
   getAllDevice() {
     this.dataService.getMACByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
-      console.log('highlights', res)
-      this.ref.checkNoChanges();
+      console.log('map', res)
+      // this.ref.detectChanges();
       if (res && res.data) {
+        this.getLocationsByConfigID();
+
         this.WIDGET_REQUEST.MAC_COUNT = res.data.length;
         if (res.data.length > 0) {
+
           this.deviceType = res.data[0].MAC_NAME;
 
           if (this.WIDGET_REQUEST.WIDGET_TYPE != 'CHARTS' && this.WIDGET_REQUEST.WIDGET_DATA == "COUNT") {
@@ -154,11 +178,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
           else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS') {
 
             const intervalTime = interval(3000);
-            intervalTime.subscribe(()=>{
-              this.getCurrDeviceByLabel(res)
+            intervalTime.subscribe(() => {
+              this.getCurrDeviceByLabel(res);
             })
 
-            // this.getCurrDeviceByLabel(res);
 
 
           }
@@ -173,7 +196,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
 
 
   getCurrDeviceByLabel(res: any) {
-    console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
+    // console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
 
     // collect location -active only
     const resultArr = res.data.filter((item: any) => {
@@ -185,10 +208,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
       if (response && response.length > 0) {
         this.defaultLat = response[0].latitude;
         this.defaultLng = response[0].longitude;
-        //  let view=L.setView([this.defaultLat, this.defaultLng], 5).addTo(this.myMap);
 
       }
-      console.log('markerArr', this.markerArr)
+      // console.log('markerArr', this.markerArr)
       let mIndex = 0;
       for (let m of this.markerArr) {
         var deviceIcon = L.icon({
@@ -203,8 +225,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
         });
         let marker = L.marker([this.markerArr[mIndex].latitude, this.markerArr[mIndex].longitude], { icon: deviceIcon })
           .bindPopup(this.markerArr[mIndex].deviceId).addTo(this.myMap);
+        // set latest lat,lng once initialy
+        if (!this.isCitySelected) {
           this.myMap.panTo(new L.LatLng(this.markerArr[mIndex].latitude, this.markerArr[mIndex].longitude));
           this.myMap.setZoom(16);
+
+        }
         mIndex++;
 
       }

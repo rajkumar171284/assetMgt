@@ -3,3 +3,18 @@
     padding: 0;
   }
   #map { height: 380px; overflow: hidden;}
+  .cityFilter{
+    position: absolute;
+    width: 100px;z-index: 2;top:170px;left:0;right:0;
+    overflow: hidden;background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    color: #fff;    padding: 10px 5px;
+    
+  }
+  .cityFilter mat-card{
+    padding: 5px !important;text-transform: uppercase;margin-bottom: 4px;
+  }
+  .selected{
+    background:orange !important ;
+  }

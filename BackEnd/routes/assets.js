@@ -151,18 +151,41 @@ router.post('/getAllMACdetails', (req, res) => {
             })
     })
 })
-router.post('/getMACdetailsByConfigID', (req, res) => {
 
-    let sql = "SELECT `PID`, `ASSET_CONFIG_ID`, `MAC_NAME`, `MAC_ADDRESS`, `MAC_STATUS`, `LOCATION`, `CREATED_BY`, `CREATED_DATE`, `MODIFY_BY`, `MODIFY_DATE` FROM `mac_tbl` WHERE ASSET_CONFIG_ID=?"
+router.post('/getLocationsByConfigID', (req, res) => {
+    let sql3;
+    sql = `SELECT DISTINCT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`
 
     let todo = [req.body.PID]
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
         else
-            res.send({
-                data: result,
-                status: 200
-            })
+        res.send({
+            data: result,
+            status: 200,
+        })
+
+    })
+})
+router.post('/getMACdetailsByConfigID', (req, res) => {
+    let sql3;
+    let sql = "SELECT * FROM `mac_tbl` WHERE ASSET_CONFIG_ID=?"
+
+    let todo = [req.body.PID]
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+        sql3 = `SELECT DISTINCT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`
+        db.query(sql3,todo, (err3, result3) => {
+            if (err3) throw err3;
+            else
+                res.send({
+                    data: result,
+                    status: 200,
+                    totalLocation: result3,
+                })
+        })
+
     })
 })
 
@@ -577,24 +600,24 @@ router.get('/getDeviceCurrStatusByConfigID/:ASSET_CONFIG_ID', (req, res) => {
                         data: result,
                         status: 200,
                         totalDevice: result2,
-                        Locations:result3
+                        Locations: result3
                     })
-                })
             })
         })
     })
-    router.post('/getDeviceCurrStatusByDeviceID', (req, res) => {
-        let sql;
-        sql = `SELECT * FROM device_history_tbl WHERE DEVICE_ID=? ORDER BY LAST_UPDATE_TIME`;
-        let todo = [res.body.DEVICE_ID]
-        db.query(sql, todo, (err, result) => {
-            if (err) throw err;
-            else
-                res.send({
-                    data: result,
-                    status: 200
-                })
-        })
+})
+router.post('/getDeviceCurrStatusByDeviceID', (req, res) => {
+    let sql;
+    sql = `SELECT * FROM device_history_tbl WHERE DEVICE_ID=? ORDER BY LAST_UPDATE_TIME`;
+    let todo = [res.body.DEVICE_ID]
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+            res.send({
+                data: result,
+                status: 200
+            })
     })
+})
 
-    module.exports = router;
+module.exports = router;

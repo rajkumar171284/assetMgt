@@ -16,7 +16,21 @@
 </div> -->
 
 <div>
+    
     <div id="map"></div>
+    
+    <div *ngIf="cityLocations.length>0" class="cityFilter">
+        <div (click)="showByCity(a)"  *ngFor="let a of cityLocations">
+            <mat-card  [ngClass]="{'selected':a.isSelected==true}">
+                <!-- <mat-label> -->
+                    <!-- {{a.isSelected}} -->
+                    {{a.LOCATION}}
+                <!-- </mat-label> -->
+    
+            </mat-card>
+        </div>
+        
+    </div>
     <div class="my-card-footer">
         <mat-card-header class="text-uppercase">
             Live locations OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}
