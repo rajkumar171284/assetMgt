@@ -44,7 +44,7 @@ export class AddMacDetailsComponent implements OnInit {
     ' Status data',
     'Location data',
     'Automation data',
-    'Actionable data ',]
+    'Actionable data ']
 
   deviceType = _deviceType;
   durationInSeconds = 5;

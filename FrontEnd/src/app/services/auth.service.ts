@@ -165,5 +165,15 @@ export class AuthService {
     }))
   }
 
-  
+  // users starts
+  getAllUsersByCID(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/getAllUsersByCompanyID`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  createUser(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/addUser`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
 }

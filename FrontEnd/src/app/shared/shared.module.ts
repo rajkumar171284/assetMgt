@@ -81,6 +81,9 @@ import { TableComponent } from '../widgets/table/table.component';
 import {MapComponent} from '../widgets/map/map.component';
 PlotlyModule.plotlyjs = PlotlyJS;
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { UsersComponent } from '../components/users/users.component';
+import { AddUsersComponent } from '../components/dialogs/add-users/add-users.component';
+import { WidgetAccessDirective } from '../components/directives/widget-access.directive';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -93,7 +96,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
     AddMacDetailsComponent,
     PlotlyComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent
+    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective
   ],
   imports: [
     CommonModule,PlotlyModule,

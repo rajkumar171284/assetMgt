@@ -40,19 +40,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log('server on ',PORT)
 })
-
-
-
-// app.get('/getAllUsersByCompanyID/:cid', (req, res) => {
-//     const id = req.params.cid;
-//     let sql = `SELECT * FROM user_tbl WHERE COMPANY_ID=${id}`;
-//     db.query(sql, (err, result) => {
-//         console.log(result)
-//         if (err) throw err;
-//         else
-//             res.send({
-//                 data:result,
-//                 status:200
-//             })
-//     })
-// })

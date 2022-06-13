@@ -1,0 +1,77 @@
+<mat-toolbar color="primary">
+    <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
+        {{typeName && typeName.PID?'Edit User':'Add New User'}}
+    </mat-grid-list>
+    
+</mat-toolbar>
+<form class="form-container" [formGroup]="newForm">
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>FIRST NAME</mat-label>
+            <input formControlName="FIRST_NAME" matInput placeholder="" type="text" class="example-right-align">
+           </mat-form-field>
+
+    </mat-grid-list>
+
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>LAST_NAME</mat-label>
+            <input formControlName="LAST_NAME" matInput placeholder="" type="text" class="example-right-align">
+           </mat-form-field>
+
+    </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>LOGIN_NAME</mat-label>
+            <input formControlName="LOGIN_NAME" matInput placeholder="" type="text" class="example-right-align">
+           </mat-form-field>
+
+    </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>PASSWORD</mat-label>
+            <input formControlName="PASSWORD" matInput placeholder="" type="text" class="example-right-align">
+           </mat-form-field>
+
+    </mat-grid-list>
+
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+        <mat-form-field>
+            <mat-label>ROLE</mat-label>
+            <mat-select formControlName="ROLE">
+                    
+                <mat-option *ngFor="let key of roleData" [value]="key">
+                    {{key}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+
+    </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="2:1">
+
+            <mat-label>WIDGETS RIGHTS</mat-label>
+            <mat-radio-group formControlName="WIDGETS_RIGHTS" aria-label="Select an option">
+                <mat-radio-button [value]="accessYes">YES</mat-radio-button>
+
+                <mat-radio-button [value]="accessNo">NO</mat-radio-button>
+            </mat-radio-group>
+
+    </mat-grid-list>
+    
+
+
+    <mat-grid-list cols="10">
+        <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
+
+        <button mat-raised-button (click)="confirmClose()"  color="warn">Cancel</button>
+
+
+        </mat-grid-list>
+
+</form>

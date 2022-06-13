@@ -8,7 +8,7 @@ import { AddAssetComponent } from '../../components/dialogs/add-asset/add-asset.
   templateUrl: './asset-type.component.html',
   styleUrls: ['./asset-type.component.scss']
 })
-export class AssetTypeComponent implements OnInit ,OnChanges{
+export class AssetTypeComponent implements  OnChanges{
   @Input('tabIndex')tabIndex:any;
 
   dataSource = [];
@@ -19,10 +19,6 @@ ngOnChanges(changes: SimpleChanges): void {
   console.log('changes')
   this.getAllAssets();
 }
-  ngOnInit(): void {
-    this.getAllAssets();
-
-  }
 
   async getAllAssets() {
     const session = await this.dataService.getSessionData();

@@ -28,6 +28,7 @@ class chartitem {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  isVisible=false;
   isWidgetOpen=true;
   dragStatus: number = 0;
   constructor(public dialog: MatDialog, private dataService: AuthService,private ref:ChangeDetectorRef) { }
