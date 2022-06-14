@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 10, 2022 at 08:22 AM
+-- Generation Time: Jun 14, 2022 at 07:04 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -803,15 +803,22 @@ CREATE TABLE `user_tbl` (
   `LOGIN_NAME` varchar(255) NOT NULL,
   `PASSWORD` varchar(255) NOT NULL,
   `ROLE` varchar(255) NOT NULL,
-  `COMPANY_ID` int(255) NOT NULL
+  `COMPANY_ID` int(255) NOT NULL,
+  `WIDGETS_RIGHTS` tinyint(1) NOT NULL,
+  `CREATED_BY` bigint(20) NOT NULL,
+  `CREATED_DATE` varchar(200) NOT NULL,
+  `MODIFY_BY` bigint(20) DEFAULT NULL,
+  `MODIFY_DATE` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `user_tbl`
 --
 
-INSERT INTO `user_tbl` (`PID`, `FIRST_NAME`, `LAST_NAME`, `LOGIN_NAME`, `PASSWORD`, `ROLE`, `COMPANY_ID`) VALUES
-(1, 'Raj', 'kumar', 'kumar', 'kumar123', 'admin', 1);
+INSERT INTO `user_tbl` (`PID`, `FIRST_NAME`, `LAST_NAME`, `LOGIN_NAME`, `PASSWORD`, `ROLE`, `COMPANY_ID`, `WIDGETS_RIGHTS`, `CREATED_BY`, `CREATED_DATE`, `MODIFY_BY`, `MODIFY_DATE`) VALUES
+(1, 'Raj', 'kumar', 'kumar', 'kumar123', 'ADMIN', 1, 1, 0, '', 1, '2022-06-13 16:03:44.584'),
+(2, 'user', 'user', 'user1', 'user1', 'LEVEL1', 1, 0, 1, '2022-06-13 16:10:28.955', NULL, NULL),
+(4, 'user', 'user', '', 'user1', 'user1', 0, 0, 1, '1', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -841,9 +848,12 @@ CREATE TABLE `widget_request_tbl` (
 
 INSERT INTO `widget_request_tbl` (`PID`, `WIDGET_TYPE`, `WIDGET_IMG`, `ASSET_CONFIG_ID`, `CHART_NAME`, `WIDGET_DATA`, `WIDGET_LABEL`, `SQL_QUERY`, `IS_DRAGGED`, `CREATED_BY`, `CREATED_DATE`, `MODIFY_BY`, `MODIFY_DATE`) VALUES
 (29, 'CHARTS', 'bar-chart', 20, 'bar', 'COUNT', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-09 13:57:55.794000', NULL, NULL),
-(31, 'CHARTS', 'scatter-chart', 20, 'scatter', 'COUNT', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-09 17:29:31.301000', NULL, NULL),
 (32, 'CHARTS', 'pie-chart', 20, 'pie', 'COUNT', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-09 17:40:19.647000', NULL, NULL),
-(33, 'HIGHLIGHTS', 'highlight-widget', 18, NULL, 'COUNT', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-09 19:16:53.505000', NULL, NULL);
+(33, 'HIGHLIGHTS', 'highlight-widget', 18, NULL, 'COUNT', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-09 19:16:53.505000', NULL, NULL),
+(34, 'TABLE', 'table-widget', 18, NULL, 'Status', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 0, 1, '2022-06-10 14:30:43.251000', NULL, NULL),
+(35, 'HIGHLIGHTS', 'highlight-widget', 20, NULL, 'COUNT', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-10 15:15:54.938000', NULL, NULL),
+(36, 'HIGHLIGHTS', 'highlight-widget', 20, NULL, 'Status', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-10 15:16:23.240000', NULL, NULL),
+(37, 'MAPS', 'map-widget', 20, NULL, 'Location', NULL, '\"SELECT * FROM null WHERE PID=undefined\"', 1, 1, '2022-06-10 15:20:08.307000', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -990,13 +1000,13 @@ ALTER TABLE `sensor_type_tbl`
 -- AUTO_INCREMENT for table `user_tbl`
 --
 ALTER TABLE `user_tbl`
-  MODIFY `PID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `PID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `widget_request_tbl`
 --
 ALTER TABLE `widget_request_tbl`
-  MODIFY `PID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `PID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
