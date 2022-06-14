@@ -1,8 +1,7 @@
 const express = require('express');
 // const mysql = require('mysql');
 const createError = require('http-errors');
-// const PORT=3306;
-const PORT=process.env.PORT | 3000;
+const PORT=process.env.PORT | 4201;
 const app = express();
 const cors = require('cors');
 const authRouter = require('./routes/auth.js');

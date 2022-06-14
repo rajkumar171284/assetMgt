@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy ,ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { AuthService } from '../../services/auth.service';
@@ -28,26 +28,40 @@ class chartitem {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  isVisible=false;
-  isWidgetOpen=true;
+  isVisible = false;
+  isWidgetOpen = true;
   dragStatus: number = 0;
-  constructor(public dialog: MatDialog, private dataService: AuthService,private ref:ChangeDetectorRef) { }
+  constructor(public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) { }
   dataSource: chartItem[] = [];
   doneList: chartItem[] = []
   overAllCharts: any = [];
   undraggedWidget: any[] = ['0'];
   draggedWidget: any[] = ['0'];
   toEditRequest: any;
+  dragDisabled = false;
   ngOnInit(): void {
     console.log('dash')
+    this.getSession();
     this.getMappedChartRequest();
 
+
+  }
+  async getSession() {
+    const session = await this.dataService.getSessionData();
+    if (session && session.ROLE == 'ADMIN') {
+      this.dragDisabled = false;
+      this.isWidgetOpen=true;
+    } else {
+      this.isWidgetOpen=false;
+      this.dragDisabled = true;
+    }
+ console.log(this.dragDisabled)
   }
 
   async getMappedChartRequest() {
     const session = await this.dataService.getSessionData();
     this.dataService.getAllChartRequests({ IS_DRAGGED: 1 }).subscribe(res => {
-      
+
       this.doneList = res.data.map((el: chartItem) => {
         return el;
       });
@@ -56,7 +70,7 @@ export class DashboardComponent implements OnInit {
       }) : ['0'];
       console.log(this.draggedWidget)
       this.getAllChartRequest();
-     
+
     })
   }
   openDialog() {
@@ -86,7 +100,7 @@ export class DashboardComponent implements OnInit {
         return el;
       });
       this.overAllCharts = this.dataSource.concat(this.doneList);
-      console.log('overAllCharts',this.overAllCharts)
+      // console.log('overAllCharts',this.overAllCharts)
       this.undraggedWidget = res.data.map((itm: chartItem) => {
         return itm.PID.toString();
 
@@ -142,7 +156,7 @@ export class DashboardComponent implements OnInit {
   getRequestDetails(PID: any, val: string) {
     if (PID) {
       // console.log(PID)
-      
+
       const value = this.overAllCharts.filter((obj: chartItem) => {
         return obj.PID == parseInt(PID);
       })
@@ -156,7 +170,7 @@ export class DashboardComponent implements OnInit {
         return value[0]
       } else if (value[0] && val == 'l') {
         return value[0].CHART_TYPE
-      }else if (value[0] && val == 'IMG') {
+      } else if (value[0] && val == 'IMG') {
         return value[0].WIDGET_IMG;
       }
       else if (value[0] && val == 'config') {
@@ -164,14 +178,14 @@ export class DashboardComponent implements OnInit {
       }
       else if (value[0] && val == 'WIDGET_TYPE') {
         // if(value[0].WIDGET_TYPE==='')
-        return value[0].WIDGET_TYPE?value[0].WIDGET_TYPE.toUpperCase():'';
+        return value[0].WIDGET_TYPE ? value[0].WIDGET_TYPE.toUpperCase() : '';
       }
-      
-    
+
+
     }
   }
 
-  closePanel(){
+  closePanel() {
 
   }
 

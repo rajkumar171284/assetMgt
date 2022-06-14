@@ -2,76 +2,94 @@
     <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
         {{typeName && typeName.PID?'Edit User':'Add New User'}}
     </mat-grid-list>
-    
+
 </mat-toolbar>
 <form class="form-container" [formGroup]="newForm">
-    <mat-grid-list cols="1" rowHeight="2:1">
+    <div class="row">
+        <div class="col-md-7">
+            <mat-grid-list cols="1" rowHeight="2:1">
 
-        <mat-form-field>
-            <mat-label>FIRST NAME</mat-label>
-            <input formControlName="FIRST_NAME" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
+                <mat-form-field>
+                    <mat-label>FIRST NAME</mat-label>
+                    <input formControlName="FIRST_NAME" matInput placeholder="" type="text" class="example-right-align">
+                </mat-form-field>
 
-    </mat-grid-list>
+            </mat-grid-list>
 
-    <mat-grid-list cols="1" rowHeight="2:1">
+            <mat-grid-list cols="1" rowHeight="2:1">
 
-        <mat-form-field>
-            <mat-label>LAST_NAME</mat-label>
-            <input formControlName="LAST_NAME" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
+                <mat-form-field>
+                    <mat-label>LAST NAME</mat-label>
+                    <input formControlName="LAST_NAME" matInput placeholder="" type="text" class="example-right-align">
+                </mat-form-field>
 
-    </mat-grid-list>
-    <mat-grid-list cols="1" rowHeight="2:1">
+            </mat-grid-list>
+            <mat-grid-list cols="1" rowHeight="2:1">
 
-        <mat-form-field>
-            <mat-label>LOGIN_NAME</mat-label>
-            <input formControlName="LOGIN_NAME" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
+                <mat-form-field>
+                    <mat-label>LOGIN NAME</mat-label>
+                    <input formControlName="LOGIN_NAME" matInput placeholder="" type="text" class="example-right-align">
+                </mat-form-field>
 
-    </mat-grid-list>
-    <mat-grid-list cols="1" rowHeight="2:1">
+            </mat-grid-list>
+            <mat-grid-list cols="1" rowHeight="2:1">
 
-        <mat-form-field>
-            <mat-label>PASSWORD</mat-label>
-            <input formControlName="PASSWORD" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
+                <mat-form-field>
+                    <mat-label>PASSWORD</mat-label>
+                    <input formControlName="PASSWORD" matInput placeholder="" type="text" class="example-right-align">
+                </mat-form-field>
 
-    </mat-grid-list>
+            </mat-grid-list>
 
-    <mat-grid-list cols="1" rowHeight="2:1">
+            <mat-grid-list cols="1" rowHeight="2:1">
 
-        <mat-form-field>
-            <mat-label>ROLE</mat-label>
-            <mat-select formControlName="ROLE">
-                    
-                <mat-option *ngFor="let key of roleData" [value]="key">
-                    {{key}}
-                </mat-option>
+                <mat-form-field>
+                    <mat-label>ROLE</mat-label>
+                    <mat-select formControlName="ROLE">
 
-            </mat-select>
-        </mat-form-field>
+                        <mat-option *ngFor="let key of roleData" [value]="key">
+                            {{key}}
+                        </mat-option>
 
-    </mat-grid-list>
-    <mat-grid-list cols="1" rowHeight="2:1">
+                    </mat-select>
+                </mat-form-field>
 
-            <mat-label>WIDGETS RIGHTS</mat-label>
-            <mat-radio-group formControlName="WIDGETS_RIGHTS" aria-label="Select an option">
+            </mat-grid-list>
+
+        </div>
+    
+    <div class="col-md-5 rights">
+        <mat-grid-list cols="1" rowHeight="1:1">
+
+            <mat-label>PERMISSIONs:</mat-label>
+        </mat-grid-list>
+        <mat-grid-list class="mt-2" cols="1" rowHeight="1:1">
+
+            <mat-label>WIDGET RIGHTS(READ/WRITE)</mat-label>
+    
+        </mat-grid-list>
+        <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
+
+            <!-- <mat-label>WIDGETS RIGHTS</mat-label> -->
+            <mat-radio-group formControlName="WIDGETS_RIGHTS" placeholder="Select an option">
                 <mat-radio-button [value]="accessYes">YES</mat-radio-button>
 
                 <mat-radio-button [value]="accessNo">NO</mat-radio-button>
             </mat-radio-group>
 
-    </mat-grid-list>
-    
+        </mat-grid-list>
+    </div>
+</div>
+
+
 
 
     <mat-grid-list cols="10">
         <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
 
-        <button mat-raised-button (click)="confirmClose()"  color="warn">Cancel</button>
+        <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
 
 
-        </mat-grid-list>
+    </mat-grid-list>
 
 </form>

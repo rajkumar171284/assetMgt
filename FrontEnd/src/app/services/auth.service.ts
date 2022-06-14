@@ -3,8 +3,15 @@ import { environment } from 'src/environments/environment';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs';
+const headers = new HttpHeaders().set('content-type', 'application/json').set('Access-Control-Allow-Origin', 'http://localhost:4200').set("Access-Control-Allow-Methods", "POST,GET,PUT,PATCH,DELETE,OPTIONS");
+
+// let headers = new HttpHeaders()
+ 
+// headers=headers.append('content-type','application/json')
+// headers=headers.append('Access-Control-Allow-Origin', '*')
+// headers=headers.append('content-type','application/x-www-form-urlencoded')
 const options = {
-  headers: new HttpHeaders()
+  headers: headers
 }
 @Injectable({
   providedIn: 'root'
@@ -14,8 +21,8 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
 
-  getSessionData(){
-    const session=JSON.parse(JSON.stringify(sessionStorage.getItem('session')));
+  getSessionData() {
+    const session = JSON.parse(JSON.stringify(sessionStorage.getItem('session')));
     return JSON.parse(session);
   }
   authLogin(params: any): Observable<any> {
@@ -30,7 +37,7 @@ export class AuthService {
       return response;
     }))
   }
-  
+
   getAssetConfig(params: any): Observable<any> {
     return this.http.get(`${environment.url}/asset/getAllAssetsConfig/${params.COMPANY_ID}`, options).pipe(map(response => {
       return response;
@@ -43,19 +50,19 @@ export class AuthService {
   }
   // device details
 
-  
+
   getAllLocationsByConfigID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/getLocationsByConfigID`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/getLocationsByConfigID`, params, options).pipe(map(response => {
       return response;
     }))
   }
   getMACByConfigID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/getMACdetailsByConfigID`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/getMACdetailsByConfigID`, params, options).pipe(map(response => {
       return response;
     }))
   }
   addMACByConfigID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/addMACByConfigID`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/addMACByConfigID`, params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -69,9 +76,9 @@ export class AuthService {
   //     return response;
   //   }))
   // }
-  
+
   updateDeviceByID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/updateDeviceByID`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/updateDeviceByID`, params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -97,7 +104,7 @@ export class AuthService {
     }))
   }
 
-  
+
   addSensor(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/addSensor`, params, options).pipe(map(response => {
       return response;
@@ -113,7 +120,7 @@ export class AuthService {
       return response;
     }))
   }
-  
+
   // assets starts
   getAllAssets(params: any): Observable<any> {
     return this.http.get(`${environment.url}/asset/getAllAssets`, options).pipe(map(response => {
@@ -133,7 +140,7 @@ export class AuthService {
   }
 
   // chart request add
-  
+
   addChartRequest(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/addChartRequest`, params, options).pipe(map(response => {
       return response;
@@ -150,7 +157,7 @@ export class AuthService {
     }))
   }
   chartRequestChangeStatus(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/chartRequestChangeStatus`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/chartRequestChangeStatus`, params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -166,20 +173,20 @@ export class AuthService {
     }))
   }
   getLiveLocationByCity(params: any): Observable<any> {
-    params.LOCATION= params.LOCATION.toLowerCase();
-    return this.http.post(`${environment.vtsURL}${params.LOCATION}/loc`, options).pipe(map(response => {
+    params.LOCATION = params.LOCATION.toLowerCase();
+    return this.http.get(`${environment.vtsURL}${params.LOCATION}/loc`, options).pipe(map(response => {
       return response;
     }))
   }
 
   // users starts
   getAllUsersByCID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/users/getAllUsersByCompanyID`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/users/getAllUsersByCompanyID`, params, options).pipe(map(response => {
       return response;
     }))
   }
   createUser(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/users/addUser`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/users/addUser`, params, options).pipe(map(response => {
       return response;
     }))
   }

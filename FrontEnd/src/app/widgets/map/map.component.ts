@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterViewInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit,OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
-import { forkJoin, interval } from 'rxjs';
+import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
 declare let L: any;
@@ -11,7 +11,7 @@ declare let L: any;
   styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapComponent implements OnInit, AfterViewInit, OnChanges {
+export class MapComponent implements OnInit, AfterViewInit, OnChanges ,OnDestroy{
 
   // Define our base layers so we can reference them multiple times
   streetMaps = tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -83,7 +83,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   defaultLng: any = -0.09;
   cityLocations: any = [];
   isCitySelected = false;
-
+  setInterval:Subscription | undefined;
   constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -177,12 +177,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
           }
           else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS') {
 
-            const intervalTime = interval(3000);
-            intervalTime.subscribe(() => {
-              this.getCurrDeviceByLabel(res);
+            const intervalTime = interval(60000);
+            this.setInterval=intervalTime.subscribe(() => {
+              // this.getCurrDeviceByLabel(res);
             })
-
-
+            this.getCurrDeviceByLabel(res);
 
           }
 
@@ -240,6 +239,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
     })
 
 
+  }
+
+  ngOnDestroy(): void {
+      this.setInterval?.unsubscribe();
   }
 
 }

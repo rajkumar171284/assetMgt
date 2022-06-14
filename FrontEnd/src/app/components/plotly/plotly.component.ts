@@ -29,7 +29,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
   chartName: any;
   @Input('pMap') pMap: any;
   @Input() name: any;
-  filterBy: any[] = ['SPEED', 'KM'];
+  filterBy: any[] = ['KM','SPEED'];
 
   filterXaxes: any[]=['DEVICE','LOCATION'];
   // @Input() xAxes: any;

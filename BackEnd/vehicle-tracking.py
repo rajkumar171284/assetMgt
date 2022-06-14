@@ -143,9 +143,9 @@ def ignitionState():
         return ignitionStatus
 
   
-@app.route('/chennai/loc', methods = ['POST'])  
+@app.route('/chennai/loc', methods = ['GET'])  
 def loc_chennai():  
-    if request.method == 'POST':
+    if request.method == 'GET':
         location =  locSplit("chennai")
         data = {
         "deviceId" : imeiUpdate(),
@@ -168,9 +168,9 @@ def loc_chennai():
         return json.loads(json_util.dumps(data))
         #return json.dumps(data)
 
-@app.route('/mumbai/loc', methods = ['POST'])  
+@app.route('/mumbai/loc', methods = ['GET'])  
 def loc_mumbai():  
-    if request.method == 'POST':
+    if request.method == 'GET':
         location =  locSplit("mumbai")
         data = {
         "deviceId" : imeiUpdate(),

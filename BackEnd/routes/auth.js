@@ -12,8 +12,9 @@ router.post('/asset/login', (req, res) => {
     const LOGIN_NAME = req.body.LOGIN_NAME;
     const PASSWORD = req.body.PASSWORD;
 
-    const sql = `SELECT * FROM user_tbl WHERE LOGIN_NAME='${LOGIN_NAME}'`;
-    db.query(sql, (err, result) => {
+    const sql = 'SELECT * FROM user_tbl WHERE LOGIN_NAME=? AND PASSWORD=?';
+    let todo = [LOGIN_NAME,PASSWORD]
+    db.query(sql, todo, (err, result) => {
         // console.log(result)
         if (err) {
             throw err;
@@ -22,24 +23,12 @@ router.post('/asset/login', (req, res) => {
             });
         }
         else {
-            console.log('LoggedIn')
+            // console.log('LoggedIn', result)
             if (result.length > 0) {
                 // found
-                const sql = `SELECT * FROM user_tbl WHERE PASSWORD='${PASSWORD}'`;
-                db.query(sql, (err, result) => {
-                    if (err) {
-                        throw err;
-                        return res.status(400).send({
-                            msg: err
-                        });
-                    }
-                    else {
-                        console.log('LoggedIn')
-                        res.send({
-                            data: result,
-                            status: 200
-                        })
-                    }
+                res.send({
+                    data: result,
+                    status: 200
                 })
 
             } else {
@@ -47,7 +36,7 @@ router.post('/asset/login', (req, res) => {
                 res.send({
                     data: result,
                     status: 201,
-                    msg:'No User found'
+                    msg: 'No User'
                 })
             }
         }
