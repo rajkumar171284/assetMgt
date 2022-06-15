@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
     <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
-        {{typeName && typeName.PID?'Enter MAC details':'Add New MAC'}}
+        {{typeName && typeName.MAC_NAME?'Edit Device details':'Add New Device'}}
     </mat-grid-list>
 
 </mat-toolbar>
@@ -24,7 +24,7 @@
                         <div class="row addr-row" [formGroupName]="i">
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <mat-label>NAME</mat-label>
+                                    <mat-label>SELECT NAME</mat-label>
                                     <!-- <input matInput formControlName="MAC_NAME" placeholder="" type="text"
                                         class="example-right-align"> -->
                                         <mat-select formControlName="MAC_NAME">

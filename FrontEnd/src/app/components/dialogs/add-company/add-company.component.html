@@ -1,0 +1,96 @@
+<mat-toolbar color="primary">
+    <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
+        {{typeName && typeName.PID?'Edit Company':'Add New Company'}}
+    </mat-grid-list>
+
+</mat-toolbar>
+<form class="form-container" [formGroup]="newForm">
+    <div class="row">
+        <div class="col-md-7">
+            <mat-grid-list cols="1" rowHeight="2:1">
+
+                <mat-form-field>
+                    <mat-label>COMPANY NAME</mat-label>
+                    <input formControlName="COMPANY_NAME" matInput placeholder="" type="text" class="example-right-align">
+                </mat-form-field>
+
+            </mat-grid-list>
+
+            <mat-grid-list cols="1" rowHeight="2:1">
+
+                <mat-form-field>
+                    <mat-label>ADDRESS LINE1</mat-label>
+                    <input formControlName="COMPANY_ADDRESS_LINE1" matInput placeholder="" type="text" class="example-right-align">
+                </mat-form-field>
+
+            </mat-grid-list>
+            <mat-grid-list cols="1" rowHeight="2:1">
+
+                <mat-form-field>
+                    <mat-label>ADDRESS LINE2</mat-label>
+                    <input formControlName="COMPANY_ADDRESS_LINE2" matInput placeholder="" type="text" class="example-right-align">
+                </mat-form-field>
+
+            </mat-grid-list>
+            
+            <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
+                <mat-label>STATUS</mat-label>
+                <mat-radio-group formControlName="STATUS" placeholder="Select an option">
+                    <mat-radio-button [value]="accessYes">YES</mat-radio-button>
+    
+                    <mat-radio-button [value]="accessNo">NO</mat-radio-button>
+                </mat-radio-group>
+    
+            </mat-grid-list>
+
+            <!-- <mat-grid-list cols="1" rowHeight="2:1">
+
+                <mat-form-field>
+                    <mat-label>ROLE</mat-label>
+                    <mat-select formControlName="ROLE">
+
+                        <mat-option *ngFor="let key of roleData" [value]="key">
+                            {{key}}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+
+            </mat-grid-list> -->
+
+        </div>
+    
+        <div class="col-md-5 rights">
+            
+            <mat-grid-list class="mt-2" cols="1" rowHeight="1:1">
+    
+                <mat-label>UPLOAD LOGO</mat-label>
+        
+            </mat-grid-list>
+            <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
+                <!-- <iframe [src]="LOGO" -->
+                <input formControlName="LOGO"   type="file" class="example-right-align">
+
+                <!-- <mat-radio-group formControlName="LOGO" placeholder="Select an option">
+                    <mat-radio-button [value]="accessYes">YES</mat-radio-button>
+    
+                    <mat-radio-button [value]="accessNo">NO</mat-radio-button>
+                </mat-radio-group> -->
+    
+            </mat-grid-list>
+        </div>
+   
+</div>
+
+
+
+
+    <mat-grid-list cols="10">
+        <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
+
+        <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
+
+
+    </mat-grid-list>
+
+</form>

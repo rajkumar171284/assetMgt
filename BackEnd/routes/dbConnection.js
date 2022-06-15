@@ -1,5 +1,5 @@
 var mysql = require('mysql');
-
+const config =require('../config');
 
 // var http=require('http');
 // var conn = mysql.createConnection({
@@ -12,9 +12,7 @@ var mysql = require('mysql');
 // }); 
 var conn = mysql.createConnection({
   // protocol:'http:',  
-
-  
-  host: '127.0.0.1', // Replace with your host name
+  host: config.host, // Replace with your host name
   user: 'root',      // Replace with your database username
   password: '',      // Replace with your database password
   database: 'asset-mgt', // // Replace with your database Name

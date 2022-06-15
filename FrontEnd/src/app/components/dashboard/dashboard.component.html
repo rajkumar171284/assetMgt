@@ -7,7 +7,7 @@
 
     
 
-    <div  [ngClass]="{'col-md-9':isWidgetOpen,'col-md-12':!isWidgetOpen}" class=" ">
+    <div  [ngClass]="{'col-md-9':isWidgetOpen,'col-md-12':!isWidgetOpen}" class="widgetDraggedPanel ">
 
 
       <div class="container mt-3 " style="padding-left:0px;padding-right:0px;">
@@ -17,10 +17,17 @@
             [cdkDropListConnectedTo]="[doneMovieList]"  (cdkDropListDropped)="onDrop($event)">
             
             <div class="row ">
-              <div [cdkDragDisabled]="dragDisabled" [ngClass]="{'col-md-12 ':List=='0'||getRequestDetails(List,'WIDGET_TYPE')=='MAPS','col-md-6':List!='0'}"  class="mb-2 example-list2 "  *ngFor="let List of draggedWidget" cdkDrag>
+              <div [cdkDragDisabled]="dragDisabled||List=='0'" class="{{getRequestDetails(List,'size')}}" [ngClass]="{'col-md-12 ':List=='0'}"  class="mb-2"  *ngFor="let List of draggedWidget" cdkDrag>
                 <mat-card [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="listed-charts mappedList" color="primary">
                   <!-- {{List}} -->
-                  <span appWidgetAccessIf *ngIf="List" class="mapped-close">
+                  <div  class="init-text" *ngIf="List=='0'">
+                        Drag & drop the Widgets
+                  </div>
+                  
+                  
+                  <span appWidgetAccessIf *ngIf="List!='0'" class="mapped-close">
+                    <mat-icon (click)="editRequest(List)" color="primary">edit</mat-icon>
+
                     <mat-icon (click)="removeRequest(List)" color="warn">delete_outline</mat-icon>
 
                   </span>
@@ -76,7 +83,7 @@
         <!-- </mat-toolbar> -->
        
         <mat-grid-list class="mt-3" color="primary" cols="2" rowHeight="2:2">
-          <mat-label>Available Widget</mat-label>
+          <mat-label>Available Widget( {{undraggedWidget.length}} )</mat-label>
 
 
           <div cdkDropList #moviesList="cdkDropList" [cdkDropListData]="undraggedWidget"

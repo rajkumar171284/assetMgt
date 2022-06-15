@@ -30,7 +30,8 @@ export class AuthService {
       return response;
     }))
   }
-
+  
+  
   // asset config starts
   addAssetConfig(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/addAssetConfig`, params, options).pipe(map(response => {
@@ -190,4 +191,20 @@ export class AuthService {
       return response;
     }))
   }
+  createCompany(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/addCompany`, params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  getAllCompanyTypes(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/getAllCompanyByType`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  deleteCompanyByID(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/deleteCompany/${params.PID}`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  
 }

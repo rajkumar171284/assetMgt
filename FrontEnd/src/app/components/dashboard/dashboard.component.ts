@@ -76,12 +76,12 @@ export class DashboardComponent implements OnInit {
   openDialog() {
     const dialogRef = this.dialog.open(WidgetComponent, {
       width: '800px',
-      data: this.toEditRequest
+      data: this.toEditRequest?this.toEditRequest:null
     });
     dialogRef.afterClosed().subscribe(result => {
-
       // call all charts
       this.getAllChartRequest();
+      this.getMappedChartRequest();
     });
   }
   async editRequest(pid: any) {
@@ -93,26 +93,13 @@ export class DashboardComponent implements OnInit {
 
   async getAllChartRequest() {
     const session = await this.dataService.getSessionData();
-    // let params = { COMPANY_ID: session.COMPANY_ID };
-    this.dataService.getAllChartRequests({ IS_DRAGGED: this.dragStatus }).subscribe(res => {
-      // this.ref.detectChanges()
+    this.dataService.getAllChartRequests({ IS_DRAGGED: 0 }).subscribe(res => {
       this.dataSource = res.data.map((el: chartItem) => {
         return el;
       });
       this.overAllCharts = this.dataSource.concat(this.doneList);
-      // console.log('overAllCharts',this.overAllCharts)
       this.undraggedWidget = res.data.map((itm: chartItem) => {
         return itm.PID.toString();
-
-        // return {
-        //   PID: itm.PID,
-        //   NAME: itm.NAME,
-        //   CHART_DATA: itm.CHART_DATA,
-        //   CHART_TYPE: itm.CHART_TYPE,
-        //   SQL_QUERY: itm.SQL_QUERY,
-        //   IS_DRAGGED: itm.IS_DRAGGED
-        // }
-
 
       })
       console.log(this.undraggedWidget)
@@ -145,7 +132,7 @@ export class DashboardComponent implements OnInit {
     console.log(data)
     this.dataService.chartRequestChangeStatus(params).subscribe(res => {
       this.getMappedChartRequest();
-
+      this.getAllChartRequest();
     })
   }
   removeRequest(item: any) {
@@ -177,10 +164,15 @@ export class DashboardComponent implements OnInit {
         return value[0].CONFIG_NAME;
       }
       else if (value[0] && val == 'WIDGET_TYPE') {
-        // if(value[0].WIDGET_TYPE==='')
         return value[0].WIDGET_TYPE ? value[0].WIDGET_TYPE.toUpperCase() : '';
       }
-
+      else if (value[0] && val == 'CHART_NAME') {
+        return value[0].CHART_NAME ? value[0].CHART_NAME.toUpperCase() : '';
+      }
+      else if (value[0] && val == 'size') {
+        return value[0].WIDGET_SIZE;
+      }
+      
 
     }
   }

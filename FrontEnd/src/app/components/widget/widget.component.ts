@@ -12,7 +12,7 @@ import { map, startWith } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
-import {_widgetTYPE,_chartTYPE} from '../../myclass';
+import { _widgetTYPE, _chartTYPE, _widgetSIZE } from '../../myclass';
 
 export interface Fruit {
   name: string;
@@ -25,6 +25,8 @@ export interface Fruit {
   providers: [AuthService]
 })
 export class WidgetComponent implements OnInit {
+  widgetSize = _widgetSIZE;
+
   widgetType = _widgetTYPE;
   chartTypes = _chartTYPE;
 
@@ -32,27 +34,22 @@ export class WidgetComponent implements OnInit {
   panelOpenState = true;
   panelOpenState2 = true;
   panelOpenState3 = true;
-
+  panelOpenState4 = true;
   dataSource: any = [];
   isSelected = false;
-
-  // isMAPSelected: any = [];
-  // auto
-  // myControl = new FormControl();
-  // myControlType = new FormControl();
-  chartChoosen=false;
+  chartChoosen = false;
 
   options: any[] = [];
-  options2: any[] = ['Status', 'Location','COUNT'];
+  options2: any[] = ['STATUS', 'LOCATION', 'COUNT'];
   newForm: FormGroup = this.fb.group({
     PID: [''],
     WIDGET_TYPE: ['', Validators.required],
     isChartSelected: false,
-    CHART_NAME: [this.chartChoosen?Validators.required:null],
-    CHART_TYPE: [this.chartChoosen?Validators.required:null],
-    WIDGET_DATA: ['', Validators.required],
+    CHART_NAME: [this.chartChoosen ? Validators.required : null],
+    CHART_TYPE: [this.chartChoosen ? Validators.required : null],
+    WIDGET_DATA: ['', Validators.required], WIDGET_SIZE: ['', Validators.required],
     ASSET_CONFIG_ID: ['', Validators.required],
-    WIDGET_IMG:'',
+    WIDGET_IMG: '',
     SQL_QUERY: [],
     IS_DRAGGED: 0
 
@@ -60,17 +57,44 @@ export class WidgetComponent implements OnInit {
 
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     private _snackBar: MatSnackBar, @Inject(MAT_DIALOG_DATA) public data: any) {
-    
-    console.log(data)
+
+    console.log('widget', data)
     if (data && data.PID) {
-      const type = this.chartTypes.filter(x => {
-        return x.name.toLowerCase() === data.NAME.toLowerCase();
+
+      if (data.CHART_NAME) {
+        // if chart choosen then make selected by color
+        this.chartTypes.filter(x => {
+          return x.name.toLowerCase() === data.CHART_NAME.toLowerCase();
+        }).map(result => {
+          result.isSelected = true;
+          this.newForm.patchValue({ isChartSelected: result.isSelected })
+          this.chartChoosen = result.isSelected;
+          return result;
+        })
+      }
+      // set widget selection also by color
+      this.widgetType.filter(x => {
+        return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
       }).map(result => {
         result.isSelected = true;
         return result;
       })
-      console.log(type)
+      // set size by color
+      if(data.WIDGET_SIZE){
+        const size=this.widgetSize.filter(x => {
+          return x.name.toLowerCase() === data.WIDGET_SIZE.toLowerCase();
+        }).map(result => {
+          result.isSelected = true;
+          return result;
+        })
+      }
+
       this.newForm.patchValue(data);
+
+
+    }else{
+      // new entry
+      this.newForm.patchValue({ IS_DRAGGED: 0 })
 
     }
   }
@@ -94,7 +118,7 @@ export class WidgetComponent implements OnInit {
     a.isSelected = this.isSelected;
     this.newForm.patchValue({
       CHART_NAME: a.name.toLowerCase(),
-      WIDGET_IMG:a.file
+      WIDGET_IMG: a.file
     })
 
 
@@ -108,7 +132,7 @@ export class WidgetComponent implements OnInit {
 
     this.newForm.patchValue({
       WIDGET_TYPE: a.name.toUpperCase(),
-      WIDGET_IMG:a.file
+      WIDGET_IMG: a.file
 
     })
 
@@ -128,16 +152,14 @@ export class WidgetComponent implements OnInit {
   }
   async confirmData() {
 
-    // const msg = await this.findInvalidControls();
-    // console.log(msg)
-
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID;
       this.Values.CREATED_BY = session.PID;
-      const query = `SELECT * FROM ${this.Values.CHART_TYPE} WHERE PID=${this.Values.CHART_DATA}`;
-      this.Values.SQL_QUERY = JSON.stringify(query);
-      this.Values.IS_DRAGGED = 0;
+      // const query = `SELECT * FROM ${this.Values.CHART_TYPE} WHERE PID=${this.Values.CHART_DATA}`;
+      // this.Values.SQL_QUERY = JSON.stringify(query);
+      this.Values.SQL_QUERY ='sql';
+     
       console.log(this.Values)
       this.dataService.addChartRequest(this.Values).subscribe(res => {
         console.log(res)
@@ -156,7 +178,7 @@ export class WidgetComponent implements OnInit {
   }
   confirmClose() {
     this.dialog.closeAll()
-    this.chartChoosen=false;
+    this.chartChoosen = false;
     this.chartTypes.forEach(item => {
       item.isSelected = false;
     })

@@ -29,9 +29,9 @@ export class PlotlyComponent implements OnInit, OnChanges {
   chartName: any;
   @Input('pMap') pMap: any;
   @Input() name: any;
-  filterBy: any[] = ['KM','SPEED'];
+  filterBy: any[] = ['KM', 'SPEED'];
 
-  filterXaxes: any[]=['DEVICE','LOCATION'];
+  filterXaxes: any[] = ['DEVICE', 'LOCATION'];
   // @Input() xAxes: any;
   public data: any;
   public layOut: any;
@@ -63,85 +63,37 @@ export class PlotlyComponent implements OnInit, OnChanges {
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
   widgetResponse: any;
   constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) { }
-  monthsData: any = [
-    '9:00:00',
-    '9:30:00',
-    '10:00:00',
-    '10:30:00',
-    '11:00:00',
-    '11:30:00',
-    '12:00:00',
+  // monthsData: any = [
+  //   '9:00:00',
+  //   '9:30:00',
+  //   '10:00:00',
+  //   '10:30:00',
+  //   '11:00:00',
+  //   '11:30:00',
+  //   '12:00:00',
 
-    '12:30:00',
-    '13:00:00',
-    '13:30:00',
-    '14:30:00', '15:00:00',
-    '15:30:00',
-    '16:00:00',
-    '16:30:00', '17:00:00',
-    '17:30:00',
-    '18:00:00',
+  //   '12:30:00',
+  //   '13:00:00',
+  //   '13:30:00',
+  //   '14:30:00', '15:00:00',
+  //   '15:30:00',
+  //   '16:00:00',
+  //   '16:30:00', '17:00:00',
+  //   '17:30:00',
+  //   '18:00:00',
 
-  ];
-  chartCatg: any = 'scatter';
+  // ];
   ngOnInit(): void {
   }
 
 
-  getData() {
-    let xDate: any = [];
-    let value: any = []
-    let value2: any = []
-
-    let value3: any = []
-    let value4: any = []
-    let xCol: any = [];
-
-    this.dataService.getAllMACstatus().subscribe(res => {
-      // console.log(res)
-      this.ref.detectChanges();
-      if (res && res.data.length > 0) {
-        const unique = [...new Set(res.data.map((item: any) => item.MAC_ADDRESS))]; // [ 'A', 'B']
-        // console.log(unique)
-        res.data.forEach((item: any) => {
-
-          xDate.push(item.CREATED_DATE);
-          if (item.MAC_ADDRESS_ID == 1) {
-            value.push(item.VALUE)
-          }
-          if (item.MAC_ADDRESS_ID == 2) {
-            value2.push(item.VALUE)
-          }
-          if (item.MAC_ADDRESS_ID == 3) {
-            value3.push(item.VALUE)
-          }
-
-
-          if (item.MAC_ADDRESS_ID == 4) {
-            value4.push(item.VALUE)
-          }
-
-        })
-        let item: any = [{ x: unique, y: value, type: this.chartCatg },
-        { x: unique, y: value2, type: this.chartCatg },
-        { x: unique, y: value3, type: this.chartCatg },
-        { x: unique, y: value4, type: this.chartCatg }]
-        this.graph1.data = item;
-        this.graph1.layout.title = this.pMap;
-
-        // this.graph1.data=res.data.map((item:any)=>{
-        //   return { x: this.monthsData, y: [item.VALUE], type: 'line' }
-        // })
-      }
-    })
-  }
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes, this.pMap)
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-      console.log('chart req:', this.WIDGET_REQUEST)
-      if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS' && this.WIDGET_REQUEST.WIDGET_DATA == "COUNT") {
-        this.labelMessage = `Total Count`;
+      // console.log('chart req:', this.WIDGET_REQUEST)
+      if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
+        // this.labelMessage = `Total Count`;
 
         this.getCurrDeviceByLabel()
 
@@ -178,7 +130,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
           // default
           this.newForm.patchValue({
             PLOT_TYPE: this.filterBy[0],
-            PLOT_XAXES:this.filterXaxes[0]
+            PLOT_XAXES: this.filterXaxes[0]
           })
           // console.log(this.newForm.value)
 
@@ -195,10 +147,10 @@ export class PlotlyComponent implements OnInit, OnChanges {
 
   xAndYaxesChart(result: any) {
 
-    let plotArray:any=[];
+    let plotArray: any = [];
     if (this.newForm.value.PLOT_XAXES == 'DEVICE') {
       for (let a of result.totalDevice) {
-        a.key=`D${a.DEVICE_ID}`;
+        a.key = `D${a.DEVICE_ID}`;
         a.totalSpeed = 0;
         a.totalKM = 0;
         result.data.filter((x: any) => {
@@ -213,7 +165,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
     } else {
       // loc axes
       for (let a of result.Locations) {
-        a.key=a.LOCATION;
+        a.key = a.LOCATION;
         a.totalSpeed = 0;
         a.totalKM = 0;
         result.data.filter((x: any) => {
@@ -222,7 +174,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
           const value = JSON.parse(resp.VALUE);
           a.totalSpeed = a.totalSpeed + value.speed;
           a.totalKM = a.totalKM + value.odometer;
-         
+
         })
         plotArray.push(a)
       }
@@ -238,8 +190,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
       } else if (this.newForm.value.PLOT_TYPE == 'KM') {
         xData = el.totalKM
       }
-      // console.log(xData, this.newForm.value.PLOT_TYPE)
-      let item: any = {
+       let item: any = {
         x: [el.key], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ? this.WIDGET_REQUEST.CHART_NAME.toLowerCase() : ''
       }
       newArr.push(item)
@@ -247,13 +198,8 @@ export class PlotlyComponent implements OnInit, OnChanges {
     }
 
     this.graph1.data = newArr;
-
-    // let item: any = [{ x: deviceIDs, y: value, type: this.chartCatg },
-    // { x: unique, y: value2, type: this.chartCatg},
-    // { x: unique, y: value3, type: this.chartCatg },
-    // { x: unique, y: value4, type: this.chartCatg }
-    // ]
-    // this.graph1.data = item;
+    this.graph1.layout.width = 820;
+    this.graph1.layout.height = 340;
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
     console.log(this.graph1)
   }
@@ -301,75 +247,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
 
   }
-  oldCall() {
-    if (this.pMap == 'line' || this.pMap) {
-      this.chartCatg = 'scatter';
-      this.getData()
-
-    } else {
-      this.chartCatg = this.pMap
-      this.getData()
-
-    }
-    console.log(this.chartCatg)
-
-    if (this.pMap === 'scatter2') {
-      this.data = [
-        { x: [1, 2, 3, 4, 5, 6, 7, 8, 9,], y: [2, 5, 3, 4, 7, 2, 44, 11, 1], type: 'bar', marker: { color: '#6666ff' }, backgroundColor: 'red' }
-
-      ]
-
-      this.layOut = {
-        width: 520, height: 340, title: 'Bar chart',
-        plot_bgcolor: "rgba(0,0,0,0)",
-        paper_bgcolor: "rgba(0,0,0,0)",
-      }
-      this.graph.data = this.data;
-
-    } else
-      if (this.pMap === 'line') {
-        //   this.graph = {
-        //     data: [
-        //         { x: [1, 2, 3], y: [2, 6, 3], type: 'scatter', mode: 'lines+points', marker: {color: 'red'} },
-        //         { x: [1, 2, 3], y: [2, 5, 3], type: 'bar' },
-        //     ],
-        //     layout: {width: 520, height: 340, title: 'Sample Plot'}
-        // };
-        this.data = [
-          { x: [1, 2, 3, 4, 5, 6, 7, 8, 9], y: [2, 7, 6, 3], type: 'scatter', mode: 'lines+points', marker: { color: '#6666ff' } },
-
-          { x: [1, 2, 3, 4, 5, 6, 7, 8, 9], y: [4, 12, 6, 9], type: 'scatter', mode: 'lines+points', marker: { color: 'orange' } },
-
-          { x: [1, 2, 3, 4, 5, 6, 7, 8, 9], y: [8, 2, 7, 9], type: 'scatter', mode: 'lines+points', marker: { color: 'green' } },
-        ]
-        // Plotly.newPlot('myDiv', data);
-        this.layOut = {
-          width: 520, height: 340, title: 'Line',
-          plot_bgcolor: "rgba(0,0,0,0)",
-          paper_bgcolor: "rgba(0,0,0,0)",
-
-        }
-        this.graph.data = this.data;
-
-      } else {
-        this.data = [
-          {
-            z: [[1, 20, 30], [20, 1, 60], [30, 60, 1],
-
-            [11, 210, 130], [200, 111, 160], [130, 60, 11]
-            ],
-            type: 'heatmap'
-          }
-        ];
-        this.graph.data = this.data;
-        this.layOut = {
-          width: 820, height: 390, title: this.pMap,
-          plot_bgcolor: "rgba(0,0,0,0)",
-          paper_bgcolor: "rgba(0,0,0,0)",
-        }
-
-      }
-  }
+  
   // We'll bind the hover event from plotly
   hover(event: any): void {
     // The hover event has a lot of information about cursor location.

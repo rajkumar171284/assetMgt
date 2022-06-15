@@ -104,6 +104,30 @@
 
         </mat-expansion-panel>
 
+        <mat-expansion-panel (opened)="panelOpenState4 = true" (closed)="panelOpenState4 = false">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                   Widget Size
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+
+            <!-- content -->
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Select Size</mat-label>
+                <mat-select formControlName="WIDGET_SIZE">
+
+                    <mat-option *ngFor="let key of widgetSize" [value]="key.file">
+                        {{key.name}}
+                    </mat-option>
+
+                </mat-select>
+            </mat-form-field>
+
+
+
+        </mat-expansion-panel>
 
         <mat-grid-list class="btn-cnt" cols="10">
             <button (click)="confirmData()" mat-raised-button color="primary"> 

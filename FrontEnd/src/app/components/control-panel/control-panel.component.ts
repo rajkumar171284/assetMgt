@@ -6,13 +6,15 @@ import { AddConnectionComponent } from '../../components/dialogs/add-connection/
 import { AddAssetComponent } from '../../components/dialogs/add-asset/add-asset.component';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AddUsersComponent } from '../../components/dialogs/add-users/add-users.component';
+import { AddCompanyComponent } from '../../components/dialogs/add-company/add-company.component';
+
 enum tabLabel {
   'Users' = 0,
   'Connections' = 1,
-  'Sensors' = 1,
-  'Asset' = 2,
-  'Configuration' = 3,
-
+  'Sensors' = 2,
+  'Asset' = 3,
+  'Configuration' = 4,
+  'Clients' = 5
 }
 @Component({
   selector: 'app-control-panel',
@@ -30,6 +32,7 @@ export class ControlPanelComponent implements OnInit {
   updateConfig = false;
   updateAsset = false;
   updateSensor = false;
+  updateComp = false;
   ngOnInit(): void {
   }
   tabChanged(e: any) {
@@ -84,6 +87,16 @@ export class ControlPanelComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         this.updateUser = true;
+      });
+    } else if (this.tabIndex === tabLabel.Clients) {
+      const dialogRef = this.dialog.open(AddCompanyComponent, {
+        width: '800px',
+        data: null
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        this.updateComp = true;
+        this.tabIndex=5;
       });
     }
 

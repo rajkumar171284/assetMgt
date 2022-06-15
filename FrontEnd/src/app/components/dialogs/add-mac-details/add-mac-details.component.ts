@@ -65,13 +65,13 @@ export class AddMacDetailsComponent implements OnInit {
 
     })
 
-    if (data) {
+    if (data && data.MAC_NAME) {
       console.log(data)
       // edit
       this.typeName = data;
       const item = this.fb.group({
         PID: data.PID,
-        MAC_NAME: data.MAC_NAME.toLowerCase(),
+        MAC_NAME: data.MAC_NAME.toUpperCase(),
         MAC_ADDRESS: data.MAC_ADDRESS,
         MAC_STATUS: data.MAC_STATUS ? true : false,
         LOCATION: data.LOCATION,

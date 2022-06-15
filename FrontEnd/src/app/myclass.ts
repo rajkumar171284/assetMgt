@@ -11,13 +11,17 @@ export interface config {
     Sensor_Data_Type: string,
     MAC_Address: string
 }
+export const _widgetSIZE = [{ name: 'Full width', file: 'col-md-12', isSelected: false },
+{ name: 'Md width', file: 'col-md-7', isSelected: false },
+{ name: 'Sm width', file: 'col-md-5', isSelected: false },
+{ name: 'Min width', file: 'col-md-4', isSelected: false },
+];
 export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: false },
 { name: 'MAPS', file: 'map-widget', isSelected: false },
 { name: 'Highlights', file: 'highlight-widget', isSelected: false },
 { name: 'TABLE', file: 'table-widget', isSelected: false },
 
 ];
-
 
 export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false },
 { name: 'Line', file: 'line-chart', isSelected: false },

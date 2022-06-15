@@ -67,7 +67,7 @@ import { TooltipComponent } from '../components/tooltip/tooltip.component';
 import { DashboardComponent } from '../components/dashboard/dashboard.component';
 import { WidgetComponent } from '../components/widget/widget.component';
 import { AddMacDetailsComponent } from '../components/dialogs/add-mac-details/add-mac-details.component';
-import { PlotlyComponent } from '../components/plotly/plotly.component';
+import { PlotlyComponent } from '../widgets/plotly/plotly.component';
 
 // widgets
 import { HighlightsComponent } from '../widgets/highlights/highlights.component';
@@ -84,6 +84,8 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { UsersComponent } from '../components/users/users.component';
 import { AddUsersComponent } from '../components/dialogs/add-users/add-users.component';
 import { WidgetAccessDirective } from '../components/directives/widget-access.directive';
+import { CompanyListComponent } from '../components/company-list/company-list.component';
+import { AddCompanyComponent } from '../components/dialogs/add-company/add-company.component';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -96,7 +98,7 @@ import { WidgetAccessDirective } from '../components/directives/widget-access.di
     AddMacDetailsComponent,
     PlotlyComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective
+    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent
   ],
   imports: [
     CommonModule,PlotlyModule,

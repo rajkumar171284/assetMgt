@@ -160,10 +160,10 @@ router.post('/getLocationsByConfigID', (req, res) => {
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
         else
-        res.send({
-            data: result,
-            status: 200,
-        })
+            res.send({
+                data: result,
+                status: 200,
+            })
 
     })
 })
@@ -175,8 +175,8 @@ router.post('/getMACdetailsByConfigID', (req, res) => {
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
         else
-        sql3 = `SELECT DISTINCT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`
-        db.query(sql3,todo, (err3, result3) => {
+            sql3 = `SELECT DISTINCT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`
+        db.query(sql3, todo, (err3, result3) => {
             if (err3) throw err3;
             else
                 res.send({
@@ -442,13 +442,13 @@ router.post('/addChartRequest', (req, res) => {
     if (req.body.PID) {
         // update
 
-        sql = 'UPDATE widget_request_tbl SET WIDGET_TYPE=?,WIDGET_IMG=?, ASSET_CONFIG_ID=?,CHART_NAME = ?,WIDGET_DATA=?,SQL_QUERY=?,IS_DRAGGED=?,MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.SQL_QUERY, req.body.CREATED_BY, new Date(), req.body.PID];
+        sql = 'UPDATE widget_request_tbl SET WIDGET_TYPE=?,WIDGET_IMG=?, ASSET_CONFIG_ID=?,CHART_NAME = ?,WIDGET_DATA=?,WIDGET_SIZE=?,SQL_QUERY=?,IS_DRAGGED=?,MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
+        todo = [req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = ' updated'
     } else {
         // add new
-        sql = `INSERT INTO widget_request_tbl(PID,WIDGET_TYPE,WIDGET_IMG, ASSET_CONFIG_ID,CHART_NAME,WIDGET_DATA,SQL_QUERY,IS_DRAGGED, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?)`;
-        todo = ['', req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.CREATED_BY, new Date()];
+        sql = `INSERT INTO widget_request_tbl(PID,WIDGET_TYPE,WIDGET_IMG, ASSET_CONFIG_ID,CHART_NAME,WIDGET_DATA,WIDGET_SIZE,SQL_QUERY,IS_DRAGGED, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+        todo = ['', req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.CREATED_BY, new Date()];
 
         errMessage = ' added';
 
@@ -456,7 +456,7 @@ router.post('/addChartRequest', (req, res) => {
     db.query(sql, todo, (err, result) => {
         console.log(result)
         if (err) {
-            throw err;
+            // throw err;
             return res.status(400).send({
                 msg: err
             });
@@ -475,8 +475,6 @@ router.post('/addChartRequest', (req, res) => {
 router.get('/allChartRequest/:IS_DRAGGED', (req, res) => {
 
     let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=?`
-    //
-    // let sql = `SELECT * FROM widget_request_tbl WHERE IS_DRAGGED=?`;
     let todo = [req.params.IS_DRAGGED]
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
@@ -499,7 +497,7 @@ router.post('/chartRequestChangeStatus', (req, res) => {
             res.send({
                 data: result,
                 status: 200,
-                msg: 'Record deleted.'
+                msg: 'Record updated.'
             })
     })
 })
