@@ -12,7 +12,8 @@ export class CompanyListComponent implements OnChanges {
   @Input()cType:string|undefined;
   dataSource = [];
   displayedColumns: string[] = [
-    "PID", "COMPANY_NAME","COMPANY_ADDRESS_LINE1","CREATED_DATE","LOGO", "STATUS", "actions"]
+    "PID", "COMPANY_NAME","COMPANY_ADDRESS_LINE1","CREATED_DATE","LOGO", "STATUS", "actions"];
+    
   constructor(private dataService: AuthService, public dialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -38,8 +39,9 @@ export class CompanyListComponent implements OnChanges {
       width: '800px',
       data: item
     });
-
+    ref.afterClosed().subscribe(result => {
     this.getAll();
+    });
   }
   removeItem(item: any) {
     this.dataService.deleteCompanyByID(item).subscribe(res => {

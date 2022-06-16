@@ -201,10 +201,20 @@ export class AuthService {
       return response;
     }))
   }
+  getAllCompanies(): Observable<any> {
+    return this.http.get(`${environment.url}/users/getAllCompanies`, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  
   deleteCompanyByID(params: any): Observable<any> {
     return this.http.post(`${environment.url}/users/deleteCompany/${params.PID}`,params, options).pipe(map(response => {
       return response;
     }))
   }
-  
+  uploadfile(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/uploadfile`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
 }

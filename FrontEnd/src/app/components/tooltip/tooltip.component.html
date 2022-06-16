@@ -1,1 +1,2 @@
-<p>{{data ?data:'Record update done !'}}</p>
+<p *ngIf="!responseMessage">{{data ?data:'Record update done !'}}</p>
+<p *ngIf="responseMessage">{{responseMessage}}</p>

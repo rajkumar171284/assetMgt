@@ -33,9 +33,6 @@ export class AddAssetComponent implements OnInit {
     if (data && !data.PID) {
       console.log(data)
       // add
-
-
-
     } else if (data && data.PID) {
       this.typeName = data;
       this.newForm.patchValue(data);

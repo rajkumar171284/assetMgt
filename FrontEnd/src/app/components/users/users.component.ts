@@ -34,8 +34,9 @@ export class UsersComponent implements OnChanges {
       width: '800px',
       data: item
     });
-
+    ref.afterClosed().subscribe(result => {
     this.getAllUsers();
+    });
   }
   removeItem(item: any) {
     this.dataService.deleteConn(item).subscribe(res => {

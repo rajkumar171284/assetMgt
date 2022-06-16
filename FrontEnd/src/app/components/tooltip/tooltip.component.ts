@@ -1,4 +1,4 @@
-import { Component, OnInit,Inject } from '@angular/core';
+import { Component, OnInit,Inject,Input } from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -8,8 +8,9 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./tooltip.component.scss']
 })
 export class TooltipComponent implements OnInit {
+  @Input() responseMessage:any;
   public data: any
-  constructor(private _snackBar: MatSnackBar,) {
+  constructor(private _snackBar: MatSnackBar) {
     // console.log(data)
     // this.data=data;
   }

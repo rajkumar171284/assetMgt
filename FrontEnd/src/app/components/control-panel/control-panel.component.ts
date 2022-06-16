@@ -7,6 +7,7 @@ import { AddAssetComponent } from '../../components/dialogs/add-asset/add-asset.
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AddUsersComponent } from '../../components/dialogs/add-users/add-users.component';
 import { AddCompanyComponent } from '../../components/dialogs/add-company/add-company.component';
+import { AuthService } from '../../services/auth.service';
 
 enum tabLabel {
   'Users' = 0,
@@ -25,7 +26,7 @@ export class ControlPanelComponent implements OnInit {
   @ViewChild('tabGroup') tabGroup: any;
 
   tabIndex: any = 0;
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog,private dataService: AuthService) { }
   updateUser = true;
 
   updateConn = false;
@@ -33,7 +34,15 @@ export class ControlPanelComponent implements OnInit {
   updateAsset = false;
   updateSensor = false;
   updateComp = false;
+  companiesList:any=[];
   ngOnInit(): void {
+  }
+  async getAllComp() {
+    const session = await this.dataService.getSessionData();
+  
+    this.dataService.getAllCompanies().subscribe(res => {
+      this.companiesList = res.data;
+    })
   }
   tabChanged(e: any) {
     console.log(e)

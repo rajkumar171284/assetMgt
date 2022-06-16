@@ -31,8 +31,10 @@ export class AssetConnectionsTypeComponent implements OnInit {
       width: '800px',
       data: item
     });
+    ref.afterClosed().subscribe(result => {
 
     this.getAllAssetConn();
+    })
   }
   removeItem(item: any) {
     this.dataService.deleteConn(item).subscribe(res => {

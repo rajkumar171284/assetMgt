@@ -68,9 +68,11 @@
         
             </mat-grid-list>
             <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
+                <img style="height:100px;width:100px" [src]="bImg | sanitize">
                 <!-- <iframe [src]="LOGO" -->
-                <input formControlName="LOGO"   type="file" class="example-right-align">
-
+                <!-- <input formControlName="LOGO" (change)="onSelectFile($event)" name="LOGO" accept="image" type="file" class="example-right-align"> -->
+                <input type="file" class="custom-file-input" id="customFile" name="uploadedImage"
+                (change)="onSelectFile($event)" #UploadFileInput>
                 <!-- <mat-radio-group formControlName="LOGO" placeholder="Select an option">
                     <mat-radio-button [value]="accessYes">YES</mat-radio-button>
     

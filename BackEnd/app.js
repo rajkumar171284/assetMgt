@@ -8,6 +8,7 @@ const authRouter = require('./routes/auth.js');
 const usersRouter = require('./routes/users.js');
 const assetRouter = require('./routes/assets.js');
 const bleRouter = require('./routes/ble.js');
+const fileUpload = require('express-fileupload');
 
 var bodyParser = require('body-parser')
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+app.use(fileUpload());
 
 app.use(cors({
     origin: '*'

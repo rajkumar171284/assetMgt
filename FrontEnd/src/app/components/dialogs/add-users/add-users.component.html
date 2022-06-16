@@ -10,6 +10,21 @@
             <mat-grid-list cols="1" rowHeight="2:1">
 
                 <mat-form-field>
+                    <mat-label>Select Company</mat-label>
+                    <mat-select formControlName="COMPANY_ID">
+
+                        <mat-option *ngFor="let key of companiesList" [value]="key.PID">
+                            {{key.COMPANY_NAME}}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+
+            </mat-grid-list>
+
+            <mat-grid-list cols="1" rowHeight="2:1">
+
+                <mat-form-field>
                     <mat-label>FIRST NAME</mat-label>
                     <input formControlName="FIRST_NAME" matInput placeholder="" type="text" class="example-right-align">
                 </mat-form-field>
@@ -72,7 +87,7 @@
 
             <!-- <mat-label>WIDGETS RIGHTS</mat-label> -->
             <mat-radio-group formControlName="WIDGETS_RIGHTS" placeholder="Select an option">
-                <mat-radio-button [value]="accessYes">YES</mat-radio-button>
+                <mat-radio-button class="mr-2" [value]="accessYes">YES</mat-radio-button>
 
                 <mat-radio-button [value]="accessNo">NO</mat-radio-button>
             </mat-radio-group>

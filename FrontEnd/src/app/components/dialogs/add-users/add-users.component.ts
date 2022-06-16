@@ -2,6 +2,9 @@ import { Component, Inject, OnInit, Output, EventEmitter, Input } from '@angular
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TooltipComponent } from '../../tooltip/tooltip.component';
+
 @Component({
   selector: 'app-add-users',
   templateUrl: './add-users.component.html',
@@ -17,8 +20,10 @@ export class AddUsersComponent implements OnInit {
   public typeName:any;
   accessYes=true;
   accessNo=false;
+  companiesList:any=[];
+
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+    @Inject(MAT_DIALOG_DATA) public data: any,private _snackBar: MatSnackBar) {
     this.newForm = this.fb.group({
       PID: [''],
       FIRST_NAME: ['', Validators.required],
@@ -30,32 +35,35 @@ export class AddUsersComponent implements OnInit {
 
       WIDGETS_RIGHTS: false,
     })
-    console.log(data)
+    // console.log(data)
     if (!data) {
-      console.log(data)
       // add
       const session = this.dataService.getSessionData();
-
       this.newForm.patchValue({
-         
-        COMPANY_ID: session.COMPANY_ID
+        // COMPANY_ID: session.COMPANY_ID
       })     
 
     } else if (data && data.PID) {
       this.typeName=data;
       this.newForm.patchValue(data);
       this.newForm.patchValue({
-         
-        WIDGETS_RIGHTS: data.WIDGETS_RIGHTS ? true : false,
-
+        WIDGETS_RIGHTS: data.WIDGETS_RIGHTS ? true : false
       });
 
     }
+    this.getAllComp();
   }
 
   ngOnInit(): void {
-  }
 
+  }
+async getAllComp() {
+    const session = await this.dataService.getSessionData();
+  
+    this.dataService.getAllCompanies().subscribe(res => {
+      this.companiesList = res.data;
+    })
+  }
   async confirmData() {
 
     // const msg = await this.findInvalidControls();
@@ -69,8 +77,17 @@ export class AddUsersComponent implements OnInit {
         console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
+        this.openSnackBar('')
+      },(err)=>{
+        this.openSnackBar(err)
       })
     }
+  }
+  openSnackBar(str:any) {
+    this._snackBar.openFromComponent(TooltipComponent, {
+      duration: 5 * 1000,
+      data:str
+    });
   }
   get Values() {
     return this.newForm.value;
@@ -79,5 +96,6 @@ export class AddUsersComponent implements OnInit {
     this.dialog.closeAll()
 
   }
+
 
 }

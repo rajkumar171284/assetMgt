@@ -160,7 +160,6 @@ export class WidgetComponent implements OnInit {
       // this.Values.SQL_QUERY = JSON.stringify(query);
       this.Values.SQL_QUERY ='sql';
      
-      console.log(this.Values)
       this.dataService.addChartRequest(this.Values).subscribe(res => {
         console.log(res)
         this.confirmClose();
