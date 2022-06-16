@@ -87,6 +87,7 @@ import { WidgetAccessDirective } from '../components/directives/widget-access.di
 import { CompanyListComponent } from '../components/company-list/company-list.component';
 import { AddCompanyComponent } from '../components/dialogs/add-company/add-company.component';
 import { SanitizePipe } from '../sanitize.pipe';
+import { AccessrightsDirective } from '../directives/accessrights.directive';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -99,7 +100,7 @@ import { SanitizePipe } from '../sanitize.pipe';
     AddMacDetailsComponent,
     PlotlyComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe
+    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective
   ],
   imports: [
     CommonModule,PlotlyModule,

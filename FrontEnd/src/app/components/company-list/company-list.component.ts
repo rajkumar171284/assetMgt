@@ -2,6 +2,8 @@ import { Component, Input,OnChanges, SimpleChanges } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AddCompanyComponent} from '../../components/dialogs/add-company/add-company.component';
+import { AddUsersComponent } from '../../components/dialogs/add-users/add-users.component';
+
 @Component({
   selector: 'app-company-list',
   templateUrl: './company-list.component.html',
@@ -12,8 +14,8 @@ export class CompanyListComponent implements OnChanges {
   @Input()cType:string|undefined;
   dataSource = [];
   displayedColumns: string[] = [
-    "PID", "COMPANY_NAME","COMPANY_ADDRESS_LINE1","CREATED_DATE","LOGO", "STATUS", "actions"];
-    
+    "PID", "COMPANY_NAME","COMPANY_ADDRESS_LINE1","CREATED_DATE", "STATUS", "actions"];
+
   constructor(private dataService: AuthService, public dialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -48,6 +50,16 @@ export class CompanyListComponent implements OnChanges {
       this.getAll();
     });
 
+  }
+  addUser(element:any){
+    const dialogRef = this.dialog.open(AddUsersComponent, {
+      width: '800px',
+      data: element
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      
+    });
   }
 
 }

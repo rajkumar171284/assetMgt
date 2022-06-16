@@ -11,10 +11,11 @@
 
                 <mat-form-field>
                     <mat-label>Select Company</mat-label>
-                    <mat-select formControlName="COMPANY_ID">
+                    <mat-select [disabled]="typeName && typeName.COMPANY_NAME?typeName.COMPANY_NAME:false"
+                        formControlName="COMPANY_ID">
 
                         <mat-option *ngFor="let key of companiesList" [value]="key.PID">
-                            {{key.COMPANY_NAME}}
+                            {{key.COMPANY_NAME?key.COMPANY_NAME:''}}
                         </mat-option>
 
                     </mat-select>
@@ -72,29 +73,28 @@
             </mat-grid-list>
 
         </div>
-    
-    <div class="col-md-5 rights">
-        <mat-grid-list cols="1" rowHeight="1:1">
 
-            <mat-label>PERMISSIONs:</mat-label>
-        </mat-grid-list>
-        <mat-grid-list class="mt-2" cols="1" rowHeight="1:1">
+        <div class="col-md-5 rights">
+            <mat-grid-list cols="1" rowHeight="1:1">
 
-            <mat-label>WIDGET RIGHTS(READ/WRITE)</mat-label>
-    
-        </mat-grid-list>
-        <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
+                <mat-label>PERMISSIONs:</mat-label>
+            </mat-grid-list>
+            <mat-grid-list class="mt-2" cols="1" rowHeight="1:1">
 
-            <!-- <mat-label>WIDGETS RIGHTS</mat-label> -->
-            <mat-radio-group formControlName="WIDGETS_RIGHTS" placeholder="Select an option">
-                <mat-radio-button class="mr-2" [value]="accessYes">YES</mat-radio-button>
+                <mat-label>WIDGET RIGHTS(READ/WRITE)</mat-label>
 
-                <mat-radio-button [value]="accessNo">NO</mat-radio-button>
-            </mat-radio-group>
+            </mat-grid-list>
+            <mat-grid-list cols="1" rowHeight="2:1">
+                
+                <mat-radio-group formControlName="WIDGETS_RIGHTS" placeholder="Select an option">
+                    <mat-radio-button color="primary" class="m-2" [value]="accessYes">YES</mat-radio-button>
 
-        </mat-grid-list>
+                    <mat-radio-button color="primary"  class="m-2" [value]="accessNo">NO</mat-radio-button>
+                </mat-radio-group>
+
+            </mat-grid-list>
+        </div>
     </div>
-</div>
 
 
 

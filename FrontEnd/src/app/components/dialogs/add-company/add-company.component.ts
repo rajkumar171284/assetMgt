@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, Output, EventEmitter, Input,OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
@@ -7,7 +7,7 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './add-company.component.html',
   styleUrls: ['./add-company.component.scss']
 })
-export class AddCompanyComponent {
+export class AddCompanyComponent implements OnChanges{
   roleData = [
     'LEVEL1',
     'ADMIN']
@@ -52,9 +52,9 @@ export class AddCompanyComponent {
     }
   }
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+      
   }
-
   async confirmData() {
     // const formData = new FormData();
     // formData.append('uploadedImage', this.newForm.get('LOGO')?.value);

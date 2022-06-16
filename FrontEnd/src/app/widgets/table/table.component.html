@@ -19,8 +19,8 @@
       <th mat-header-cell *matHeaderCellDef> STATUS </th>
       <td mat-cell *matCellDef="let element">
         <!-- {{element.MAC_STATUS?'ON':'OFF'}} -->
-        <mat-icon *ngIf="element.MAC_STATUS==0" color="warn">change_history</mat-icon>
-        <mat-icon  *ngIf="element.MAC_STATUS"  class="success">change_history</mat-icon>
+        <mat-icon matTooltip="Device Inactive" *ngIf="element.MAC_STATUS==0" color="warn">change_history</mat-icon>
+        <mat-icon matTooltip="Device Active" *ngIf="element.MAC_STATUS"  class="success">change_history</mat-icon>
         <!-- <img class="tbl-status" src="assets/{{element.MAC_STATUS?'switch-on.png':'switch-off.png'}}"> -->
       </td>
     </ng-container>

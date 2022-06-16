@@ -20,12 +20,12 @@
 
 
        
-        <ng-container matColumnDef="LOGO">
-            <th mat-header-cell *matHeaderCellDef> LOGO </th>
+        <!-- <ng-container matColumnDef="LOGO"> -->
+            <!-- <th mat-header-cell *matHeaderCellDef> LOGO </th>
             <td mat-cell *matCellDef="let element">
                 <mat-icon>
                     {{element.LOGO?'photo':''}}
-                </mat-icon>
+                </mat-icon> -->
                 <!-- <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAA=="/>
                 <img style="height:100px;width:100px" [src]="element.LOGO | sanitize"> -->
                 <!-- <a [href]="element.LOGO" target="_blank">
@@ -33,13 +33,13 @@
                         {{element.LOGO?'photo':''}}
                     </mat-icon>
                 </a> -->
-            </td>
-        </ng-container>
+            <!-- </td> -->
+        <!-- </ng-container> -->
 
         <ng-container matColumnDef="STATUS">
             <th mat-header-cell *matHeaderCellDef> STATUS </th>
             <td mat-cell *matCellDef="let element">
-                <mat-icon>
+                <mat-icon matTooltip="{{element.STATUS?'Active':'In-active'}}"  color="accent">
                     {{element.STATUS?'check_box':'check_box_outline_blank'}}
                 </mat-icon>
             </td>
@@ -52,13 +52,16 @@
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef> </th>
             <td mat-cell *matCellDef="let element">
-                <div class="" style="display: flex;">
-                    <button (click)="editItem(element)" mat-flat-button>
+                <div style="display: flex;">
+                    <button matTooltip="Edit record" (click)="editItem(element)" mat-flat-button>
                         <mat-icon color="primary">edit</mat-icon>
 
                     </button>
-                    <button (click)="removeItem(element)" mat-flat-button>
+                    <button matTooltip="Remove record" (click)="removeItem(element)" mat-flat-button>
                         <mat-icon color="warn">delete_outline</mat-icon>
+                    </button>
+                    <button matTooltip="Create new User" (click)="addUser(element)" mat-flat-button>
+                        <mat-icon color="primary">note_add</mat-icon>
                     </button>
                 </div>
 

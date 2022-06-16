@@ -20,6 +20,7 @@ export class AddUsersComponent implements OnInit {
   public typeName:any;
   accessYes=true;
   accessNo=false;
+  toDisabled=false;
   companiesList:any=[];
 
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
@@ -38,18 +39,27 @@ export class AddUsersComponent implements OnInit {
     // console.log(data)
     if (!data) {
       // add
-      const session = this.dataService.getSessionData();
-      this.newForm.patchValue({
-        // COMPANY_ID: session.COMPANY_ID
-      })     
+      // const session = this.dataService.getSessionData();
+      // this.newForm.patchValue({
+      //   // COMPANY_ID: session.COMPANY_ID
+      // })     
+      this.toDisabled=false;
 
-    } else if (data && data.PID) {
+    } else if (data && data.PID && !data.COMPANY_NAME) {
+      this.toDisabled=false;
       this.typeName=data;
       this.newForm.patchValue(data);
       this.newForm.patchValue({
         WIDGETS_RIGHTS: data.WIDGETS_RIGHTS ? true : false
       });
-
+    } else if (data && data.PID && data.COMPANY_NAME) {
+      // if company name comes then value from company list
+      this.typeName=data;
+      this.toDisabled=true;
+  //  bind only company id
+      this.newForm.patchValue({
+        COMPANY_ID: data.PID
+      });
     }
     this.getAllComp();
   }
@@ -57,8 +67,8 @@ export class AddUsersComponent implements OnInit {
   ngOnInit(): void {
 
   }
-async getAllComp() {
-    const session = await this.dataService.getSessionData();
+getAllComp() {
+    // const session = await this.dataService.getSessionData();
   
     this.dataService.getAllCompanies().subscribe(res => {
       this.companiesList = res.data;
@@ -67,19 +77,20 @@ async getAllComp() {
   async confirmData() {
 
     // const msg = await this.findInvalidControls();
-    console.log(this.newForm)
+    // console.log(this.newForm)
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       this.Values.CREATED_BY = session.PID;
-      // console.log(this.Values)
-      this.dataService.createUser(this.Values).subscribe(res => {
-        console.log(res)
+      console.log(this.Values)
+      this.dataService.createUser(this.Values).subscribe((res:any) => {
+        
         this.dialogClose.emit(true);
         this.confirmClose();
-        this.openSnackBar('')
+        this.openSnackBar(res.msg)
       },(err)=>{
-        this.openSnackBar(err)
+        console.log(err)
+        this.openSnackBar(err.error.message)
       })
     }
   }

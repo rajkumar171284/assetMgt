@@ -1,36 +1,39 @@
-<ng-container >
-    <mat-toolbar class="example-header">
-        <button mat-button (click)="sidenav.toggle()">
-          <mat-icon>menu</mat-icon>
+<ng-container>
+  <mat-toolbar class="example-header">
+    <button mat-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
 
-        </button>
-        <div style="margin-left:1%;color:#fff">
-          <!-- <mat-list-item class="logo" role="listitem" >
+    </button>
+    <div style="margin-left:1%;color:#fff">
+      <!-- <mat-list-item class="logo" role="listitem" >
             <img class="" src="assets/inspirisys-logo.png"/>
             
           </mat-list-item> -->
-          Generic Asset Management
-
-        </div>
-        <div class="logo-right logo">
-          Hi,{{session && session.LOGIN_NAME?session.LOGIN_NAME:''}} 
-        <button (click)="logOut()" mat-button>
+      <div>
+        {{session && session.COMPANY_NAME?session.COMPANY_NAME:''}}
+      </div>
+      <div style="font-size:14px ;">
+        Generic Asset Management
+      </div>
+    </div>
+    <div class="logo-right logo">
+      Hi,{{session && session.LOGIN_NAME?session.LOGIN_NAME:''}}
+      <button (click)="logOut()" mat-button>
         <mat-icon>logout</mat-icon>
 
-        </button>
-        <!-- <img class="" src="assets/inspirisys-logo.png"/> -->
+      </button>
+      <!-- <img class="" src="assets/inspirisys-logo.png"/> -->
 
-      </div>
+    </div>
 
-    </mat-toolbar>
-  
-    <mat-sidenav-container class="example-container">
-      <mat-sidenav #sidenav mode="side" opened class="example-sidenav"
-                   [fixedInViewport]="options.value.fixed" [fixedTopGap]="options.value.top"
-                   [fixedBottomGap]="options.value.bottom">
-        
-        <mat-list role="list" style="padding-top: 0;">
-          <!-- <mat-list-item class="logo" role="listitem" >
+  </mat-toolbar>
+
+  <mat-sidenav-container class="example-container">
+    <mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="options.value.fixed"
+      [fixedTopGap]="options.value.top" [fixedBottomGap]="options.value.bottom">
+
+      <mat-list role="list" style="padding-top: 0;">
+        <!-- <mat-list-item class="logo" role="listitem" >
             <img class="" src="assets/inspirisys-logo.png"/>
             <span style="color:#888;margin-left:5px;"></span>
             <button color="dark" class="pull-right" mat-button (click)="sidenav.toggle()">
@@ -39,25 +42,26 @@
             </button>
             
           </mat-list-item> -->
-          <mat-list-item  role="listitem" >
-            </mat-list-item>
-          <mat-nav-list style="padding-left: 10px; padding-right: 10px;">
-            <a mat-list-item matTooltip="Dashboard" routerLink="/home/dashboard" routerLinkActive="active-list-item">
-              <mat-icon> bar_chart</mat-icon>
-              <!-- Dashboard -->
-            </a>
-            <a appWidgetAccessIf mat-list-item matTooltip="Admin Panel" routerLink="/home/control-panel" routerLinkActive="active-list-item">
-              <mat-icon> settings</mat-icon>
+        <mat-list-item role="listitem">
+        </mat-list-item>
+        <mat-nav-list style="padding-left: 10px; padding-right: 10px;">
+          <a mat-list-item matTooltip="Dashboard" routerLink="/home/dashboard" routerLinkActive="active-list-item">
+            <mat-icon> bar_chart</mat-icon>
+            <!-- Dashboard -->
+          </a>
+          <a appWidgetAccessIf mat-list-item matTooltip="Admin Panel" routerLink="/home/control-panel"
+            routerLinkActive="active-list-item">
+            <mat-icon> settings</mat-icon>
 
-              <!-- Control Panel -->
-            </a>
-            <a mat-list-item matTooltip="Reports" routerLink="/home/reports" routerLinkActive="active-list-item">
-              <mat-icon>reorder</mat-icon>
-            </a>
-          </mat-nav-list>
+            <!-- Control Panel -->
+          </a>
+          <a mat-list-item matTooltip="Reports" routerLink="/home/reports" routerLinkActive="active-list-item">
+            <mat-icon>reorder</mat-icon>
+          </a>
+        </mat-nav-list>
 
-          
-          <!-- <mat-list-item routerLink="/dashboard" role="listitem">
+
+        <!-- <mat-list-item routerLink="/dashboard" role="listitem">
             <mat-icon>equalizer</mat-icon>
             Dashboard
 
@@ -69,19 +73,19 @@
 
           </mat-list-item>
            -->
-        </mat-list>
-        
+      </mat-list>
 
-      </mat-sidenav>
-      
-  
-      <mat-sidenav-content >
 
-        <!-- <mat-toolbar class="example-header">
+    </mat-sidenav>
+
+
+    <mat-sidenav-content>
+
+      <!-- <mat-toolbar class="example-header">
             <button mat-button (click)="sidenav.toggle()">Toggle</button>
     
         </mat-toolbar> -->
-        <!-- <p><mat-checkbox formControlName="fixed">Fixed</mat-checkbox></p>
+      <!-- <p><mat-checkbox formControlName="fixed">Fixed</mat-checkbox></p>
         <p><mat-form-field appearance="fill">
           <mat-label>Top gap</mat-label>
           <input matInput type="number" formControlName="top">
@@ -90,12 +94,10 @@
           <mat-label>Bottom gap</mat-label>
           <input matInput type="number" formControlName="bottom">
         </mat-form-field></p> -->
-        <!-- <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p> -->
-        <router-outlet></router-outlet>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
-  
-    <!-- <mat-toolbar class="example-footer">Footer</mat-toolbar> -->
-  </ng-container>
-  
-  
+      <!-- <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p> -->
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+  <!-- <mat-toolbar class="example-footer">Footer</mat-toolbar> -->
+</ng-container>

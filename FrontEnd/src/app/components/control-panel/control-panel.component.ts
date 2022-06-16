@@ -17,16 +17,24 @@ enum tabLabel {
   'Configuration' = 4,
   'Clients' = 5
 }
+enum enum2 {
+  'Clients' = 5
+}
+// enum tabLabel {enum1,enum2};
 @Component({
   selector: 'app-control-panel',
   templateUrl: './control-panel.component.html',
   styleUrls: ['./control-panel.component.scss']
 })
 export class ControlPanelComponent implements OnInit {
-  @ViewChild('tabGroup') tabGroup: any;
+  @ViewChild('tabG6roup') tabGroup: any;
 
   tabIndex: any = 0;
-  constructor(public dialog: MatDialog,private dataService: AuthService) { }
+  constructor(public dialog: MatDialog,private dataService: AuthService) { 
+    
+    // const tabLabel={...enum1,...enum2};
+    // type tabLabel = typeof tabLabel;
+  }
   updateUser = true;
 
   updateConn = false;
@@ -35,7 +43,31 @@ export class ControlPanelComponent implements OnInit {
   updateSensor = false;
   updateComp = false;
   companiesList:any=[];
+  // tabLabel:enum1|undefined;
   ngOnInit(): void {
+    const session =  this.dataService.getSessionData();
+    if(session){
+      // enum tabLabel{
+      //   'Users' = 0,
+      //   'Connections' = 1,
+      //   'Sensors' = 2,
+      //   'Asset' = 3,
+      //   'Configuration' = 4,
+      //   // 'Clients' = 5
+      // }
+      // type this.tabLabel=typeof tabLabel
+    }
+    // enum enum1 {
+    //   'Users' = 0,
+    //   'Connections' = 1,
+    //   'Sensors' = 2,
+    //   'Asset' = 3,
+    //   'Configuration' = 4,
+    //   // 'Clients' = 5
+    // }
+    // enum enum2 {
+    //   'Clients' = 5
+    // }
   }
   async getAllComp() {
     const session = await this.dataService.getSessionData();
@@ -45,7 +77,7 @@ export class ControlPanelComponent implements OnInit {
     })
   }
   tabChanged(e: any) {
-    console.log(e)
+    // console.log(e)
     this.tabIndex = e.index;//active tab
   }
   openDialog() {

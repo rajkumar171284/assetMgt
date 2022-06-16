@@ -12,6 +12,8 @@ import { TooltipComponent } from '../../../components/tooltip/tooltip.component'
 })
 export class AddAssetConfigComponent implements OnInit, OnChanges {
   @Input() tabIndex: any;
+  companiesList: any = [];
+
   industryType = ['Healthcare',
     'Manufacturing',
     'Agriculture', 'Energy',
@@ -67,7 +69,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       SENSOR: ['', Validators.required],
       SENSOR_CATEGORY: [''],
       SENSOR_DATA_TYPE: ['', Validators.required],
-      // MAC_ADDRESS: ['', Validators.required],
+      COMPANY_ID: ['', Validators.required],
       MAC_DETAILS: this.fb.array([])
 
     })
@@ -84,7 +86,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       })
     }
 
-    this.initCall()
+   
   }
   get MAC_DETAILS(): FormArray {
     return this.newForm.get('MAC_DETAILS') as FormArray;
@@ -104,8 +106,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateMAC();
-    this.initCall()
+    this.initCall();
   }
+  
   initCall() {
     this.dataService.getAssetConn({}).subscribe(conn => {
       if (conn) {
@@ -121,6 +124,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
             if (this.typeName) {
               this.dataService.getMACByConfigID(this.typeName).subscribe(res => {
                 console.log(res)
+                this.getAllComp();
                 if (res && res.data.length > 0) {
                   this.newForm.patchValue({
                     MAC_DETAILS: res.data.map((item: any) => {
@@ -136,6 +140,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
                   })
                 }
               })
+            }else{
+              // new asset config
+              this.getAllComp();
             }
 
 
@@ -150,7 +157,13 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.updateMAC();
   }
-
+  getAllComp() {
+    // const session = await this.dataService.getSessionData();
+  
+    this.dataService.getAllCompanies().subscribe(res => {
+      this.companiesList = res.data;
+    })
+  }
   async confirmData() {
 
     // const msg = await this.findInvalidControls();
@@ -158,7 +171,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
-      this.Values.COMPANY_ID = session.COMPANY_ID
+      // this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
       // console.log(this.Values)
       this.Values.CONFIG_NAME =this.Values.CONFIG_NAME.toUpperCase();
