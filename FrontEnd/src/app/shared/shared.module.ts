@@ -48,6 +48,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AngularResizeElementModule } from 'angular-resize-element';
 
 // common components
 import { SidenavComponent } from '../layouts/sidenav/sidenav.component';
@@ -88,6 +89,8 @@ import { CompanyListComponent } from '../components/company-list/company-list.co
 import { AddCompanyComponent } from '../components/dialogs/add-company/add-company.component';
 import { SanitizePipe } from '../sanitize.pipe';
 import { AccessrightsDirective } from '../directives/accessrights.directive';
+// import { ResizeDirective } from '../directives/resize.directive';
+import { ResizableModule } from 'angular-resizable-element';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -149,7 +152,7 @@ import { AccessrightsDirective } from '../directives/accessrights.directive';
     OverlayModule,
     PortalModule,
     ScrollingModule, HttpClientModule,
-    LeafletModule
+    LeafletModule,AngularResizeElementModule,ResizableModule
   ]
 })
 export class SharedModule { }

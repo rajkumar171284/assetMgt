@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit,OnDestroy, Input, OnChanges, SimpleCha
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+declare let $: any; 
 
 declare let L: any;
 
@@ -87,6 +88,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges ,OnDestroy
   constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
+    $( ".resizable" ).resizable();
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.WIDGET_REQUEST) {

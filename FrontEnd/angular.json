@@ -32,9 +32,11 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"              
+              "src/styles.scss",
+              "./node_modules/angular-resize-element/bundles/style.scss"          
             ],
-            "scripts": []
+            "scripts": ["./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/jquery-ui/jquery-ui.js"]
           },
           "configurations": {
             "production": {
@@ -106,9 +108,13 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/angular-resize-element/bundles/style.scss"   
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js",
+  "./node_modules/jquery-ui/jquery-ui.js"
+            ]
           }
         }
       }
