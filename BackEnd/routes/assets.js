@@ -538,7 +538,7 @@ router.get('/getMACstatusByAssetConfigID/:ASSET_CONFIG_ID', (req, res) => {
 
 router.get('/getAllMACstatus', (req, res) => {
     let sql;
-    sql = `SELECT * FROM mac_address_status_tbl ORDER BY CREATED_DATE`;
+    sql = `SELECT device_history_tbl.* ,asset_config_tbl.CONFIG_NAME FROM device_history_tbl LEFT JOIN asset_config_tbl on asset_config_tbl.PID= device_history_tbl.ASSET_CONFIG_ID ORDER BY LAST_UPDATE_TIME`;
     db.query(sql, (err, result) => {
         if (err) throw err;
         else

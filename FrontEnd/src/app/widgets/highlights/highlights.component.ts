@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-
+declare let $: any;
 @Component({
   selector: 'app-highlights',
   templateUrl: './highlights.component.html',
@@ -14,7 +14,17 @@ export class HighlightsComponent implements OnChanges {
   constructor(private dataService: AuthService) { }
 
   ngOnInit(): void {
+    $(".resizable").resizable({
+      stop: function( event:Event, ui:any ) {
 
+        let height = $(".resizable").height(); 
+
+        let width = $(".resizable").width(); 
+        console.log('width',$(ui.size.width)[0],'height',$(ui.size.height)[0])
+
+    } 
+    });
+   
   }
 
   ngOnChanges(changes: SimpleChanges): void {

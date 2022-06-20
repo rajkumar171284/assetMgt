@@ -91,6 +91,8 @@ import { SanitizePipe } from '../sanitize.pipe';
 import { AccessrightsDirective } from '../directives/accessrights.directive';
 // import { ResizeDirective } from '../directives/resize.directive';
 import { ResizableModule } from 'angular-resizable-element';
+import {TableVirtualScrollModule} from 'ng-table-virtual-scroll';
+
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -152,7 +154,7 @@ import { ResizableModule } from 'angular-resizable-element';
     OverlayModule,
     PortalModule,
     ScrollingModule, HttpClientModule,
-    LeafletModule,AngularResizeElementModule,ResizableModule
+    LeafletModule,AngularResizeElementModule,ResizableModule,TableVirtualScrollModule
   ]
 })
 export class SharedModule { }

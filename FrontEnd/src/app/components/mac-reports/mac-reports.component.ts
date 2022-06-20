@@ -1,10 +1,14 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input,ViewChild, OnChanges, AfterViewInit ,SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { config } from '../../myclass';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { __deviceHistory } from '../../myclass';
+import {MatSort, Sort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
+import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
 @Component({
   selector: 'app-mac-reports',
@@ -13,15 +17,21 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MacReportsComponent implements OnInit, OnChanges {
-  dataSource = [];
+  @ViewChild(MatSort)
+  sort!: MatSort;
+  dataSource = new TableVirtualScrollDataSource();
+
   displayedColumns: string[] = [
-    "PID", "MAC_ADDRESS", "ASSET_CONFIG_ID", "VALUE", "STATUS", "CREATED_DATE"]
+    // "PID",
+     "DEVICE_ID", "CONFIG_NAME", "VALUE", "STATUS", "LAST_UPDATE_TIME"]
   constructor(private dataService: AuthService, public dialog: MatDialog, private ref: ChangeDetectorRef) { }
   ngOnChanges(changes: SimpleChanges): void {
     console.log('changes')
    
   }
-
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
   ngOnInit(): void {
     this.getAllMACdata();
   }
@@ -32,8 +42,11 @@ export class MacReportsComponent implements OnInit, OnChanges {
   
     this.dataService.getAllMACstatus().subscribe(res => {
       console.log(res)
+      
 
-      this.dataSource = res.data;
+      this.dataSource = new TableVirtualScrollDataSource(res.data);
+      // .map((item:__deviceHistory)=>item );
+      this.dataSource.sort = this.sort;
       this.ref.detectChanges();
     })
   }

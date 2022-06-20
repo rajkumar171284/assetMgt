@@ -48,7 +48,8 @@ export class PlotlyComponent implements OnInit, OnChanges {
     layout: {
       width: 420, height: 300, marginLeft: -20,
       title: ''
-    }
+    },
+    responsive:true
   };
 
   graph2 = {
@@ -63,26 +64,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
   widgetResponse: any;
   constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) { }
-  // monthsData: any = [
-  //   '9:00:00',
-  //   '9:30:00',
-  //   '10:00:00',
-  //   '10:30:00',
-  //   '11:00:00',
-  //   '11:30:00',
-  //   '12:00:00',
-
-  //   '12:30:00',
-  //   '13:00:00',
-  //   '13:30:00',
-  //   '14:30:00', '15:00:00',
-  //   '15:30:00',
-  //   '16:00:00',
-  //   '16:30:00', '17:00:00',
-  //   '17:30:00',
-  //   '18:00:00',
-
-  // ];
+  
   ngOnInit(): void {
   }
 
@@ -198,8 +180,10 @@ export class PlotlyComponent implements OnInit, OnChanges {
     }
 
     this.graph1.data = newArr;
-    this.graph1.layout.width = 820;
+    // this.graph1.layout.width = 820;
     this.graph1.layout.height = 340;
+    this.graph1.responsive = true;
+
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
     console.log(this.graph1)
   }

@@ -20,7 +20,10 @@ export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: 
 { name: 'MAPS', file: 'map-widget', isSelected: false },
 { name: 'Highlights', file: 'highlight-widget', isSelected: false },
 { name: 'TABLE', file: 'table-widget', isSelected: false },
-
+{ name: 'ON/OFF Controls', file: 'onoff-widget', isSelected: false },
+{ name: 'Activity Controls', file: 'activity-widget', isSelected: false },
+{ name: 'Summary', file: 'summary-widget', isSelected: false },
+{ name: 'Reports', file: 'reports-widget', isSelected: false },
 ];
 
 export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false },
@@ -31,9 +34,19 @@ export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false }
 ];
 
 export const _assetTypes = ['Security',
-'Activity Trackers',
-'Industrial Security and Safety',
-' Augmented Reality',
-'Motion Detection'
+    'Activity Trackers',
+    'Industrial Security and Safety',
+    ' Augmented Reality',
+    'Motion Detection'
 ];
-export const _deviceType=["IMEI","MAC ADDRESS"]
+export const _deviceType = ["IMEI", "MAC ADDRESS"];
+export interface __deviceHistory{
+    PID:number;
+    ASSET_CONFIG_ID:number;
+     DEVICE_ID:any;
+    VALUE:any;
+    STATUS:any;
+    LATITUDE:any;
+    LONGITUDE:any;
+    LOCATION:string;
+}

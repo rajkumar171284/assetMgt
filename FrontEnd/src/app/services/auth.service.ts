@@ -50,8 +50,12 @@ export class AuthService {
     }))
   }
   // device details
-
-
+  
+  saveDeviceHistory(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/asset/addDeviceHistory`, params, options).pipe(map(response => {
+      return response;
+    }))
+  }
   getAllLocationsByConfigID(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/getLocationsByConfigID`, params, options).pipe(map(response => {
       return response;

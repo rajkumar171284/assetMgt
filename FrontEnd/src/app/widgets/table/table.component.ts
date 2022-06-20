@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-
+import { ResizeEvent } from "angular-resizable-element";
+declare let $: any;
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
@@ -17,7 +18,18 @@ export class TableComponent implements OnInit, OnChanges {
   constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
+    $(".resizable").resizable({
+      stop: function( event:Event, ui:any ) {
 
+        let height = $("#resizable").height(); 
+
+        let width = $("#resizable").width(); 
+        console.log('width',width,'height',height)
+    } 
+    });
+    // $(".resizable").on('resize', function (e: Event) {
+    //   console.log('resizable')
+    // });
   }
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.WIDGET_REQUEST)

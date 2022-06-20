@@ -5,54 +5,6 @@
   </span>
 
 
-  <!-- <div #element id = "resizable" class = "resizable ui-widget-content"> 
-    <h3 class = "ui-widget-header">Pull my edges to resize me!!</h3>
- </div> -->
-
-  <!-- <div id="test"></div> -->
-
-  <!-- <p (window:resize)="onResize2($event)">fweirueirueiwu</p> -->
-
-  <!-- <div  class="rectangle" mwlResizable [enableGhostResize]="true" (resizeEnd)="onResizeEnd($event)">
-    <div class="resize-handle-top" mwlResizeHandle [resizeEdges]="{ top: true }"></div>
-    <div class="resize-handle-left" mwlResizeHandle [resizeEdges]="{ left: true }"></div>
-    <div class="resize-handle-right" mwlResizeHandle [resizeEdges]="{ right: true }"></div>
-    <div class="resize-handle-bottom" mwlResizeHandle [resizeEdges]="{ bottom: true }"></div>
-  </div> -->
-  <!-- <div id="resizeMe" class="resizable">
-    Resize me
-    <div class="resizer resizer-r"></div>
-    <div class="resizer resizer-b"></div>
-</div> -->
-
-  <!-- <div class="popup">
-    <div class="popup-header">Click here to move</div>
-    <p>Move</p>
-    <p>this</p>
-    <p>DIV</p>
-  </div>
-  
-  <div class="popup">
-    <div class="popup-header noselect">Click here to move</div>
-    <p>Move</p>
-    <p>this</p>
-    <p>DIV</p>
-  </div> -->
-
-  <!-- <div class="container" style="background-color: red;" #container [style.width.px]="data.width" [style.height.px]="data.height">
-    <div class="resize resize__right"
-         (resize)="onResize($event)"
-         [targetElement]="containerElement"
-         [direction]="AngularResizeElementDirection.RIGHT"
-    >
-  </div>
-
-    <div class="resize resize__bottom--right"
-         (resize)="onResize($event)"
-         [targetElement]="containerElement"
-         [direction]="AngularResizeElementDirection.BOTTOM_RIGHT"
-    ></div>
-</div> -->
 
   <div *ngIf="!hide" class="row">
 
@@ -62,23 +14,21 @@
     <div [ngClass]="{'col-md-9':isWidgetOpen,'col-md-12':!isWidgetOpen}" class="widgetDraggedPanel ">
 
 
-
-
-
       <div class="container mt-3 " style="padding-left:0px;padding-right:0px;">
 
 
-        <div class="row pb-4" cdkDropList #doneMovieList="cdkDropList" [cdkDropListData]="draggedWidget"
+        <div class="row1 pb-4" cdkDropList #doneMovieList="cdkDropList" [cdkDropListData]="draggedWidget"
           [cdkDropListConnectedTo]="[doneMovieList]" (cdkDropListDropped)="onDrop($event)">
 
-          <div class="row ">
+          <div class="row">
 
 <!-- class="{{getRequestDetails(List,'size')}}" -->
 
 <!-- cdkDrag [cdkDragDisabled]="dragDisabled||List=='0'" -->
-            <div  cdkDrag [cdkDragDisabled]="dragDisabled||List=='0'"
-              [ngClass]="{'col-md-12 ':List=='0'}" class="mb-2" *ngFor="let List of draggedWidget;let idx=index" >
-              <mat-card [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="listed-charts mappedList"
+<!-- cdkDropListOrientation="horizontal" -->
+            <div  cdkDrag [cdkDragDisabled]="dragDisabledArr[idx].dragDisabled||List=='0'"
+              [ngClass]="{'col-md-12 ':List=='0','col-md-6':List!='0'}" class="mb-2" *ngFor="let List of draggedWidget;let idx=index" >
+              <div [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="example-box1 resizable1 listed-charts"
                 color="primary">
                
                 <div class="init-text" *ngIf="List=='0'">
@@ -87,8 +37,9 @@
 
 
                 <span appWidgetAccessIf *ngIf="List!='0'" class="mapped-close">
-                  <mat-icon color="accent" matTooltip="{{dragDisabled?'Drag disabled':'Drag enabled'}}" (click)="dragDisabled=!dragDisabled"> 
-                    {{dragDisabled?'layers_clear':'layers'}}</mat-icon>
+                  <mat-icon color="accent" matTooltip="{{dragDisabledArr[idx].dragDisabled?'Drag disabled':'Drag enabled'}}"
+                   (click)="dragDisabledArr[idx].dragDisabled=!dragDisabledArr[idx].dragDisabled"> 
+                    {{dragDisabledArr[idx].dragDisabled?'layers_clear':'layers'}}</mat-icon>
 
                   <mat-icon (click)="editRequest(List)" matTooltip="Edit Widget" color="primary">edit</mat-icon>
 
@@ -101,7 +52,7 @@
                   <app-highlights [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-highlights>
 
                 </div>
-                <div  (drag)="onDrag($event)" (resize)="onResize($event)" class="resizable" *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='TABLE'">
+                <div class="" *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='TABLE'">
 
                   <app-table [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-table>
 
@@ -117,7 +68,7 @@
 
                 </div>
 
-              </mat-card>
+              </div>
 
             </div>
           </div>

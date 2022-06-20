@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, HostListener,OnChanges, SimpleChanges } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { AuthService } from '../../services/auth.service';
@@ -37,7 +37,7 @@ interface toDrag{
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit ,OnChanges{
   
   dragDisabledArr:any[]=[];
   isVisible = false;
@@ -64,21 +64,28 @@ export class DashboardComponent implements OnInit {
   getElement() {
     return this.theElement.nativeElement;
   }
-
+ ngOnChanges(changes: SimpleChanges): void {
+  console.log('resizable')
+ }
   ngAfterViewInit() {
     // const element = this.getElement();
     // element.resizable({ handles: "all" });
   }
 
   ngOnInit(): void {
-    // const element = this.getElement();
-    let that = this;
-    $(".resizable").resizable();
-    $(".resizable").on('resize', function (e: Event) {
-      console.log('starts')
 
-      // e.stopPropagation();
-    });
+    // $(".resizable").resizable({
+    //   stop: function( event:Event, ui:any ) {
+
+    //     let height = $("#resizable").height(); 
+
+    //     let width = $("#resizable").width(); 
+    //     console.log('width',width,'height',height)
+    // } 
+    // });
+    // $(".resizable").on('resize', function (e: Event) {
+    //   console.log('resizable')
+    // });
 
     this.data.width = 200;
     this.data.height = 200;
@@ -88,16 +95,12 @@ export class DashboardComponent implements OnInit {
 
 
   }
-  @HostListener('resize', ['$event'])
+  @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    console.log('starts')
-    this.dragDisabled = true;
+    console.log('resize starts')
+    // this.dragDisabled = true;
   }
-  @HostListener('drag', ['$event'])
-  onDrag(event: any) {
-    console.log('starts')
-    this.dragDisabled = false;
-  }
+ 
   async getSession() {
     const session = await this.dataService.getSessionData();
     if (session && session.ROLE == 'ADMIN') {
@@ -120,18 +123,12 @@ export class DashboardComponent implements OnInit {
       this.draggedWidget = res.data.length > 0 ? this.doneList.map(x => {
         return x.PID.toString();
       }) : ['0'];
-       of(this.doneList).subscribe(res=>{
+       of(this.doneList).subscribe((res:any)=>{
         console.log(res)
-        this.dragDisabledArr.push({isDraggable:false})
+        res.dragDisabled=false;
+        this.dragDisabledArr=res;
       })
-      // this.dragDisabledArr = this.doneList.map(x => {
-      //   return {
-      //     isDraggable:false
-      //   };
-      // })
-      // this.dataFromMessages$ =this.dragDisabledArr.map((a:any,i)=>{
-      //    return { isDraggable:false}
-      // })
+      
       console.log(this.dragDisabledArr)
       this.getAllChartRequest();
 
