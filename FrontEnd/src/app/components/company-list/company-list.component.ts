@@ -12,6 +12,8 @@ import { AddUsersComponent } from '../../components/dialogs/add-users/add-users.
 export class CompanyListComponent implements OnChanges {
   @Input()tabIndex:any;
   @Input()cType:string|undefined;
+  @Input() updateData: any;
+
   dataSource = [];
   displayedColumns: string[] = [
     "PID", "COMPANY_NAME","COMPANY_ADDRESS_LINE1","CREATED_DATE", "STATUS", "actions"];
@@ -19,7 +21,8 @@ export class CompanyListComponent implements OnChanges {
   constructor(private dataService: AuthService, public dialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(this.tabIndex==5){
+    console.log(changes)
+    if(this.tabIndex==5||this.updateData){
     console.log('getAllCompanyTypes',this.cType,this.tabIndex)
       
     this.getAll();

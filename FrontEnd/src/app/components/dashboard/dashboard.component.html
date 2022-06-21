@@ -20,7 +20,7 @@
         <div class="row1 pb-4" cdkDropList #doneMovieList="cdkDropList" [cdkDropListData]="draggedWidget"
           [cdkDropListConnectedTo]="[doneMovieList]" (cdkDropListDropped)="onDrop($event)">
 
-          <div class="row">
+          <div *ngIf="dragDisabledArr.length>0" class="row">
 
 <!-- class="{{getRequestDetails(List,'size')}}" -->
 
@@ -30,6 +30,11 @@
               [ngClass]="{'col-md-12 ':List=='0','col-md-6':List!='0'}" class="mb-2" *ngFor="let List of draggedWidget;let idx=index" >
               <div [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="example-box1 resizable1 listed-charts"
                 color="primary">
+
+                <!-- <span class="savewidget" (_widgetData)="saveWidget($event)">
+                  <mat-icon color="accent">save</mat-icon>
+          
+              </span> -->
                
                 <div class="init-text" *ngIf="List=='0'">
                   Drag & drop the Widgets
@@ -49,17 +54,17 @@
 
                 <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')=='HIGHLIGHTS'">
 
-                  <app-highlights [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-highlights>
+                  <app-highlights (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-highlights>
 
                 </div>
                 <div class="" *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='TABLE'">
 
-                  <app-table [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-table>
+                  <app-table (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-table>
 
                 </div>
                 <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='MAPS'">
 
-                  <app-map [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-map>
+                  <app-map (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-map>
 
                 </div>
                 <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='CHARTS'">
@@ -106,7 +111,7 @@
             [cdkDropListConnectedTo]="[doneMovieList]" class="example-list2" (cdkDropListDropped)="onDrop($event)">
             <div class="Widget-block" [cdkDragData]="List" *ngFor="let List of undraggedWidget" cdkDrag>
 
-              <mat-card class="listed-charts" color="primary">
+              <mat-card class="listed-charts undraggedBlock" color="primary">
 
                 <span appWidgetAccessIf class="mapped-close">
                   <mat-icon (click)="editRequest(List)" color="accent">edit</mat-icon>

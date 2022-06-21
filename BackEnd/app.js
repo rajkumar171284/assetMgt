@@ -1,16 +1,21 @@
 const express = require('express');
 // const mysql = require('mysql');
 const createError = require('http-errors');
-const PORT=process.env.PORT | 4201;
+const PORT = process.env.PORT | 4201;
 const app = express();
 const cors = require('cors');
 const authRouter = require('./routes/auth.js');
 const usersRouter = require('./routes/users.js');
 const assetRouter = require('./routes/assets.js');
 const bleRouter = require('./routes/ble.js');
+const mqttRouter = require("./routes/mqtt2.js");
+const mqttRouter1 = require("./routes/mqtt.js");
 const fileUpload = require('express-fileupload');
 
 var bodyParser = require('body-parser')
+var http = require('http');
+const server = http.createServer(app)
+
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -28,6 +33,8 @@ app.use('/api', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/asset', assetRouter);
 app.use('/api/asset', bleRouter);
+app.use('/api/mqtt', mqttRouter);
+app.use('/api/mqtt1', mqttRouter1);
 // Handling Errors
 app.use((err, req, res, next) => {
     // console.log(err);
@@ -38,6 +45,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log('server on ',PORT)
+// app.listen(PORT, () => {
+//     console.log('server on ',PORT)
+// })
+server.listen(PORT, '127.0.0.1', function () {
+    server.close(function () {
+        server.listen(8001, '10.1.1.139')
+    })
 })

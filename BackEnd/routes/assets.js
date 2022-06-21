@@ -29,7 +29,7 @@ router.post('/addAssetConfig', (req, res) => {
     }
     db.query(sql, todo, (err, result, fields) => {
         if (err) {
-            throw err;
+            // throw err;
             return res.status(400).send({
                 msg: err
             });

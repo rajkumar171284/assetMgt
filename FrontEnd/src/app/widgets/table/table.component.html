@@ -1,4 +1,9 @@
-<div class="table-card resizable">
+<div [style.width.px]="getProp('W')" [style.height.px]="getProp('H')" class="table-card resizable">
+
+  <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
+    <mat-icon color="accent">save</mat-icon>
+
+  </span>
   <div class="my-card-footer theme2">
     <mat-card-header class="text-uppercase">
       INSIGHTS OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}
@@ -8,35 +13,35 @@
   <div class="example-container mat-elevation-z8">
 
 
-  <table mat-table [dataSource]="dataSource" class="demo-table">
+    <table mat-table [dataSource]="dataSource" class="demo-table">
 
 
-    <ng-container matColumnDef="MAC_ADDRESS">
-      <th mat-header-cell *matHeaderCellDef> DEVICE ID </th>
-      <td mat-cell *matCellDef="let element"> {{element.MAC_ADDRESS}} </td>
-    </ng-container>
-    <ng-container matColumnDef="STATUS">
-      <th mat-header-cell *matHeaderCellDef> STATUS </th>
-      <td mat-cell *matCellDef="let element">
-        <!-- {{element.MAC_STATUS?'ON':'OFF'}} -->
-        <mat-icon matTooltip="Device Inactive" *ngIf="element.MAC_STATUS==0" color="warn">change_history</mat-icon>
-        <mat-icon matTooltip="Device Active" *ngIf="element.MAC_STATUS"  class="success">change_history</mat-icon>
-        <!-- <img class="tbl-status" src="assets/{{element.MAC_STATUS?'switch-on.png':'switch-off.png'}}"> -->
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="MAC_ADDRESS">
+        <th mat-header-cell *matHeaderCellDef> DEVICE ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.MAC_ADDRESS}} </td>
+      </ng-container>
+      <ng-container matColumnDef="STATUS">
+        <th mat-header-cell *matHeaderCellDef> STATUS </th>
+        <td mat-cell *matCellDef="let element">
+          <!-- {{element.MAC_STATUS?'ON':'OFF'}} -->
+          <mat-icon matTooltip="Device Inactive" *ngIf="element.MAC_STATUS==0" color="warn">change_history</mat-icon>
+          <mat-icon matTooltip="Device Active" *ngIf="element.MAC_STATUS" class="success">change_history</mat-icon>
+          <!-- <img class="tbl-status" src="assets/{{element.MAC_STATUS?'switch-on.png':'switch-off.png'}}"> -->
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="CREATED_DATE">
-      <th mat-header-cell *matHeaderCellDef> LAST UPDATE </th>
-      <td mat-cell *matCellDef="let element"> {{element.CREATED_DATE | date:'short'}} </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    <tr *ngIf="dataSource.length==0">
+      <ng-container matColumnDef="CREATED_DATE">
+        <th mat-header-cell *matHeaderCellDef> LAST UPDATE </th>
+        <td mat-cell *matCellDef="let element"> {{element.CREATED_DATE | date:'short'}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr *ngIf="dataSource.length==0">
 
-      <td mat-cell *matCellDef> No Data </td>
+        <td mat-cell *matCellDef> No Data </td>
 
-    </tr>
-  </table>
+      </tr>
+    </table>
 
   </div>
   <!-- <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">

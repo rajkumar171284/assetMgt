@@ -41,10 +41,11 @@ export class ControlPanelComponent implements OnInit {
   updateConfig = false;
   updateAsset = false;
   updateSensor = false;
-  updateComp = false;
+  updateComp = 'init';
   companiesList:any=[];
   // tabLabel:enum1|undefined;
   ngOnInit(): void {
+  
     const session =  this.dataService.getSessionData();
     if(session){
       // enum tabLabel{
@@ -130,14 +131,17 @@ export class ControlPanelComponent implements OnInit {
         this.updateUser = true;
       });
     } else if (this.tabIndex === tabLabel.Clients) {
+      this.updateComp = 'init';
       const dialogRef = this.dialog.open(AddCompanyComponent, {
         width: '800px',
         data: null
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        this.updateComp = true;
+        console.log('afterClosed')
+        this.updateComp = 'afterClosed';
         this.tabIndex=5;
+       
       });
     }
 

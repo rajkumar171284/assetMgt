@@ -58,6 +58,22 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 // resize
+.overlay{
+ 
+}
+.savewidget{
+  position: absolute;
+  bottom: 0px;
+  z-index: 999;
+  cursor: pointer;
+  left: 0;
+}
+.savewidget:hover + .overlay{
+  position: absolute;opacity: 1;z-index: 99;width:100%;height: 100%;background: rgba(0, 0, 0, 0.12);
+}
+.resizable{
+  position: relative;
+}
 .example-box {
   width: 400px;
   height: 230px;

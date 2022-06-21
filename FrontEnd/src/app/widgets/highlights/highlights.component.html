@@ -1,5 +1,9 @@
-<mat-card class="resizable mt-4 mb-3 my-card bg11">
-   
+<mat-card [style.width.px] ="getProp('W')" [style.height.px]="getProp('H')" class="resizable mt-4 mb-3 my-card bg11">
+   <!-- <div class="overlay"></div> -->
+    <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
+        <mat-icon color="accent">save</mat-icon>
+
+    </span>
     <div class="my-card-footer">
         <mat-card-header class="text-uppercase">
             HIGHLIGHTS OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}

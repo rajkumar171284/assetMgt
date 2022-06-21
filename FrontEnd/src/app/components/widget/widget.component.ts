@@ -47,7 +47,7 @@ export class WidgetComponent implements OnInit {
     isChartSelected: false,
     CHART_NAME: [this.chartChoosen ? Validators.required : null],
     CHART_TYPE: [this.chartChoosen ? Validators.required : null],
-    WIDGET_DATA: ['', Validators.required], WIDGET_SIZE: ['', Validators.required],
+    WIDGET_DATA: ['', Validators.required], WIDGET_SIZE: [''],
     ASSET_CONFIG_ID: ['', Validators.required],
     WIDGET_IMG: '',
     SQL_QUERY: [],
@@ -159,7 +159,13 @@ export class WidgetComponent implements OnInit {
       // const query = `SELECT * FROM ${this.Values.CHART_TYPE} WHERE PID=${this.Values.CHART_DATA}`;
       // this.Values.SQL_QUERY = JSON.stringify(query);
       this.Values.SQL_QUERY ='sql';
-     
+      if(!this.Values.PID){
+        // if  add
+        const params: any = {
+          width: 230, height: 320
+        }
+        this.Values.WIDGET_SIZE=JSON.stringify(params);
+      }
       this.dataService.addChartRequest(this.Values).subscribe(res => {
         console.log(res)
         this.confirmClose();

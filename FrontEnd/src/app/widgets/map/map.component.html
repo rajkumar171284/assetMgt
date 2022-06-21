@@ -1,22 +1,10 @@
-<!-- <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div id="map"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="my-card-footer">
-                <mat-card-header class="text-uppercase">
-                    Live locations OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}
-                </mat-card-header>
-            </div>
-        </div>
-    </div>
-</div> -->
 
-<div class="resizable">
+
+<div [style.width.px] ="getProp('W')" [style.height.px]="getProp('H')" class="resizable">
+    <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
+        <mat-icon color="accent">save</mat-icon>
     
+      </span>
     <div class="resizable11" id="map"></div>
     
     <div *ngIf="cityLocations.length>0" class="cityFilter">

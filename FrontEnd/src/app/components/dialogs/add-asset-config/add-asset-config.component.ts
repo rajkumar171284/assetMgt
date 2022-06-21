@@ -56,6 +56,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   public typeName: any;
   macActive = true;
   macInactive = false;
+  public demo1TabIndex = 0;
+
+
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
     this.newForm = this.fb.group({
@@ -105,8 +108,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.updateMAC();
-    this.initCall();
+    // this.updateMAC();
+    // this.initCall();
+    // this.getAllComp();
   }
   
   initCall() {
@@ -142,6 +146,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
               })
             }else{
               // new asset config
+              console.log('sds')
               this.getAllComp();
             }
 
@@ -156,6 +161,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   }
   ngOnInit(): void {
     this.updateMAC();
+    this.initCall();
   }
   getAllComp() {
     // const session = await this.dataService.getSessionData();
@@ -169,9 +175,15 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     // const msg = await this.findInvalidControls();
     // console.log(msg)
 
+    if(this.newForm.get('COMPANY_ID')?.valid && this.newForm.get('CONFIG_NAME')?.valid && this.newForm.get('ASSET_ID')?.valid && this.newForm.get('INDUSTRIAL_TYPE')?.valid && this.newForm.get('INDUSTRIAL_DATA_SOURCE')?.valid && this.newForm.get('CONNECTION_TYPE')?.valid
+    && this.newForm.get('TRACKING_DEVICE')?.valid && this.newForm.get('SENSOR')?.valid && this.newForm.get('SENSOR_CATEGORY')?.valid && this.newForm.get('SENSOR_DATA_TYPE')?.valid){
+      this.demo1TabIndex = 1;
+
+    }
+
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
-      // this.Values.COMPANY_ID = session.COMPANY_ID
+      this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
       // console.log(this.Values)
       this.Values.CONFIG_NAME =this.Values.CONFIG_NAME.toUpperCase();

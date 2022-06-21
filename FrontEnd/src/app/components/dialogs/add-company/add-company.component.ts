@@ -12,6 +12,8 @@ export class AddCompanyComponent implements OnChanges{
     'LEVEL1',
     'ADMIN']
   @Input() tabIndex: any;
+  @Input() updateData: any;
+  
   @Output() dialogClose: any = new EventEmitter();
   @ViewChild('UploadFileInput', { static: false }) uploadFileInput: ElementRef | undefined;
  bImg:any;
@@ -28,7 +30,7 @@ export class AddCompanyComponent implements OnChanges{
       COMPANY_ADDRESS_LINE2: ['', Validators.required],
       COMPANY_TYPE: ['', Validators.required],
       STATUS: ['', Validators.required],
-      LOGO: ['', Validators.required],
+      LOGO: [''],
     })
 
     if (!data) {

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "mserve": "set NODE_OPTIONS=--max_old_space_size=8192 & ng serve --open"
+    "mserve": "set NODE_OPTIONS=--max_old_space_size=8192 & ng serve --host 10.1.1.139 --open"
   },
   "private": true,
   "dependencies": {

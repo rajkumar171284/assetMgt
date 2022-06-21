@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  url:'http://127.0.0.1:4201/api',
-  vtsURL:'http://127.0.0.1:8000/',
-  // url: 'http://192.168.1.3:3000/api',//public ip
+  // url:'http://127.0.0.1:4201/api',
+  vtsURL: 'http://127.0.0.1:8000/',
+  url: 'http://10.1.1.139:8001/api',//public ip
   // url:'https://35.193.11.55:3306/api',
 
 };

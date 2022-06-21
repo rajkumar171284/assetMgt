@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Output,EventEmitter,OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
@@ -32,10 +32,22 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
   cityLocations: any = [];
   isCitySelected = false;
   setInterval: Subscription | undefined;
+  @Output() _widgetData = new EventEmitter();
+
   constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    $(".resizable").resizable();
+    let that=this;
+    $(".resizable").resizable({
+      stop: function (event: Event, ui: any) {
+        let height = $(ui.size.height)[0];
+        let width = $(ui.size.width)[0];               
+        const params: any = {
+          width: width, height: height
+        }
+        that.WIDGET_REQUEST.WIDGET_SIZE=JSON.stringify(params);       
+      }
+    });
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.WIDGET_REQUEST) {
@@ -211,5 +223,17 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
   ngOnDestroy(): void {
     this.setInterval?.unsubscribe();
   }
+  getProp(type:string){
+    const prop =JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
+    if(type=='W'){
+       return prop.width
+    }
+    if(type=='H'){
+      return prop.height
+    }
+  }
+  saveWidget() {
 
+    this._widgetData.emit(this.WIDGET_REQUEST)
+  }
 }

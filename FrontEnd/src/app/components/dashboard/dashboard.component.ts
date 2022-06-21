@@ -37,7 +37,7 @@ interface toDrag{
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit ,OnChanges{
+export class DashboardComponent implements OnInit{
   
   dragDisabledArr:any[]=[];
   isVisible = false;
@@ -64,15 +64,19 @@ export class DashboardComponent implements OnInit ,OnChanges{
   getElement() {
     return this.theElement.nativeElement;
   }
- ngOnChanges(changes: SimpleChanges): void {
-  console.log('resizable')
- }
+//  ngOnChanges(changes: SimpleChanges): void {
+//   console.log('resizable')
+//  }
   ngAfterViewInit() {
     // const element = this.getElement();
     // element.resizable({ handles: "all" });
   }
 
   ngOnInit(): void {
+
+    this.dataService.getMqtt({}).subscribe(res=>{
+      console.log(res)
+    })
 
     // $(".resizable").resizable({
     //   stop: function( event:Event, ui:any ) {
@@ -95,11 +99,11 @@ export class DashboardComponent implements OnInit ,OnChanges{
 
 
   }
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    console.log('resize starts')
-    // this.dragDisabled = true;
-  }
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event: any) {
+  //   console.log('resize starts')
+  //   // this.dragDisabled = true;
+  // }
  
   async getSession() {
     const session = await this.dataService.getSessionData();
@@ -253,5 +257,22 @@ export class DashboardComponent implements OnInit ,OnChanges{
   //   //   this.visible = false;
   //   // }
   // }
+  async saveWidget(data:any){
+console.log('data',data)
+  
+
+    if (data) {
+      const session = await this.dataService.getSessionData();
+      data.COMPANY_ID = session.COMPANY_ID;
+      data.CREATED_BY = session.PID;
+     
+      data.SQL_QUERY ='sql';
+     
+      this.dataService.addChartRequest(data).subscribe(res => {
+        console.log(res)
+       
+      })
+    }
+  }
 
 }
