@@ -1,4 +1,4 @@
-<mat-card [style.width.px] ="getProp('W')" [style.height.px]="getProp('H')" class="resizable mt-4 mb-3 my-card bg11">
+<mat-card #Item id="{{widgetIndex}}" [style.width.px] ="getProp('W')" [style.height.px]="getProp('H')" class="resizable mt-4 mb-3 my-card bg11">
    <!-- <div class="overlay"></div> -->
     <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
         <mat-icon color="accent">save</mat-icon>

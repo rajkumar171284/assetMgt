@@ -5,6 +5,8 @@ import { AuthService } from '../../services/auth.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ResizeEvent } from "angular-resizable-element";
 import { from, Observable, of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TooltipComponent } from '../../components/tooltip/tooltip.component';
 
 declare let $: any;
 // import {
@@ -43,7 +45,7 @@ export class DashboardComponent implements OnInit{
   isVisible = false;
   isWidgetOpen = true;
   dragStatus: number = 0;
-  constructor(public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) { }
+  constructor(private _snackBar: MatSnackBar,public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) { }
   dataSource: chartItem[] = [];
   doneList: chartItem[] = []
   overAllCharts: any = [];
@@ -270,9 +272,14 @@ console.log('data',data)
      
       this.dataService.addChartRequest(data).subscribe(res => {
         console.log(res)
+        this.openSnackBar();
        
       })
     }
   }
-
+  openSnackBar() {
+    this._snackBar.openFromComponent(TooltipComponent, {
+      duration: 5 * 1000,
+    });
+  }
 }
