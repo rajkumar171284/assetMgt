@@ -49,7 +49,8 @@
 
 .Widget-block .listed-charts {
     background:rgba(0, 0, 0, 0.3);
-    border: 0px solid #fff;
+    box-shadow: 0 0px 8px #fff;
+    // border: 0px solid #fff;
     padding:5px;
     mat-card-subtitle ,mat-card-content{
         color: #fff !important
@@ -57,8 +58,8 @@
 }
 
 .widget-panel {
-    background-color: dodgerblue;
-    // background-image: linear-gradient(315deg, dodgerblue 0%, #0c0c0c 74%);
+    // background-color: dodgerblue;
+    background: linear-gradient(315deg, dodgerblue 0%, #0c0c0c 74%);
     position: relative;transition: .5s all;
 }
 .closed{

@@ -118,7 +118,7 @@ router.post('/updateDeviceByID', (req, res) => {
     db.query(sql, todo, (err, result) => {
 
         if (err) {
-            console.log(result, err)
+            // console.log(result, err)
 
             // throw err;
             return res.status(400).send({
@@ -167,7 +167,7 @@ router.post('/getLocationsByConfigID', (req, res) => {
 
     })
 })
-router.post('/getMACdetailsByConfigID', (req, res) => {
+router.post('/getDeviceDetailsByConfigID', (req, res) => {
     let sql3;
     let sql = "SELECT * FROM `mac_tbl` WHERE ASSET_CONFIG_ID=?"
 
@@ -192,8 +192,8 @@ router.post('/getMACdetailsByConfigID', (req, res) => {
 router.get('/getAllAssetsConfig/:COMPANY_ID', (req, res) => {
     const COMPANY_ID = req.params.COMPANY_ID;
     let sql = `SELECT asset_config_tbl.PID,asset_config_tbl.CONFIG_NAME,asset_config_tbl.ASSET_ID,asset_config_tbl.INDUSTRIAL_TYPE,asset_config_tbl.INDUSTRIAL_DATA_SOURCE,asset_config_tbl.CONNECTION_TYPE,asset_config_tbl.TRACKING_DEVICE,asset_config_tbl.SENSOR,asset_config_tbl.SENSOR_CATEGORY,asset_config_tbl.SENSOR_DATA_TYPE,asset_config_tbl.MAC_ADDRESS,asset_config_tbl.COMPANY_ID ,sensor_type_tbl.NAME,asset_tbl.NAME  FROM asset_config_tbl LEFT JOIN  sensor_type_tbl ON asset_config_tbl.SENSOR = sensor_type_tbl.PID LEFT JOIN asset_tbl ON asset_config_tbl.ASSET_ID=asset_tbl.PID WHERE COMPANY_ID=?`;
-    let todo=[COMPANY_ID]
-    db.query(sql,todo, (err, result) => {
+    let todo = [COMPANY_ID]
+    db.query(sql, todo, (err, result) => {
         if (err) throw err;
         else
             res.send({
@@ -339,7 +339,7 @@ router.post('/addSensorSubCatg', (req, res) => {
     const todo = ['', req.body.SENSOR_TYPE_ID, req.body.CATEGORY_NAME, req.body.CREATED_BY, new Date()];
 
     db.query(sql, todo, (err, result) => {
-        console.log(result)
+        // console.log(result)
         if (err) {
             throw err;
             return res.status(400).send({
@@ -402,7 +402,7 @@ router.post('/addAsset', (req, res) => {
 
     }
     db.query(sql, todo, (err, result) => {
-        console.log(result)
+        // console.log(result)
         if (err) {
             throw err;
             return res.status(400).send({
@@ -455,7 +455,7 @@ router.post('/addChartRequest', (req, res) => {
 
     }
     db.query(sql, todo, (err, result) => {
-        console.log(result)
+        // console.log(result)
         if (err) {
             // throw err;
             return res.status(400).send({
@@ -472,11 +472,42 @@ router.post('/addChartRequest', (req, res) => {
         }
     })
 })
+
+// get widget details by config Id
+router.post('/AssetConfigDetailsByID', (req, res) => {
+
+    const IS_DRAGGED = 1;
+    let sql = `SELECT DISTINCT MAC_ADDRESS FROM mac_tbl WHERE ASSET_CONFIG_ID=?`
+    let todo = [req.body.ASSET_CONFIG_ID];
+    var sql2;
+
+    // only dragged & dropped list-get all locations & total device list
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+            sql2 = `SELECT DISTINCT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`
+
+        db.query(sql2, todo, (err2, result2) => {
+            if (err2) throw err2;
+            else
+                res.send({
+                    data: {
+                        "totalDevice": result,
+                        "Locations": result2
+                    },
+                    status: 200,
+
+                })
+
+        })
+    })
+})
 // get all chart requests
 router.get('/allChartRequest/:IS_DRAGGED', (req, res) => {
 
     let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=?`
-    let todo = [req.params.IS_DRAGGED]
+    let todo = [req.params.IS_DRAGGED];
+
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
         else
@@ -484,6 +515,7 @@ router.get('/allChartRequest/:IS_DRAGGED', (req, res) => {
                 data: result,
                 status: 200
             })
+
     })
 })
 

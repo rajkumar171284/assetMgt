@@ -2,7 +2,10 @@
     height: 350px;
     padding: 0;
   }
-  #map { height: 380px; overflow: hidden;}
+  #map { 
+    // height: 380px;
+    height: 100%;
+     overflow: hidden;}
   .cityFilter{
     position: absolute;
     width: 100px;z-index: 2;top:170px;left:0;right:0;

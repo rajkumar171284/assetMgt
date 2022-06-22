@@ -62,7 +62,7 @@ export class AuthService {
     }))
   }
   getMACByConfigID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/getMACdetailsByConfigID`, params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/getDeviceDetailsByConfigID`, params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -76,11 +76,11 @@ export class AuthService {
       return response;
     }))
   }
-  // updateDeviceByID(params: any): Observable<any> {
-  //   return this.http.post(`${environment.url}/asset/updateDeviceByID`,params, options).pipe(map(response => {
-  //     return response;
-  //   }))
-  // }
+  getAssetConfigDetailsById(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/asset/AssetConfigDetailsByID`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
 
   updateDeviceByID(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/updateDeviceByID`, params, options).pipe(map(response => {

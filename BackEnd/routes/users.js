@@ -45,7 +45,7 @@ var upload = multer({
 
 router.post('/uploadfile', (req, res) => {
     const file = req.file
-    console.log(req);
+    // console.log(req);
     if (!file) {
         const error = new Error('Please upload a file')
         error.httpStatusCode = 400

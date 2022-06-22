@@ -19,11 +19,11 @@ export class AccessrightsDirective {
       const session = this.dataService.getSessionData();
 
       if(session && session.ROLE=='ADMIN' && session.COMPANY_TYPE=='CORP'){
-        console.log(val)
+        // console.log(val)
 
         this.viewContainer.createEmbeddedView(this.templateRef);
       } else {
-        console.log(val)
+        // console.log(val)
    
         this.viewContainer.clear();
       }

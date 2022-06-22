@@ -201,4 +201,10 @@ export class WidgetComponent implements OnInit {
     console.log(status)
     return status;
   }
+  optionSelected(event:any){
+    
+    console.log('this.Values.ASSET_CONFIG_ID',this.Values.ASSET_CONFIG_ID)
+
+
+  }
 }

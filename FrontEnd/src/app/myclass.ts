@@ -11,6 +11,17 @@ export interface config {
     Sensor_Data_Type: string,
     MAC_Address: string
 }
+export interface __addAssetDevice{
+    PID :number,
+    ASSET_CONFIG_ID:number,
+    DEVICE_ID:any,
+    VALUE:any,
+    STATUS:any,
+    LATITUDE:any,
+    LONGITUDE:any,
+    LOCATION:any,
+    LAST_UPDATE_TIME:any
+}
 export const _widgetSIZE = [{ name: 'Full width', file: 'col-md-12', isSelected: false },
 { name: 'Md width', file: 'col-md-7', isSelected: false },
 { name: 'Sm width', file: 'col-md-5', isSelected: false },
@@ -20,6 +31,7 @@ export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: 
 { name: 'MAPS', file: 'map-widget', isSelected: false },
 { name: 'Highlights', file: 'highlight-widget', isSelected: false },
 { name: 'TABLE', file: 'table-widget', isSelected: false },
+// { name: 'Utility', file: 'guage-widget', isSelected: false },
 { name: 'ON/OFF Controls', file: 'onoff-widget', isSelected: false },
 { name: 'Activity Controls', file: 'activity-widget', isSelected: false },
 { name: 'Summary', file: 'summary-widget', isSelected: false },
@@ -30,7 +42,8 @@ export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false }
 { name: 'Line', file: 'line-chart', isSelected: false },
 { name: 'Donut', file: 'donut-chart', isSelected: false },
 { name: 'Pie', file: 'pie-chart', isSelected: false },
-{ name: 'scatter', file: 'scatter-chart', isSelected: false }
+{ name: 'scatter', file: 'scatter-chart', isSelected: false },
+{ name: 'gauge', file: 'guage-widget', isSelected: false },
 ];
 
 export const _assetTypes = ['Security',

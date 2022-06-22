@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, HostListener,OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { AuthService } from '../../services/auth.service';
@@ -7,12 +7,9 @@ import { ResizeEvent } from "angular-resizable-element";
 import { from, Observable, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
+import { __addAssetDevice } from '../../myclass';
 
 declare let $: any;
-// import {
-//   AngularResizeElementDirection,
-//   AngularResizeElementEvent
-// } from "angular-resize-element";
 interface Item {
   PID: number;
 }
@@ -31,21 +28,21 @@ class chartitem {
   SQL_QUERY = '';
   IS_DRAGGED = 0;
 }
-interface toDrag{
-  isDraggable:any;
+interface toDrag {
+  isDraggable: any;
 }
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit{
-  
-  dragDisabledArr:any[]=[];
+export class DashboardComponent implements OnInit {
+
+  dragDisabledArr: any[] = [];
   isVisible = false;
   isWidgetOpen = true;
   dragStatus: number = 0;
-  constructor(private _snackBar: MatSnackBar,public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) { }
+  constructor(private _snackBar: MatSnackBar, public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) { }
   dataSource: chartItem[] = [];
   doneList: chartItem[] = []
   overAllCharts: any = [];
@@ -55,8 +52,18 @@ export class DashboardComponent implements OnInit{
   dragDisabled = false;
   hide = false;
   dataFromMessages$: Observable<any> | undefined;
-  // resize
 
+  // newDevice: __addAssetDevice = {
+  //   PID: 0,
+  //   ASSET_CONFIG_ID: 0,
+  //   DEVICE_ID: undefined,
+  //   VALUE: undefined,
+  //   STATUS: undefined,
+  //   LATITUDE: undefined,
+  //   LONGITUDE: undefined,
+  //   LOCATION: undefined,
+  //   LAST_UPDATE_TIME: undefined
+  // };
   public data: any = {};
   @ViewChild('container', { read: ElementRef })
   public readonly containerElement: any;
@@ -66,9 +73,9 @@ export class DashboardComponent implements OnInit{
   getElement() {
     return this.theElement.nativeElement;
   }
-//  ngOnChanges(changes: SimpleChanges): void {
-//   console.log('resizable')
-//  }
+  //  ngOnChanges(changes: SimpleChanges): void {
+  //   console.log('resizable')
+  //  }
   ngAfterViewInit() {
     // const element = this.getElement();
     // element.resizable({ handles: "all" });
@@ -76,9 +83,7 @@ export class DashboardComponent implements OnInit{
 
   ngOnInit(): void {
 
-    this.dataService.getMqtt({}).subscribe(res=>{
-      console.log(res)
-    })
+
 
     // $(".resizable").resizable({
     //   stop: function( event:Event, ui:any ) {
@@ -106,7 +111,7 @@ export class DashboardComponent implements OnInit{
   //   console.log('resize starts')
   //   // this.dragDisabled = true;
   // }
- 
+
   async getSession() {
     const session = await this.dataService.getSessionData();
     if (session && session.ROLE == 'ADMIN') {
@@ -129,12 +134,12 @@ export class DashboardComponent implements OnInit{
       this.draggedWidget = res.data.length > 0 ? this.doneList.map(x => {
         return x.PID.toString();
       }) : ['0'];
-       of(this.doneList).subscribe((res:any)=>{
+      of(this.doneList).subscribe((res: any) => {
         console.log(res)
-        res.dragDisabled=false;
-        this.dragDisabledArr=res;
+        res.dragDisabled = false;
+        this.dragDisabledArr = res;
       })
-      
+
       console.log(this.dragDisabledArr)
       this.getAllChartRequest();
 
@@ -197,9 +202,15 @@ export class DashboardComponent implements OnInit{
       PID: pid
     }
     // console.log(data)
-    this.dataService.chartRequestChangeStatus(params).subscribe(res => {
+    this.dataService.chartRequestChangeStatus(params).subscribe(async res => {
       this.getMappedChartRequest();
       this.getAllChartRequest();
+      // get all locations & devices
+      // const configId=await this.getRequestDetails(pid,'json')
+
+      // this.dataService.getAssetConfigDetailsById(configId).subscribe(response=>{
+      //   console.log(response)
+      // })
     })
   }
   removeRequest(item: any) {
@@ -259,21 +270,21 @@ export class DashboardComponent implements OnInit{
   //   //   this.visible = false;
   //   // }
   // }
-  async saveWidget(data:any){
-console.log('data',data)
-  
+  async saveWidget(data: any) {
+    console.log('data', data)
+
 
     if (data) {
       const session = await this.dataService.getSessionData();
       data.COMPANY_ID = session.COMPANY_ID;
       data.CREATED_BY = session.PID;
-     
-      data.SQL_QUERY ='sql';
-     
+
+      data.SQL_QUERY = 'sql';
+
       this.dataService.addChartRequest(data).subscribe(res => {
         console.log(res)
         this.openSnackBar();
-       
+
       })
     }
   }

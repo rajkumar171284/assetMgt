@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { __addAssetDevice } from '../../myclass';
+import { interval } from 'rxjs';
 interface xcol {
   MAC_ADDRESS_ID: number
 }
@@ -15,7 +16,7 @@ interface xcol {
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class PlotlyComponent implements OnInit, OnChanges {
+export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   newForm: FormGroup = this.fb.group({
 
     // SENSOR_TYPE_ID: ['', Validators.required],
@@ -35,11 +36,11 @@ export class PlotlyComponent implements OnInit, OnChanges {
   // @Input() xAxes: any;
   public data: any;
   public layOut: any;
-  graph = {
-    data: [],
-    layout: { width: 520, height: 340, title: 'Sample Plot' },
-    pointIndex: 1
-  };
+  // graph = {
+  //   data: [],
+  //   layout: { width: 520, height: 340, title: 'Sample Plot' },
+  //   pointIndex: 1
+  // };
 
   graph1 = {
     data: [
@@ -49,7 +50,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
       width: 420, height: 300, marginLeft: -20,
       title: ''
     },
-    responsive:true
+    responsive: true
   };
 
   graph2 = {
@@ -63,24 +64,87 @@ export class PlotlyComponent implements OnInit, OnChanges {
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
   widgetResponse: any;
-  constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) { }
-  
-  ngOnInit(): void {
+
+  newDevice: __addAssetDevice = {
+    PID: 0,
+    ASSET_CONFIG_ID: 0,
+    DEVICE_ID: undefined,
+    VALUE: undefined,
+    STATUS: undefined,
+    LATITUDE: undefined,
+    LONGITUDE: undefined,
+    LOCATION: undefined,
+    LAST_UPDATE_TIME: undefined
+  };
+  myInterval: Subscription | undefined;
+  constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) { 
+  //  if(this.WIDGET_REQUEST){
+  //   console.log('chart req:', this.WIDGET_REQUEST)
+   
+  //  }
+    
   }
 
+  ngOnInit(): void {
+  }
+  ngOnDestroy(): void {
+    this.myInterval?.unsubscribe();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes, this.pMap)
     if (this.WIDGET_REQUEST) {
+      this.dataService.getAssetConfigDetailsById(this.WIDGET_REQUEST).subscribe(response=>{
+        console.log(response)
+      })
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-      // console.log('chart req:', this.WIDGET_REQUEST)
+      
+      console.log('chart reqs:', this.WIDGET_REQUEST.CHART_NAME, this.WIDGET_REQUEST.ASSET_CONFIG_ID, this.WIDGET_REQUEST.WIDGET_DATA)
       if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
         // this.labelMessage = `Total Count`;
+        if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
+          // run tatapower api to get random data those to be saved in db
+          const time = interval(6000);
+          this.myInterval = time.subscribe(() => {
+            this.dataService.getMqtt({}).subscribe(response => {
+              console.log(response)
+              if (response) {
+                const res = response.data;
+                const value = response.data;
+                // if (value.sensorId) {
+                //   delete value.sensorId;
+                // }
+                // if (value.date) {
+                //   delete value.date;
+                // }
+                // if (value.location) {
+                //   delete value.location;
+                // }
+                this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
+                this.newDevice.DEVICE_ID = res.sensorId;
+                this.newDevice.STATUS = true;
+                this.newDevice.VALUE = JSON.stringify(value);
+                this.newDevice.LOCATION = res.location;
+                this.newDevice.LAST_UPDATE_TIME = res.date;
 
-        this.getCurrDeviceByLabel()
+                console.log(this.newDevice)
+
+                this.dataService.saveDeviceHistory(this.newDevice).subscribe(resp => {
+                  console.log(resp)
+                })
+
+              }
+            })
+          })
 
 
+        } else {
+
+          this.getCurrDeviceByLabel()
+
+        }
       }
+
     }
 
   }
@@ -172,7 +236,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
       } else if (this.newForm.value.PLOT_TYPE == 'KM') {
         xData = el.totalKM
       }
-       let item: any = {
+      let item: any = {
         x: [el.key], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ? this.WIDGET_REQUEST.CHART_NAME.toLowerCase() : ''
       }
       newArr.push(item)
@@ -231,7 +295,7 @@ export class PlotlyComponent implements OnInit, OnChanges {
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
 
   }
-  
+
   // We'll bind the hover event from plotly
   hover(event: any): void {
     // The hover event has a lot of information about cursor location.

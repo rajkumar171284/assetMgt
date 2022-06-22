@@ -8,8 +8,9 @@ const authRouter = require('./routes/auth.js');
 const usersRouter = require('./routes/users.js');
 const assetRouter = require('./routes/assets.js');
 const bleRouter = require('./routes/ble.js');
-const mqttRouter = require("./routes/mqtt2.js");
-const mqttRouter1 = require("./routes/mqtt.js");
+const mqttRouter = require("./routes/mqtt.js");
+const mapRouter = require("./routes/maps.js");
+
 const fileUpload = require('express-fileupload');
 
 var bodyParser = require('body-parser')
@@ -34,7 +35,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/asset', assetRouter);
 app.use('/api/asset', bleRouter);
 app.use('/api/mqtt', mqttRouter);
-app.use('/api/mqtt1', mqttRouter1);
+app.use('/api/maps', mapRouter);
 // Handling Errors
 app.use((err, req, res, next) => {
     // console.log(err);

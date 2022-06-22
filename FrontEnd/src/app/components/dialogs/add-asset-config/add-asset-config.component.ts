@@ -4,6 +4,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../../components/tooltip/tooltip.component';
+import { _deviceType } from '../../../myclass';
 
 @Component({
   selector: 'app-add-asset-config',
@@ -57,7 +58,10 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   macActive = true;
   macInactive = false;
   public demo1TabIndex = 0;
+  deviceType = _deviceType;
 
+  conn=['MQTT'];
+  configRouter=['NODEJS','PYTHON','MQTT']
 
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
@@ -73,6 +77,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       SENSOR_CATEGORY: [''],
       SENSOR_DATA_TYPE: ['', Validators.required],
       COMPANY_ID: ['', Validators.required],
+      METHOD:[],
+      HOST:'',
+
       MAC_DETAILS: this.fb.array([])
 
     })

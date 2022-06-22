@@ -64,7 +64,8 @@ export class AddMacDetailsComponent implements OnInit {
       MAC_DETAILS: this.fb.array([])
 
     })
-
+    console.log(data)
+    this.data=data;
     if (data && data.MAC_NAME) {
       console.log(data)
       // edit
@@ -77,12 +78,13 @@ export class AddMacDetailsComponent implements OnInit {
         LOCATION: data.LOCATION,
         // DEVICE_TYPE:['', Validators.required]
       })
-      this.MAC_DETAILS.push(item)
-      // this.newForm.patchValue({
-      //   MAC_DETAILS:this.MAC_DETAILS
-      // });
+      this.MAC_DETAILS.push(item);
+    
     } else {
       // add
+      this.newForm.patchValue({
+        PID: data && data.PID?data.PID:'',
+      })
       this.updateMAC();
     }
   }
@@ -90,13 +92,13 @@ export class AddMacDetailsComponent implements OnInit {
     return this.newForm.get('MAC_DETAILS') as FormArray;
   }
   updateMAC() {
+    console.log(this.data.PID)
     const item = this.fb.group({
       PID: '',
       MAC_NAME: ['', Validators.required],
       MAC_ADDRESS: ['', Validators.required],
       MAC_STATUS: true,
-      LOCATION: ['', Validators.required],
-      // DEVICE_TYPE:['', Validators.required]
+      LOCATION: ['', Validators.required]
     })
 
     this.MAC_DETAILS.push(item)

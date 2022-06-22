@@ -170,15 +170,42 @@
                     </div>
                     <div class="col-md-10 offset-md-1">
                         <ng-container formArrayName="MAC_DETAILS">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <mat-form-field>
+                                        <mat-label>API ROUTES</mat-label>
+                                        <mat-select  formControlName="METHOD">
+                
+                                            <mat-option *ngFor="let key of configRouter" [value]="key">
+                                                {{key}}
+                                            </mat-option>
+                
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <!-- <div class="col-md-6">
+                                    <mat-form-field>
+                                        <mat-label>HOST NAME</mat-label>
+                                        <input matInput formControlName="HOST" placeholder="eg. 0.0.0.0" type="text"
+                                            class="example-right-align">
+                                    </mat-form-field>
+                                </div> -->
+                            </div>
 
                             <ng-container *ngFor="let item of MAC_DETAILS.controls; let i = index">
 
                                 <div class="row addr-row" [formGroupName]="i">
+
                                     <div class="col-md-6">
                                         <mat-form-field>
                                             <mat-label>NAME</mat-label>
-                                            <input matInput formControlName="MAC_NAME" placeholder="" type="text"
-                                                class="example-right-align">
+                                            <mat-select formControlName="MAC_NAME">
+                    
+                                                <mat-option *ngFor="let key of deviceType" [value]="key">
+                                                    {{key}}
+                                                </mat-option>
+                            
+                                            </mat-select>
                                         </mat-form-field>
                                     </div>
                                     <div class="col-md-6">

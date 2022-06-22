@@ -21,17 +21,17 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
 
   constructor(private dataService: AuthService) { }
   ngDoCheck(): void {
-    console.log('dochk', this.widgetIndex);
+    // console.log('dochk', this.widgetIndex);
     // this.getWidgetdetails();
     const id = this.widgetIndex.toString();
     let that = this;
     // if (this.Item.element)
-    let doc=`#${{id}}`;
+    // let doc=`#${{id}}`;
     let x=document.getElementById(id);
-    console.log(id,doc,document.getElementById(id))
+    // console.log(id,doc,document.getElementById(id))
       $(x).resizable({
         stop: function (event: Event, ui: any) {
-          console.log(ui)
+          // console.log(ui)
           that.height = $(ui.size.height)[0];
           that.width = $(ui.size.width)[0];
           const params: any = {
@@ -43,18 +43,18 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
   }
   ngOnInit(): void {
     let that = this;
-    $(".resizable").resizable({
-      stop: function (event: Event, ui: any) {
-        console.log(ui)
-        that.height = $(ui.size.height)[0];
-        that.width = $(ui.size.width)[0];
-        const params: any = {
-          width: that.width, height: that.height
-        }
-        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
-      }
-    });
-    console.log(that.WIDGET_REQUEST)
+    // $(".resizable").resizable({
+    //   stop: function (event: Event, ui: any) {
+    //     // console.log(ui)
+    //     that.height = $(ui.size.height)[0];
+    //     that.width = $(ui.size.width)[0];
+    //     const params: any = {
+    //       width: that.width, height: that.height
+    //     }
+    //     that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
+    //   }
+    // });
+    // console.log(that.WIDGET_REQUEST)
     // 
   }
   getWidgetdetails() {
@@ -69,15 +69,15 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
       }
     });
-    console.log(that.WIDGET_REQUEST)
+    // console.log(that.WIDGET_REQUEST)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('highlights:', this.WIDGET_REQUEST)
+    // console.log('highlights:', this.WIDGET_REQUEST)
     this.getWidgetdetails();
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-      console.log('highlights:', this.WIDGET_REQUEST)
+      // console.log('highlights:', this.WIDGET_REQUEST)
 
       this.getAllMACAddress();
       this.getWidgetdetails();

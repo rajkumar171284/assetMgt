@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Output,EventEmitter,OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, DoCheck,AfterViewInit, Output,EventEmitter,OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
@@ -13,7 +13,7 @@ declare let L: any;
   styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class MapComponent implements OnInit, AfterViewInit, OnChanges,DoCheck, OnDestroy {
 
   // Define our base layers so we can reference them multiple times
   streetMaps = tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -33,26 +33,37 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
   isCitySelected = false;
   setInterval: Subscription | undefined;
   @Output() _widgetData = new EventEmitter();
-
+  @Input() widgetIndex: any;
+  public height: any;
+  public width: any;
   constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
-
-  ngOnInit(): void {
-    let that=this;
-    $(".resizable").resizable({
-      stop: function (event: Event, ui: any) {
-        let height = $(ui.size.height)[0];
-        let width = $(ui.size.width)[0];               
-        const params: any = {
-          width: width, height: height
+  ngDoCheck(): void {
+    // console.log('dochk', this.widgetIndex);
+    // this.getWidgetdetails();
+    const id = this.widgetIndex.toString();
+    let that = this;
+    
+    let x=document.getElementById(id);
+    // console.log(id,doc,document.getElementById(id))
+      $(x).resizable({
+        stop: function (event: Event, ui: any) {
+          console.log(ui)
+          that.height = $(ui.size.height)[0];
+          that.width = $(ui.size.width)[0];
+          const params: any = {
+            width: that.width, height: that.height
+          }
+          that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
         }
-        that.WIDGET_REQUEST.WIDGET_SIZE=JSON.stringify(params);       
-      }
-    });
+      });
+  }
+  ngOnInit(): void {
+  
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-      console.log('map req:', this.WIDGET_REQUEST)
+      // console.log('map req:', this.WIDGET_REQUEST)
 
       this.getAllDevice();
     }
@@ -73,7 +84,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
   }
   getLocationsByConfigID() {
     this.dataService.getAllLocationsByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
-      console.log('map loc', res)
+      // console.log('map loc', res)
       if (res && res.data) {
         this.cityLocations = res.data.map((city: any) => {
           city.isSelected = false;
@@ -109,7 +120,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
   }
   getAllDevice() {
     this.dataService.getMACByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
-      console.log('map', res)
+      // console.log('map', res)
       // this.ref.detectChanges();
       if (res && res.data) {
         this.getLocationsByConfigID();
@@ -156,14 +167,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
 
 
   getCurrDeviceByLabel(res: any) {
-    // console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
 
     // collect location -active only
     const resultArr = res.data.filter((item: any) => {
       return item.MAC_STATUS === 1;
     })
     forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response: any) => {
-      console.log(response)
+      // console.log(response)
       this.markerArr = response;
       if (response && response.length > 0) {
         this.defaultLat = response[0].latitude;

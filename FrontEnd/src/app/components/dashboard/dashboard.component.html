@@ -64,7 +64,7 @@
                 </div>
                 <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='MAPS'">
 
-                  <app-map (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-map>
+                  <app-map [widgetIndex]="idx" (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-map>
 
                 </div>
                 <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='CHARTS'">

@@ -14,8 +14,9 @@ enum tabLabel {
   'Connections' = 1,
   'Sensors' = 2,
   'Asset' = 3,
-  'Configuration' = 4,
-  'Clients' = 5
+  'Clients' = 4,
+  'Configuration' = 5,
+  
 }
 enum enum2 {
   'Clients' = 5
@@ -140,7 +141,7 @@ export class ControlPanelComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         console.log('afterClosed')
         this.updateComp = 'afterClosed';
-        this.tabIndex=5;
+        this.tabIndex=4;
        
       });
     }
