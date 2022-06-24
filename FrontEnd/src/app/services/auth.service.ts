@@ -38,7 +38,7 @@ export class AuthService {
       return response;
     }))
   }
-
+  
   getAssetConfig(params: any): Observable<any> {
     return this.http.get(`${environment.url}/asset/getAllAssetsConfig/${params.COMPANY_ID}`, options).pipe(map(response => {
       return response;

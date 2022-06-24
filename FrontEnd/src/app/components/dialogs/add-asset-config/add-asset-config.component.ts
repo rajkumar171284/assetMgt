@@ -72,7 +72,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       INDUSTRIAL_TYPE: ['', Validators.required],
       INDUSTRIAL_DATA_SOURCE: [''],
       CONNECTION_TYPE: ['', Validators.required],
-      TRACKING_DEVICE: ['', Validators.required],
+      TRACKING_DEVICE: [''],
       SENSOR: ['', Validators.required],
       SENSOR_CATEGORY: [''],
       SENSOR_DATA_TYPE: ['', Validators.required],
@@ -92,6 +92,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       this.newForm.patchValue({
         SENSOR: parseInt(data.SENSOR),
         ASSET_TYPE: parseInt(data.ASSET_TYPE),
+        // CONNECTION_TYPE:JSON.parse(data.CONNECTION_TYPE)
 
       })
     }
@@ -190,9 +191,8 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
-      this.Values.COMPANY_ID = session.COMPANY_ID
+      
       this.Values.CREATED_BY = session.PID;
-      // console.log(this.Values)
       this.Values.CONFIG_NAME =this.Values.CONFIG_NAME.toUpperCase();
       this.dataService.addAssetConfig(this.Values).subscribe(res => {
         console.log(res)

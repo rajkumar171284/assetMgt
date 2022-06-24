@@ -10,7 +10,7 @@ import {AddConnectionComponent} from '../dialogs/add-connection/add-connection.c
 export class AssetConnectionsTypeComponent implements OnInit {
   dataSource = [];
   displayedColumns: string[] = [
-    "PID", "NAME", "actions"]
+    "PID", "CONN_NAME","IP" ,"actions"]
   constructor(private dataService: AuthService, public dialog: MatDialog) { }
 
   ngOnInit(): void {

@@ -2,6 +2,7 @@ import { Component, Inject, OnInit, Output, EventEmitter, Input } from '@angular
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
+import {_protocolType} from '../../../myclass';
 @Component({
   selector: 'app-add-connection',
   templateUrl: './add-connection.component.html',
@@ -12,11 +13,13 @@ export class AddConnectionComponent implements OnInit {
   @Output() dialogClose: any = new EventEmitter();
   newForm: FormGroup;
   public typeName:any;
+  protocolType=_protocolType;
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.newForm = this.fb.group({
       PID: [''],
-      NAME: ['', Validators.required],
+      CONN_NAME: ['', Validators.required],
+      IP:['', Validators.required]
     })
     console.log(data)
     if (data && !data.PID) {

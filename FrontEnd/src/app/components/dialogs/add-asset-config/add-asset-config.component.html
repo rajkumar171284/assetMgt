@@ -80,20 +80,18 @@
                 </div>
                 <div class="col-md-4">
                     <mat-form-field>
-                        <mat-label>SELECT CONNECTION TYPE</mat-label>
+                        <mat-label>SELECT PROTOCOL</mat-label>
                         <mat-select formControlName="CONNECTION_TYPE">
-
-                            <mat-option *ngFor="let key of assetConn" [value]="key.NAME">
-                                {{key.NAME}}
+                            <mat-option *ngFor="let key of assetConn" [value]="key.PID">
+                                {{key.CONN_NAME}}
                             </mat-option>
 
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                     <mat-form-field>
                         <mat-label>TRACKING DEVICE </mat-label>
-                        <!-- <input matInput formControlName="TRACKING_DEVICE" placeholder="" type="text" class="example-right-align"> -->
                         <mat-select formControlName="TRACKING_DEVICE">
 
                             <mat-option *ngFor="let key of trackingDevices" [value]="key">
@@ -102,7 +100,7 @@
 
                         </mat-select>
                     </mat-form-field>
-                </div>
+                </div> -->
            
                 <div class="col-md-4">
                     <mat-form-field>
@@ -116,7 +114,7 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                     <mat-form-field *ngIf="assetSubSensors.length==0">
                         <mat-label>SENSOR CATEGORY</mat-label>
                         <input matInput formControlName="SENSOR_CATEGORY" placeholder="(optional)" type="text"
@@ -133,7 +131,7 @@
 
                         </mat-select>
                     </mat-form-field>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                     <mat-form-field>
                         <mat-label>SENSOR DATA TYPE</mat-label>
@@ -171,7 +169,7 @@
                     <div class="col-md-10 offset-md-1">
                         <ng-container formArrayName="MAC_DETAILS">
                             <div class="row">
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <mat-form-field>
                                         <mat-label>API ROUTES</mat-label>
                                         <mat-select  formControlName="METHOD">
@@ -182,7 +180,7 @@
                 
                                         </mat-select>
                                     </mat-form-field>
-                                </div>
+                                </div> -->
                                 <!-- <div class="col-md-6">
                                     <mat-form-field>
                                         <mat-label>HOST NAME</mat-label>

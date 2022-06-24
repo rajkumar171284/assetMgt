@@ -70,6 +70,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     ASSET_CONFIG_ID: 0,
     DEVICE_ID: undefined,
     VALUE: undefined,
+    UNITS: undefined,
     STATUS: undefined,
     LATITUDE: undefined,
     LONGITUDE: undefined,
@@ -77,12 +78,9 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     LAST_UPDATE_TIME: undefined
   };
   myInterval: Subscription | undefined;
-  constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) { 
-  //  if(this.WIDGET_REQUEST){
-  //   console.log('chart req:', this.WIDGET_REQUEST)
-   
-  //  }
-    
+  constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
+
+
   }
 
   ngOnInit(): void {
@@ -93,54 +91,21 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes, this.pMap)
-    if (this.WIDGET_REQUEST) {
-      this.dataService.getAssetConfigDetailsById(this.WIDGET_REQUEST).subscribe(response=>{
-        console.log(response)
-      })
+    if (this.WIDGET_REQUEST && this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
+      this.getDeviceLog()
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-      
+
       console.log('chart reqs:', this.WIDGET_REQUEST.CHART_NAME, this.WIDGET_REQUEST.ASSET_CONFIG_ID, this.WIDGET_REQUEST.WIDGET_DATA)
       if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
         // this.labelMessage = `Total Count`;
         if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
           // run tatapower api to get random data those to be saved in db
-          const time = interval(6000);
-          this.myInterval = time.subscribe(() => {
-            this.dataService.getMqtt({}).subscribe(response => {
-              console.log(response)
-              if (response) {
-                const res = response.data;
-                const value = response.data;
-                // if (value.sensorId) {
-                //   delete value.sensorId;
-                // }
-                // if (value.date) {
-                //   delete value.date;
-                // }
-                // if (value.location) {
-                //   delete value.location;
-                // }
-                this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
-                this.newDevice.DEVICE_ID = res.sensorId;
-                this.newDevice.STATUS = true;
-                this.newDevice.VALUE = JSON.stringify(value);
-                this.newDevice.LOCATION = res.location;
-                this.newDevice.LAST_UPDATE_TIME = res.date;
-
-                console.log(this.newDevice)
-
-                this.dataService.saveDeviceHistory(this.newDevice).subscribe(resp => {
-                  console.log(resp)
-                })
-
-              }
-            })
-          })
-
+          
+          
 
         } else {
 
-          this.getCurrDeviceByLabel()
+          this.getDeviceLog()
 
         }
       }
@@ -149,14 +114,36 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  async getCurrDeviceByLabel() {
+  async getDeviceLog() {
     console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
     this.dataService.getDeviceCurrStatusByConfigID(this.WIDGET_REQUEST).subscribe(result => {
-      // console.log(result)
-      if (result && result.data.length > 0) {
-        this.widgetResponse = result;
+      console.log(result)
+      const set = false;
+      if (result && result.data.length > 0 && !set) {
+        
+        const protocol =result.PROTOCOL;
+        if(protocol && protocol.CONN_NAME=='MQTT'){
+
+          this.getMQTTdata()
+        }
+
+        this.widgetResponse = result.data.map((ele: any) => {
+          // if(ele.VALUE){
+          //   try {
+          //     ele.DATA_VALUE=JSON.parse(ele.VALUE)
+          //   }
+          //   catch(e){
+          //     return false;
+          //   }
+          // }
+          
+          // ele.DATA_VALUE=ele.VALUE?JSON.parse(ele.VALUE):''
+          return ele;
+        });
+        console.log(this.widgetResponse)
         // get x axes as  
         this.ref.detectChanges();
+        return;
         for (let a of result.totalDevice) {
           a.totalSpeed = 0;
           a.totalKM = 0;
@@ -316,4 +303,32 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
+  getMQTTdata(){
+    const time = interval(6000);
+    this.myInterval = time.subscribe(() => {
+      this.dataService.getMqtt({}).subscribe(response => {
+        console.log(response)
+        if (response) {
+          const res = response.data;
+          const value = response.data;
+          
+          this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
+          this.newDevice.DEVICE_ID = res.sensorId;
+          this.newDevice.STATUS = true;
+          this.newDevice.VALUE = JSON.stringify(value);
+          this.newDevice.UNITS =JSON.stringify(value);
+          this.newDevice.LOCATION = res.location;
+          this.newDevice.LAST_UPDATE_TIME = res.date;
+
+          console.log(this.newDevice)
+
+          this.dataService.saveDeviceHistory(this.newDevice).subscribe(resp => {
+            console.log(resp)
+           
+          })
+
+        }
+      })
+    })
+  }
 }

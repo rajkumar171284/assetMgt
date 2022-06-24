@@ -87,7 +87,7 @@ export class ControlPanelComponent implements OnInit {
     console.log(this.tabIndex, tabLabel.Connections, tabLabel.Sensors)
     if (this.tabIndex === tabLabel.Connections) {
       let dialogRef = this.dialog.open(AddConnectionComponent, {
-        width: '800px',
+        width: '100px',
         data: null
       });
       dialogRef.afterClosed().subscribe(result => {

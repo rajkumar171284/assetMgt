@@ -16,12 +16,15 @@ export interface __addAssetDevice{
     ASSET_CONFIG_ID:number,
     DEVICE_ID:any,
     VALUE:any,
+    UNITS:any,
     STATUS:any,
     LATITUDE:any,
     LONGITUDE:any,
     LOCATION:any,
     LAST_UPDATE_TIME:any
 }
+export const _protocolType=['HTTP','HTTPS','MQTT']
+
 export const _widgetSIZE = [{ name: 'Full width', file: 'col-md-12', isSelected: false },
 { name: 'Md width', file: 'col-md-7', isSelected: false },
 { name: 'Sm width', file: 'col-md-5', isSelected: false },
@@ -52,7 +55,7 @@ export const _assetTypes = ['Security',
     ' Augmented Reality',
     'Motion Detection'
 ];
-export const _deviceType = ["IMEI", "MAC ADDRESS"];
+export const _deviceType = ["IMEI", "MAC ADDRESS","DEVICE ID"];
 export interface __deviceHistory{
     PID:number;
     ASSET_CONFIG_ID:number;

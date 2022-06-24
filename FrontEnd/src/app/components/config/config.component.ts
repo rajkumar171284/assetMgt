@@ -40,13 +40,14 @@ export class ConfigComponent implements OnInit,OnChanges {
   tabIndex = 0;
   configData: config[] = [];
   displayedColumns: string[] = [
+    "COMPANY_NAME" ,
     "CONFIG_NAME",
     "Asset_Name",
-    // "Use_Type" , 
-    "Industrial_Type",
-    "Connection_Type",
-    "Tracking_Device_Type",
-    'SENSOR',
+     
+    // "Industrial_Type",
+    // "CONN_NAME",
+    // "Tracking_Device_Type",
+    'NAME',
     // "Sub_Category_Sensor_Type",
     // "Sensor_Data_Type",
     "MAC_Address", "actions"
@@ -65,9 +66,25 @@ export class ConfigComponent implements OnInit,OnChanges {
   }
   async getAllAssetConfig() {
     const session = await this.dataService.getSessionData();
-    let params = { COMPANY_ID: session.COMPANY_ID };
+    // if admin -inspirisys then show all asset config records by passing company id empty
+   
+    let params:any={}
+    if(session.COMPANY_TYPE=='CORP' && session.ROLE==='ADMIN'){
+      params = { COMPANY_ID:0  };
+    }else if(session.COMPANY_TYPE!='CORP'){
+      // client then pass comp id
+      params = { COMPANY_ID: session.COMPANY_ID };
+
+    }
+    
     this.dataService.getAssetConfig(params).subscribe(res => {
-      this.dataSource = res.data;
+      this.dataSource = res.data.map((element:any)=>{
+        // const name=JSON.parse(element.CONNECTION_TYPE)?JSON.parse(element.CONNECTION_TYPE):''
+        // element.CONN_NAME=  name.CONN_NAME;
+        return element
+
+      });
+      console.log( this.dataSource)
     })
   }
 
@@ -97,7 +114,7 @@ export class ConfigComponent implements OnInit,OnChanges {
     });
   }
  
-  async expandItem(element: any) {
+   expandItem(element: any) {
     // console.log(element.stopPropagation())
     if (element) {
       this.dataService.getMACByConfigID(element).subscribe(res => {

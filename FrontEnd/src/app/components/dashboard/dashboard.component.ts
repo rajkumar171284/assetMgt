@@ -84,20 +84,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
 
 
-
-    // $(".resizable").resizable({
-    //   stop: function( event:Event, ui:any ) {
-
-    //     let height = $("#resizable").height(); 
-
-    //     let width = $("#resizable").width(); 
-    //     console.log('width',width,'height',height)
-    // } 
-    // });
-    // $(".resizable").on('resize', function (e: Event) {
-    //   console.log('resizable')
-    // });
-
     this.data.width = 200;
     this.data.height = 200;
     // console.log('dash')

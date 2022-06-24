@@ -6,10 +6,19 @@
 </mat-toolbar>
 <form class="form-container" [formGroup]="newForm">
     <mat-grid-list cols="1" rowHeight="2:1">
+        <mat-label>SELECT PROTOCOL</mat-label>
+        <mat-select formControlName="CONN_NAME">
+            <mat-option *ngFor="let key of protocolType" [value]="key">
+                {{key}}
+            </mat-option>
 
+        </mat-select>
+        </mat-grid-list>
+    <mat-grid-list cols="1" rowHeight="2:1">
+       
         <mat-form-field>
-            <mat-label>Connection NAME</mat-label>
-            <input formControlName="NAME" matInput placeholder="" type="text" class="example-right-align">
+            <mat-label>IP ADDRESS</mat-label>
+            <input formControlName="IP" matInput placeholder="" type="text" class="example-right-align">
            </mat-form-field>
 
        
