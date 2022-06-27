@@ -12,27 +12,66 @@
     </div>
 
 </div> -->
-<div>
-    <form class="form-container p-2" [formGroup]="newForm">
-    <mat-form-field>
-        <mat-label>Plot by</mat-label>       
-        <mat-select placeholder="Select Unit" (selectionChange)="onFilterChange()" formControlName="PLOT_TYPE">
-            <mat-option *ngFor="let key of filterBy" [value]="key">
-                {{key}}
-            </mat-option>
 
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>Select xAxes</mat-label>       
-        <mat-select placeholder="Select xAxes"  (selectionChange)="onFilterChange()" formControlName="PLOT_XAXES">
-            <mat-option *ngFor="let key of filterXaxes" [value]="key">
-                {{key}}
-            </mat-option>
+<form class="form-container p-2" [formGroup]="newForm">
+    <div *ngIf="filterShow1">
 
-        </mat-select>
-    </mat-form-field>
+        <mat-form-field>
+            <mat-label>Plot by</mat-label>
+            <mat-select placeholder="Select Unit" (selectionChange)="onFilterChange()" formControlName="PLOT_TYPE">
+                <mat-option *ngFor="let key of filterBy" [value]="key">
+                    {{key}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Select xAxes</mat-label>
+            <mat-select placeholder="Select xAxes" (selectionChange)="onFilterChange()" formControlName="PLOT_XAXES">
+                <mat-option *ngFor="let key of filterXaxes" [value]="key">
+                    {{key}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+
+    <!--  -->
+    <div *ngIf="filterShow2 && widgetResponse">
+        <mat-form-field appearance="fill">
+            <mat-label>Select Loction</mat-label>
+            <mat-select placeholder="" formControlName="LOCATION">
+                <mat-option *ngFor="let key of widgetResponse.locations" [value]="key">
+                    {{key.LOCATION}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate formControlName="START_DATE" placeholder="Start date">
+              <input matEndDate formControlName="END_DATE" placeholder="End date">
+            </mat-date-range-input>
+            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          
+            <!-- <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+            <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error> -->
+          </mat-form-field>
+
+          <button (click)="filterSrc()">
+            <mat-icon>search</mat-icon>
+          </button>
+          
+    </div>
 </form>
-</div>
-<plotly-plot  [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true"
-(hover)="hover($event)" (mouseleave)="mouseLeave($event)"></plotly-plot>
+
+<!-- <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
+    (mouseleave)="mouseLeave($event)"></plotly-plot> -->
+
+    <div>
+        <app-guage [name]="widgetResponse.totalDevice"></app-guage>
+    </div>

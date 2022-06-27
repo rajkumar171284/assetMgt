@@ -1,0 +1,3 @@
+<div class="g-flex" *ngFor="let item of myGraph">
+    <plotly-plot [data]="item.data" [layout]="item.layout" [useResizeHandler]="true"></plotly-plot>
+</div>

@@ -31,7 +31,7 @@ client.on("connect", function () {
     // })
 })
 
-var finaData;
+var finalData;
 
 function ambientTemp() {
     var data = Math.random() * (45.5 - 2.5) + 2.5;
@@ -131,7 +131,7 @@ function location() {
     return textArray[randomloc];
 }
 
-function sensorId(){
+function sensorId() {
 
     var textArray = [
         'sensor001',
@@ -139,9 +139,9 @@ function sensorId(){
         'sensor003',
         'sensor004'
     ];
-    var randomloc = Math.floor(Math.random()*textArray.length);
+    var randomloc = Math.floor(Math.random() * textArray.length);
     return textArray[randomloc];
-    }
+}
 
 function sensor_data() {
     var sensor_data = {
@@ -164,7 +164,7 @@ function sensor_data() {
         oilWaterActivity: oilWaterActivity(),
         oilMoisture: oilMoisture(),
         location: location(),
-        sensorId:sensorId(),
+        sensorId: sensorId(),
         date: new Date()
     }
     return sensor_data;
@@ -174,25 +174,32 @@ function sensor_data() {
 
 function mqtt_pub() {
 
-    finaData = sensor_data()
-    finaData = JSON.stringify(finaData)
+    finalData = sensor_data()
+    finalData = JSON.stringify(finalData)
     // console.log(finaData)
-    client.publish('tatapower', finaData)
+    client.publish('tatapower', finalData)
     //client.end();
-    finaData = "";
+    finalData = "";
     return null;
 }
 
 mqtt_pub()
 var dataF = setInterval(mqtt_pub, 3000);
 router.get('/tatapower', (req, res) => {
-    finaData = sensor_data()
-    finaData = JSON.stringify(finaData)
-    client.publish('tatapower', finaData);
+    finalData = sensor_data()
+    finalData = JSON.stringify(finalData)
+    client.publish('tatapower', finalData);
+    // 
+    // const value = JSON.parse(JSON.stringify(JSON.parse(finalData)));
+    
+    // res.status(200).json({ data: JSON.parse(finalData), status: 200, })
+    // res.status(500).json({ error: 'message' })
     res.send({
-        data:JSON.parse(finaData),
+        data: JSON.parse(finalData),
         status: 200,
-    });
+        msg: `Record received,successfully`
+    })
+
 
 });
 module.exports = router;

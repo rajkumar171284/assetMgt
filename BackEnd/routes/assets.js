@@ -621,6 +621,48 @@ router.post('/addDeviceHistory', (req, res) => {
     })
 })
 
+// filter
+router.post('/getDeviceHistory', (req, res) => {
+    let sql;
+    let sql2;
+    let sql3, sql4;
+    // :ASSET_CONFIG_ID/:START_DATE/:END_DATE
+    
+    sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
+    // sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? LAST_UPDATE_TIME`
+    let todo = [req.body.ASSET_CONFIG_ID]
+    let todo2 = [req.body.START_DATE,req.body.END_DATE]
+    // console.log(req.body)
+    db.query(sql, todo2, (err, result) => {
+        if (err) throw err;
+        else
+            sql2 = `SELECT DISTINCT DEVICE_ID FROM device_history_tbl WHERE ASSET_CONFIG_ID=?`
+
+        db.query(sql2, todo, (err2, result2) => {
+            if (err2) throw err2;
+            else
+                sql3 = `SELECT DISTINCT LOCATION FROM device_history_tbl WHERE ASSET_CONFIG_ID=?`
+            db.query(sql3, todo, (err3, result3) => {
+                if (err3) throw err3;
+                else
+                    sql4 = `SELECT asset_config_tbl.CONFIG_NAME,asset_config_tbl.COMPANY_ID,asset_connection_type_tbl.CONN_NAME,asset_connection_type_tbl.IP FROM asset_config_tbl LEFT JOIN asset_connection_type_tbl ON asset_connection_type_tbl.PID=asset_config_tbl.CONNECTION_TYPE WHERE asset_config_tbl.PID=?`
+                let todo = [req.body.ASSET_CONFIG_ID]
+
+                db.query(sql4, todo, (err4, result4) => {
+                    if (err4) throw err4;
+                    else
+                        res.send({
+                            data: result,
+                            status: 200,
+                            totalDevice: result2,
+                            locations: result3,
+                            protocol: result4
+                        })
+                })
+            })
+        })
+    })
+})
 router.get('/getDeviceCurrStatusByConfigID/:ASSET_CONFIG_ID', (req, res) => {
     let sql;
     let sql2;
@@ -649,8 +691,8 @@ router.get('/getDeviceCurrStatusByConfigID/:ASSET_CONFIG_ID', (req, res) => {
                             data: result,
                             status: 200,
                             totalDevice: result2,
-                            Locations: result3,
-                            PROTOCOL: result4
+                            locations: result3,
+                            protocol: result4
                         })
                 })
             })

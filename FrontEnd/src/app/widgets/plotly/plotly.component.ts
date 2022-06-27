@@ -6,9 +6,16 @@ import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { __addAssetDevice } from '../../myclass';
 import { interval } from 'rxjs';
+import * as moment from 'moment'
 interface xcol {
   MAC_ADDRESS_ID: number
 }
+
+
+interface _device {
+  DEVICE_ID: any
+}
+
 @Component({
   selector: 'app-plotly',
   templateUrl: './plotly.component.html',
@@ -42,7 +49,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   //   pointIndex: 1
   // };
 
-  graph1 = {
+  graph1: any = {
     data: [
       { x: [], y: [], type: '' },
     ],
@@ -63,7 +70,13 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   };
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
-  widgetResponse: any;
+  widgetResponse: any = {
+    locations: [],
+    protocol: {},
+    data: [],
+    status: '',
+    totalDevice: [],
+  };
 
   newDevice: __addAssetDevice = {
     PID: 0,
@@ -78,12 +91,22 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     LAST_UPDATE_TIME: undefined
   };
   myInterval: Subscription | undefined;
+  filterShow1: boolean = false;
+  filterShow2: boolean = false;
+
+  todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
+  todayEndDate: any = moment().endOf('day').toString();
+  deviceList: _device[] = []
   constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
 
+    console.log(moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString())
+    //  console.log(moment().subtract(1,'days').endOf('day').toString())
 
   }
 
   ngOnInit(): void {
+
+
   }
   ngOnDestroy(): void {
     this.myInterval?.unsubscribe();
@@ -91,20 +114,38 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes, this.pMap)
-    if (this.WIDGET_REQUEST && this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
-      this.getDeviceLog()
+    this.filterSrc()
+    if (this.WIDGET_REQUEST) {
+
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
 
       console.log('chart reqs:', this.WIDGET_REQUEST.CHART_NAME, this.WIDGET_REQUEST.ASSET_CONFIG_ID, this.WIDGET_REQUEST.WIDGET_DATA)
       if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
+        this.getDeviceLog()
         // this.labelMessage = `Total Count`;
         if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
+          this.filterShow2 = true;
+          this.filterShow1 = false;
+
+          this.newForm = this.fb.group({
+
+            // SENSOR_TYPE_ID: ['', Validators.required],
+            PLOT_XAXES: [''],
+            PLOT_TYPE: [''],
+            LOCATION: [''],
+            START_DATE: [''],
+            END_DATE: ['']
+          })
           // run tatapower api to get random data those to be saved in db
-          
-          
+          this.newForm.patchValue({
+            START_DATE: new Date(this.todayStartDate),
+            END_DATE: new Date(this.todayEndDate)
+          })
+
 
         } else {
-
+          this.filterShow1 = true;
+          this.filterShow2 = false;
           this.getDeviceLog()
 
         }
@@ -114,33 +155,154 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
+  get VALUES() {
+    return this.newForm.value;
+  }
+  filterSrc() {
+    // console.log(this.todayStartDate)
+
+    // console.log(moment(this.VALUES.START_DATE).startOf('day').format("YYYY-MM-DD HH:mm:ss").toString())
+
+    this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
+    this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
+    console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
+  }
+
   async getDeviceLog() {
-    console.log('this.WIDGET_REQUEST-charts-count', this.WIDGET_REQUEST)
-    this.dataService.getDeviceCurrStatusByConfigID(this.WIDGET_REQUEST).subscribe(result => {
+    let arr: any = []
+
+    const params: any = {
+      ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID,
+      START_DATE: moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString(),
+      END_DATE: moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString()
+
+    }
+    // console.log(params)
+    this.dataService.getDeviceHistoryByFilter(params).subscribe(async result => {
       console.log(result)
       const set = false;
       if (result && result.data.length > 0 && !set) {
-        
-        const protocol =result.PROTOCOL;
-        if(protocol && protocol.CONN_NAME=='MQTT'){
-
+        this.widgetResponse = result;
+        // this.widgetResponse.totalDevice.history=[];
+        const protocol = result.protocol;
+        // console.log('MQTT',protocol)
+        if (protocol && protocol[0].CONN_NAME == 'MQTT') {
+          // console.log('MQTT')
           this.getMQTTdata()
         }
+        // const objectKeys = await result.data.map(this.getKEYS)
+        for (let sensor of this.widgetResponse.totalDevice) {
+          sensor.history = [];
+          sensor.unitsArr = [];
+          sensor.history = this.widgetResponse.data.filter((obj: any) => {
+            return obj.DEVICE_ID == sensor.DEVICE_ID;
+          }).map((resp: any) => {
+            let VALUE = resp.VALUE;
+            resp.newVALUE = '';
+            try {
+              resp.newVALUE = JSON.parse(VALUE);
+            } catch (err) {
+              resp.newVALUE = JSON.stringify(VALUE);
+            }
+            return resp.newVALUE;
+          })
+          // setup unique object
+          let index = this.widgetResponse.data.findIndex((obj: any) => {
+            return obj.DEVICE_ID == sensor.DEVICE_ID;
+          })
+          if (index != -1) {
 
-        this.widgetResponse = result.data.map((ele: any) => {
-          // if(ele.VALUE){
-          //   try {
-          //     ele.DATA_VALUE=JSON.parse(ele.VALUE)
-          //   }
-          //   catch(e){
-          //     return false;
-          //   }
-          // }
-          
-          // ele.DATA_VALUE=ele.VALUE?JSON.parse(ele.VALUE):''
-          return ele;
-        });
+            let VALUE = this.widgetResponse.data[index].VALUE;
+            try {
+              VALUE = JSON.parse(VALUE);
+              sensor.VALUE = VALUE;
+              // console.log(Object.keys(VALUE))
+              // const newObject = Object.keys(VALUE);
+              // console.log('newObject', newObject)
+              // let oIndex = 0;
+              for (let a of Object.keys(VALUE)) {
+                // console.log(Object.keys(VALUE)[oIndex])
+                let key: any = a;
+                var object: any = {};
+                object[key] = 0;
+                sensor.unitsArr.push(object)
+                // console.log(object);
+                // oIndex++;
+              }
+            } catch (err) {
+              VALUE = JSON.stringify(VALUE);
+              sensor.VALUE = VALUE;
+              for (let a of Object.keys(VALUE)) {
+                // console.log(Object.keys(VALUE)[oIndex])
+                let key: any = a;
+                var object: any = {};
+                object[key] = 0;
+                sensor.unitsArr.push(object)
+                // console.log(object);
+                // oIndex++;
+              }
+
+            }
+          }
+
+          // get total units value
+          for (let unit of sensor.unitsArr) {
+            // console.log('unit', Object.keys(unit))
+            for (let u of Object.keys(unit)) {
+              console.log('unit', u)
+              // let mp=sensor.history.map((hItem: any) => {
+              //   console.log('hItem', Object.keys(hItem))
+              //   return  Object.keys(hItem).map(z => u)
+              //   //  hItem
+              // })
+              // console.log(mp)
+            }
+
+
+            let uIndex = sensor.history.findIndex((x: any) => {
+              console.log(Object.keys(x))
+              for (let key of Object.keys(x)) {
+                console.log(key)
+              }
+              return x
+            });
+
+          }
+        }
         console.log(this.widgetResponse)
+        if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
+
+          var data = [
+            {
+              domain: { x: [0, 1], y: [0, 1] },
+              value: 270,
+              title: { text: "Speed" },
+              type: "indicator",
+              mode: "gauge+number"
+            }
+          ];
+          this.graph1.data = data;
+          this.graph1.layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+
+        }
+        // result.data.forEach((ele: any) => {
+        //   ele.DATA_VALUE=ele.VALUE?JSON.parse(ele.VALUE):''
+        //   arr.push(ele)
+        // });
+
+        // this.widgetResponse = result.data.map((ele: any) => {
+        //   // if(ele.VALUE){
+        //   //   try {
+        //   //     ele.DATA_VALUE=JSON.parse(ele.VALUE)
+        //   //   }
+        //   //   catch(e){
+        //   //     return false;
+        //   //   }
+        //   // }
+
+        //   // ele.DATA_VALUE=ele.VALUE?JSON.parse(ele.VALUE):''
+        //   return ele;
+        // });
         // get x axes as  
         this.ref.detectChanges();
         return;
@@ -178,6 +340,51 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
+  getKEYS(result: any) {
+    if (result) {
+
+      try {
+        const VALUE = JSON.parse(result.VALUE);
+        // console.log('parse', VALUE);
+        let index = this.deviceList.findIndex((item: any) => {
+
+          return item.DEVICE_ID == result.DEVICE_ID;
+        })
+        if (index == -1) {
+          this.deviceList.push({
+            DEVICE_ID: result.DEVICE_ID
+          })
+        }
+        console.log(this.deviceList)
+        // for (let a of Object.keys(VALUE)) {
+        //   console.log(arr)
+        // }
+      } catch (err) {
+        const VALUE = JSON.parse(JSON.stringify(result.VALUE));
+        let index = this.deviceList.findIndex((item: _device) => {
+
+          return item.DEVICE_ID == result.DEVICE_ID;
+        })
+        if (index == -1) {
+          this.deviceList.push({
+            DEVICE_ID: result.DEVICE_ID
+          })
+        }
+        console.log(this.deviceList)
+        // console.log('stringify',VALUE); 
+        // console.log('stringify',VALUE.activePower); 
+        for (let a of Object.keys(VALUE)) {
+          // console.log(a)
+        }
+      }
+
+
+
+      // console.log(VALUE.activePower)
+
+
+    }
+  }
   xAndYaxesChart(result: any) {
 
     let plotArray: any = [];
@@ -303,32 +510,58 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  getMQTTdata(){
+  getMQTTdata() {
     const time = interval(6000);
     this.myInterval = time.subscribe(() => {
       this.dataService.getMqtt({}).subscribe(response => {
-        console.log(response)
+        // console.log('getMqtt',)
         if (response) {
+
           const res = response.data;
-          const value = response.data;
-          
+          const value = JSON.parse(JSON.stringify(response.data));
+          // console.log(value.activePower)
+
           this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
           this.newDevice.DEVICE_ID = res.sensorId;
           this.newDevice.STATUS = true;
           this.newDevice.VALUE = JSON.stringify(value);
-          this.newDevice.UNITS =JSON.stringify(value);
+          this.newDevice.UNITS = JSON.stringify(value);
           this.newDevice.LOCATION = res.location;
           this.newDevice.LAST_UPDATE_TIME = res.date;
 
-          console.log(this.newDevice)
+          // console.log(this.newDevice)
 
           this.dataService.saveDeviceHistory(this.newDevice).subscribe(resp => {
-            console.log(resp)
-           
+            // console.log(resp)
+
           })
 
         }
       })
     })
+  }
+
+
+  async getParsed(data: any) {
+    if (!data) return;
+    let VALUE = data.VALUE;
+    try {
+      VALUE = JSON.parse(VALUE);
+      data.VALUE = VALUE;
+      return data;
+      // for (let a of Object.keys(VALUE)) {
+      //   console.log(arr)
+      // }
+    } catch (err) {
+      VALUE = JSON.parse(VALUE);
+      data.VALUE = VALUE;
+      return data;
+      // console.log('stringify',VALUE); 
+      // console.log('stringify',VALUE.activePower); 
+      // for (let a of Object.keys(VALUE)) {
+      //   // console.log(a)
+      // }
+    }
+
   }
 }
