@@ -27,8 +27,8 @@
 <!-- cdkDrag [cdkDragDisabled]="dragDisabled||List=='0'" -->
 <!-- cdkDropListOrientation="horizontal" -->
             <div  cdkDrag [cdkDragDisabled]="dragDisabledArr[idx].dragDisabled||List=='0'"
-              [ngClass]="{'col-md-12 ':List=='0','col-md-6':List!='0'}"  class="mb-2" *ngFor="let List of draggedWidget;let idx=index" >
-              <div [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="example-box1 resizable1 listed-charts"
+              [ngClass]="{'col-md-12 ':List=='0','col-md-12':List!='0'}"  class="mb-2" *ngFor="let List of draggedWidget;let idx=index" >
+              <div [ngClass]="{'draggedEmpty minWidgetHight':List=='0'}" class="row example-box1 resizable1 listed-charts"
                 color="primary">
 
                 <!-- <span class="savewidget" (_widgetData)="saveWidget($event)">
@@ -116,8 +116,6 @@
                 <span appWidgetAccessIf class="mapped-close">
                   <mat-icon (click)="editRequest(List)" color="accent">edit</mat-icon>
                   <mat-icon (click)="removeRequest(List)" color="warn">delete_outline</mat-icon>
-
-
                 </span>
                 <mat-card-subtitle>
                   {{getRequestDetails(List,'n')}} of {{getRequestDetails(List,'config')}}

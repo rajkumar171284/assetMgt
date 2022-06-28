@@ -58,8 +58,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 // resize
-.overlay{
- 
+.form-container{
+//  border:1px solid red;
+ width: 100%;
 }
 .savewidget{
   position: absolute;

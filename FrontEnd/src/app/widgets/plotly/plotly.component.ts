@@ -166,6 +166,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
     this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
     console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
+    this.getDeviceLog();
   }
 
   async getDeviceLog() {
@@ -173,8 +174,8 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
     const params: any = {
       ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID,
-      START_DATE: moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString(),
-      END_DATE: moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString()
+      START_DATE: this.WIDGET_REQUEST.START_DATE,
+      END_DATE: this.WIDGET_REQUEST.END_DATE
 
     }
     // console.log(params)
@@ -224,10 +225,9 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
                 // console.log(Object.keys(VALUE)[oIndex])
                 let key: any = a;
                 var object: any = {};
-                object[key] = 0;
-                sensor.unitsArr.push(object)
-                // console.log(object);
-                // oIndex++;
+                object.key = key;
+                object.totalValue = 0;
+                sensor.unitsArr.push(object);
               }
             } catch (err) {
               VALUE = JSON.stringify(VALUE);
@@ -236,10 +236,9 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
                 // console.log(Object.keys(VALUE)[oIndex])
                 let key: any = a;
                 var object: any = {};
-                object[key] = 0;
-                sensor.unitsArr.push(object)
-                // console.log(object);
-                // oIndex++;
+                object.key = key;
+                object.totalValue = 0;
+                sensor.unitsArr.push(object);
               }
 
             }
@@ -248,27 +247,26 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
           // get total units value
           for (let unit of sensor.unitsArr) {
             // console.log('unit', Object.keys(unit))
-            for (let u of Object.keys(unit)) {
-              console.log('unit', u)
-              // let mp=sensor.history.map((hItem: any) => {
-              //   console.log('hItem', Object.keys(hItem))
-              //   return  Object.keys(hItem).map(z => u)
-              //   //  hItem
-              // })
-              // console.log(mp)
-            }
 
+            let mp = sensor.history.forEach((Item: any) => {
 
-            let uIndex = sensor.history.findIndex((x: any) => {
-              console.log(Object.keys(x))
-              for (let key of Object.keys(x)) {
-                console.log(key)
+              let vIndex = 0;
+              for (let v of Object.keys(Item)) {
+                if (v === unit.key) {
+
+                  // console.log(Object.keys(Item)[vIndex])
+                  unit.totalValue = unit.totalValue + Object.values(Item)[vIndex]
+                }
+                vIndex++;
               }
-              return x
-            });
-
+            })
+            console.log(mp)
           }
+
+
+
         }
+
         console.log(this.widgetResponse)
         if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
 
@@ -489,7 +487,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
 
   }
-
+  
   // We'll bind the hover event from plotly
   hover(event: any): void {
     // The hover event has a lot of information about cursor location.

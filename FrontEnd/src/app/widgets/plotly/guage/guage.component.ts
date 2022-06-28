@@ -3,9 +3,10 @@ import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 // import { AuthService } from '../../services/auth.service';
-// import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 // import { __addAssetDevice } from '../../myclass';
 import { interval } from 'rxjs';
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 @Component({
   selector: 'app-guage',
   templateUrl: './guage.component.html',
@@ -14,39 +15,63 @@ import { interval } from 'rxjs';
 export class GuageComponent implements OnInit, OnChanges {
   @Input() name: any;
   graph1: any = {};
-  public myGraph: any;
-  constructor() { }
+  public myGraph: any = [];
+  @Input() selectedDevice: any;
+  newForm: FormGroup = this.fb.group({
+
+    // SENSOR_TYPE_ID: ['', Validators.required],
+    DEVICE_ID: [''],
+  })
+  constructor(private fb: FormBuilder,) {
+    
+   }
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.name)
     if (this.name) {
-      this.myGraph=this.name;
+      this.selectedDevice=0;
+      this.newForm.patchValue({
+        DEVICE_ID:this.selectedDevice
+      })
+      this.generateChart(this.name)
+
     }
-    // this.generateChart(this.name)
+    console.log(this.selectedDevice)
 
   }
 
   generateChart(array: any) {
-    let tot = 0;
-    for (let arr of this.myGraph) {
 
-      var data = [
-        {
-          domain: { x: [0, 1], y: [0, 1] },
-          value: tot + arr.VALUE.activePower,
-          title: { text: arr.DEVICE_ID },
-          type: "indicator",
-          mode: "gauge+number"
-        },
-        
-      ];
-      arr.data = data;
-      arr.layout = { width: 300, height: 230, margin: { t: 0, b: 0 } };
+this.myGraph=[];
+    for (let arr of array) {
+      let newObj: any = {};
+      newObj.DEVICE_ID = arr.DEVICE_ID;
+      newObj.units = [];
+      for (let item of arr.unitsArr) {
+        var data = [
+          {
+            domain: { x: [0, 1], y: [0, 1] },
+            value: item.totalValue,
+            title: { text: item.key },
+            type: "indicator",
+            mode: "gauge+number"
+          },
+
+        ];
+        let newItem: any = {}
+        newItem.data = data;
+        newItem.layout = { width: 300, height: 230, margin: { t: 0, b: 10 } };
+        newObj.units.push(newItem)
+
+      }
+      this.myGraph.push(newObj)
+      console.log(this.myGraph)
 
     }
   }
   ngOnInit(): void {
-    
 
   }
-
+  onDeviceChange(){
+    this.selectedDevice=this.newForm.get('DEVICE_ID')?.value;
+  }
 }
