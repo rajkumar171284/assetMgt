@@ -48,6 +48,15 @@ export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false }
 { name: 'scatter', file: 'scatter-chart', isSelected: false },
 { name: 'gauge', file: 'guage-widget', isSelected: false },
 ];
+export class widgetResponse {
+    totalLocations: [] | undefined;
+    locations: [] | undefined;
+    protocol: {} | undefined;
+    data: [] | undefined;
+    status: '' | undefined;
+    totalDevice: [] | undefined
+  
+  };
 
 export const _assetTypes = ['Security',
     'Activity Trackers',

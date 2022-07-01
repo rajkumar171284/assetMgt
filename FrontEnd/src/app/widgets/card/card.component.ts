@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
@@ -6,8 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { __addAssetDevice } from '../../myclass';
 import { interval } from 'rxjs';
-import * as moment from 'moment'
-
+import * as moment from 'moment';
 
 interface _device {
   DEVICE_ID: any
@@ -22,16 +21,14 @@ class widgetResponse {
 
 };
 @Component({
-  selector: 'app-plotly',
-  templateUrl: './plotly.component.html',
-  styleUrls: ['./plotly.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
-
+  selector: 'app-card',
+  templateUrl: './card.component.html',
+  styleUrls: ['./card.component.scss']
 })
-export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
+export class CardComponent implements OnChanges, OnDestroy {
 
   @Input() WIDGET_REQUEST: any;
-  errMessage: string = '';
+  errMessage: any;
   labelMessage2: any;
   deviceType: string = '';
   chartName: any;
@@ -71,7 +68,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
   widgetResponse: any = new widgetResponse()
-  loading = false;
+
   newDevice: __addAssetDevice = {
     PID: 0,
     ASSET_CONFIG_ID: 0,
@@ -87,34 +84,29 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   myInterval: Subscription | undefined;
   filterShow1: boolean = false;
   filterShow2: boolean = false;
+  @Input() selectedDevice: any;
 
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
-  deviceList: _device[] = [];
-  showGuage = false;
+  deviceList: _device[] = []
   constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
 
+    // console.log(moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString())
     this.newForm = this.fb.group({
       PLOT_XAXES: [''],
       PLOT_TYPE: [''],
       LOCATION: ['', this.filterShow2 ? Validators.required : ''],
       START_DATE: ['', this.filterShow2 ? Validators.required : ''],
       END_DATE: ['', this.filterShow2 ? Validators.required : ''],
+      // DEVICE_ID:[]
     })
+
 
 
   }
 
   ngOnInit(): void {
-    if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
-      this.filterShow2 = true;
-      this.filterShow1 = false;
 
-    } else {
-      this.filterShow1 = true;
-      this.filterShow2 = true;
-
-    }
 
   }
   ngOnDestroy(): void {
@@ -125,39 +117,38 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     // console.log(changes, this.pMap)
     // 
     if (this.WIDGET_REQUEST) {
-      this.widgetResponse = new widgetResponse();
+      this.widgetResponse = new widgetResponse()
 
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
 
       // console.log('chart reqs:', this.WIDGET_REQUEST.CHART_NAME, this.WIDGET_REQUEST.ASSET_CONFIG_ID, this.WIDGET_REQUEST.WIDGET_DATA)
-      if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
+      if (this.WIDGET_REQUEST.WIDGET_TYPE) {
         this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
-
+          // console.log(locations)
           if (locations && locations.data.length > 0) {
 
             this.widgetResponse.totalLocations = locations.data;
-            if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
+            this.newForm.patchValue({
+              START_DATE: new Date(this.todayStartDate),
+              END_DATE: new Date(this.todayEndDate), LOCATION:
+                this.widgetResponse.totalLocations[0].LOCATION
+
+            })
+            if (this.WIDGET_REQUEST.CHART_NAME) {
 
 
               this.filterShow2 = true;
               this.filterShow1 = false;
-              // console.log(this.filterShow2)
 
-              // run tatapower api to get random data those to be saved in db
-              this.newForm.patchValue({
-                START_DATE: new Date(this.todayStartDate),
-                END_DATE: new Date(this.todayEndDate), LOCATION: this.widgetResponse.totalLocations[0].LOCATION
 
-              })
 
               this.filterSrc()
             } else {
-
+              this.filterShow1 = true;
+              this.filterShow2 = false;
               this.getDeviceLog()
 
             }
-
-          } else {
 
           }
         })
@@ -173,7 +164,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     return this.newForm.value;
   }
   filterSrc() {
-    this.loading = true;
     this.errMessage = '';
     this.WIDGET_REQUEST.LOCATION = this.VALUES.LOCATION;
     this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
@@ -182,13 +172,16 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     this.getDeviceLog();
   }
 
-  getDeviceLog() {
+  async getDeviceLog() {
     // loader
-    this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
-      // console.log(result)
+    this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(async result => {
+      console.log(result)
       const set = false;
-
       if (result && result.data.length > 0 && !set) {
+        this.selectedDevice = 0;
+        this.newForm.patchValue({
+          DEVICE_ID: this.selectedDevice
+        })
         this.widgetResponse.data = result.data;
         this.widgetResponse.protocol = result.protocol;
         this.widgetResponse.totalDevice = result.totalDevice
@@ -198,11 +191,11 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
           // console.log('MQTT')
           this.getMQTTdata()
         }
-        console.log(this.widgetResponse)
         // const objectKeys = await result.data.map(this.getKEYS)
         for (let sensor of this.widgetResponse.totalDevice) {
           sensor.history = [];
           sensor.unitsArr = [];
+          sensor.units = [];
           sensor.history = this.widgetResponse.data.filter((obj: any) => {
             return obj.DEVICE_ID == sensor.DEVICE_ID;
           }).map((resp: any) => {
@@ -225,155 +218,71 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
             try {
               VALUE = JSON.parse(VALUE);
               sensor.VALUE = VALUE;
+              let aIndex = 0;
               for (let a of Object.keys(VALUE)) {
                 let key: any = a;
+                var object: any = {};
+                object.key = key;
+                object.totalValue = 0;
+                sensor.unitsArr.push(object);
+                // latest value      
                 if (key != 'location' && key != 'date' && key != 'sensorId') {
-                  var object: any = {};
-                  object.key = key;
-                  object.totalValue = 0;
-                  sensor.unitsArr.push(object);
-
+                  var object2: any = {};
+                  object2.key = key;
+                  object2.value = Object.values(VALUE)[aIndex];
+                  sensor.units.push(object2);
                 }
+                aIndex++;
               }
             } catch (err) {
               VALUE = JSON.stringify(VALUE);
               sensor.VALUE = VALUE;
+              let aIndex = 0;
               for (let a of Object.keys(VALUE)) {
                 let key: any = a;
+                var object: any = {};
+                object.key = key;
+                object.totalValue = 0;
+                sensor.unitsArr.push(object);
+
+
+                // latest value      
                 if (key != 'location' && key != 'date' && key != 'sensorId') {
-                  var object: any = {};
-                  object.key = key;
-                  object.totalValue = 0;
-                  sensor.unitsArr.push(object);
+                  var object2: any = {};
+                  object2.key = key;
+                  object2.value = Object.values(VALUE)[aIndex];
+                  sensor.units.push(object2);
                 }
+
+                aIndex++;
               }
 
             }
           }
 
-          // get total units value
-          for (let unit of sensor.unitsArr) {
-            sensor.history.forEach((Item: any) => {
-              let vIndex = 0;
-              for (let v of Object.keys(Item)) {
-                if (v === unit.key) {
-                  unit.totalValue = unit.totalValue + Object.values(Item)[vIndex]
-                }
-                vIndex++;
-              }
-            })
-          }
-
-
+          // get total units value- later calc
+          // for (let unit of sensor.unitsArr) {
+          //   sensor.history.forEach((Item: any) => {
+          //     let vIndex = 0;
+          //     for (let v of Object.keys(Item)) {
+          //       if (v === unit.key) {
+          //         // console.log(Object.keys(Item)[vIndex])
+          //         unit.totalValue = unit.totalValue + Object.values(Item)[vIndex]
+          //       }
+          //       vIndex++;
+          //     }
+          //   })
+          // }
 
         }
 
         // console.log(this.widgetResponse)
-        if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
-          this.showGuage = true;
-          var data = [
-            {
-              domain: { x: [0, 1], y: [0, 1] },
-              value: 270,
-              title: { text: "Speed" },
-              type: "indicator",
-              mode: "gauge+number"
-            }
-          ];
-          this.graph1.data = data;
-          this.graph1.layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
 
-        }
-
-        // get x axes as  
-        // this.ref.detectChanges();
-        // return;
-        // for (let a of result.totalDevice) {
-        //   a.totalSpeed = 0;
-        //   a.totalKM = 0;
-        //   result.data.filter((x: any) => {
-        //     return x.DEVICE_ID == a.DEVICE_ID;
-        //   }).map((resp: any) => {
-        //     const value = JSON.parse(resp.VALUE);
-        //     a.totalSpeed = a.totalSpeed + value.speed;
-        //     a.totalKM = a.totalKM + value.odometer;
-        //   })
-        // }
-        // console.log(result)
-        else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line') {
-          console.log('line')
-          let linedata: any = [];
-          let index = 0;
-          for (let a of this.widgetResponse.totalDevice) {
-            let xArray = a.history.map((z: any) => {
-              let dt = new Date(z.date);
-              return moment(dt).format("DD-MM-YYYY HH:mm:ss")
-            });
-
-            const unique = [...new Set(xArray.map((uniq: any) => uniq))];
-
-            // format VALUE json as key & value
-            let newVALUE: any = [];
-            Object.keys(a.VALUE).forEach((item: any, index) => {
-              if (item != 'location' && item != 'date' && item != 'sensorId') {
-                newVALUE.push({
-                  key: item, value: Object.values(a.VALUE)[index]
-                })
-              }
-            })
-
-            let yArray = newVALUE.map((z: any) => z.value);
-            
-            let trace = {
-              x: unique,
-              y: yArray, mode: 'lines+points',
-              type: 'scatter', name: a.DEVICE_ID
-            };
-            linedata.push(trace)
-            index++;
-
-          }
-         
-          // // Define Layout
-          var layout = {
-            yaxis: { autorange: true, title: "" },
-            title: "",
-            showlegend: true,
-            xaxis: {
-              // tickformat: '%d/%m',
-            }
-          };
-
-          // Display using Plotly
-          this.graph1.data = linedata;
-          this.graph1.layout = layout;
-          console.log(linedata)
-
-        }
-        else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
-          this.pieChart(result)
-        } else {
-
-          // default
-          this.newForm.patchValue({
-            PLOT_TYPE: this.filterBy[0],
-            PLOT_XAXES: this.filterXaxes[0]
-          })
-          // console.log(this.newForm.value)
-
-
-          this.xAndYaxesChart(result)
-        }
-
-
+        this.ref.detectChanges();
 
       } else {
-        this.errMessage = 'No Data found..';
-
+        this.errMessage = 'No data found.'
       }
-      this.loading = false;
-      // console.log(this.loading)
-      this.ref.detectChanges();
     })
 
   }
@@ -393,7 +302,10 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
             DEVICE_ID: result.DEVICE_ID
           })
         }
-
+        console.log(this.deviceList)
+        // for (let a of Object.keys(VALUE)) {
+        //   console.log(arr)
+        // }
       } catch (err) {
         const VALUE = JSON.parse(JSON.stringify(result.VALUE));
         let index = this.deviceList.findIndex((item: _device) => {
@@ -405,8 +317,12 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
             DEVICE_ID: result.DEVICE_ID
           })
         }
-
-
+        console.log(this.deviceList)
+        // console.log('stringify',VALUE); 
+        // console.log('stringify',VALUE.activePower); 
+        for (let a of Object.keys(VALUE)) {
+          // console.log(a)
+        }
       }
 
 
@@ -595,4 +511,5 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     }
 
   }
+
 }

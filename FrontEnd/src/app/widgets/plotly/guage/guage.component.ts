@@ -10,7 +10,8 @@ import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 @Component({
   selector: 'app-guage',
   templateUrl: './guage.component.html',
-  styleUrls: ['./guage.component.scss']
+  styleUrls: ['./guage.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GuageComponent implements OnInit, OnChanges {
   @Input() name: any;
@@ -18,30 +19,29 @@ export class GuageComponent implements OnInit, OnChanges {
   public myGraph: any = [];
   @Input() selectedDevice: any;
   newForm: FormGroup = this.fb.group({
-
-    // SENSOR_TYPE_ID: ['', Validators.required],
     DEVICE_ID: [''],
   })
-  constructor(private fb: FormBuilder,) {
-    
-   }
+  errMessage:any;
+  constructor(private fb: FormBuilder,private ref: ChangeDetectorRef) {
+
+  }
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.name)
     if (this.name) {
-      this.selectedDevice=0;
+      this.selectedDevice = 0;
       this.newForm.patchValue({
-        DEVICE_ID:this.selectedDevice
+        DEVICE_ID: this.selectedDevice
       })
       this.generateChart(this.name)
 
     }
-    console.log(this.selectedDevice)
+    // console.log(this.selectedDevice)
 
   }
 
   generateChart(array: any) {
 
-this.myGraph=[];
+    this.myGraph = [];
     for (let arr of array) {
       let newObj: any = {};
       newObj.DEVICE_ID = arr.DEVICE_ID;
@@ -67,11 +67,12 @@ this.myGraph=[];
       console.log(this.myGraph)
 
     }
+    this.ref.detectChanges();
   }
   ngOnInit(): void {
 
   }
-  onDeviceChange(){
-    this.selectedDevice=this.newForm.get('DEVICE_ID')?.value;
+  onDeviceChange() {
+    this.selectedDevice = this.newForm.get('DEVICE_ID')?.value;
   }
 }

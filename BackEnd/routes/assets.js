@@ -468,9 +468,7 @@ router.post('/addChartRequest', (req, res) => {
 
     }
     db.query(sql, todo, (err, result) => {
-        // console.log(result)
         if (err) {
-            // throw err;
             return res.status(400).send({
                 msg: err
             });
@@ -514,11 +512,10 @@ router.post('/AssetConfigDetailsByID', (req, res) => {
         })
     })
 })
-// get all chart requests
-router.get('/allChartRequest/:IS_DRAGGED', (req, res) => {
+router.get('/getLocationsByID/:ASSET_CONFIG_ID', (req, res) => {
 
-    let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE  FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=?`
-    let todo = [req.params.IS_DRAGGED];
+    let sql = `SELECT LOCATION ,ASSET_CONFIG_ID FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
+    let todo = [req.params.ASSET_CONFIG_ID];
 
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
@@ -527,6 +524,75 @@ router.get('/allChartRequest/:IS_DRAGGED', (req, res) => {
                 data: result,
                 status: 200
             })
+
+    })
+})
+// get all chart requests
+router.get('/allChartRequest/:IS_DRAGGED', (req, res) => {
+
+    let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE  FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=? `
+    let todo = [req.params.IS_DRAGGED];
+    let sql2;
+    let locations = [];
+    db.query(sql, todo, (err, result) => {
+        // console.log(rows)
+        if (err) throw err;
+        else
+            //     console.log(req.params.IS_DRAGGED)
+            // if (req.params.IS_DRAGGED == 1) {
+            //     rows.forEach(async item => {
+            //         item.LOCATION = [];
+            //         // console.log(item)
+            //         sql2 = `SELECT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
+            //         let todo2 = [item.ASSET_CONFIG_ID];
+            //         await db.query(sql2, todo2, (err2, result2) => {
+            //             if (err2)
+            //                 throw err2;
+            //             else
+            //                 console.log(result2);
+            //             // locations = result2;
+            //             item.LOCATION.push(result2);
+
+            //         })
+            //         //write query with await
+            //     });
+            //     db.end();
+            //     // for (var i in rows) {
+            //     //     rows[i].LOCATION=[];
+            //     //     // only dragged
+            //     //     sql2 = `SELECT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
+            //     //     let todo2 = [rows[i].ASSET_CONFIG_ID];
+
+            //     //     db.query(sql2, todo2, (err2, result2) => {
+            //     //         if (err2) throw err2;
+            //     //         else
+            //     //             console.log(result2)
+            //     //         // locations = result2;
+            //     //         rows[i].LOCATION = result2;
+
+            //     //     })
+
+
+            //     // }
+            //     res.send({
+            //         data: rows,
+            //         status: 200,
+
+            //     })
+            //     // db.end();
+            // }
+            // else {
+            //     // those are not dragged from right panel
+            //     res.send({
+            //         data: result,
+            //         status: 200
+            //     })
+            // }
+            res.send({
+                data: result,
+                status: 200
+            })
+
 
     })
 })
@@ -626,13 +692,13 @@ router.post('/getDeviceHistory', (req, res) => {
     let sql;
     let sql2;
     let sql3, sql4;
-    // :ASSET_CONFIG_ID/:START_DATE/:END_DATE
-    
-    sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
-    // sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? LAST_UPDATE_TIME`
+    //AND LOCATION=? 
+
+    sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND LOCATION=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
     let todo = [req.body.ASSET_CONFIG_ID]
-    let todo2 = [req.body.START_DATE,req.body.END_DATE]
-    // console.log(req.body)
+    // req.body.LOCATION,
+    let todo2 = [req.body.ASSET_CONFIG_ID, req.body.LOCATION, req.body.START_DATE, req.body.END_DATE]
+
     db.query(sql, todo2, (err, result) => {
         if (err) throw err;
         else

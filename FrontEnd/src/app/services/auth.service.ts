@@ -57,7 +57,7 @@ export class AuthService {
     }))
   }
   getAllLocationsByConfigID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/getLocationsByConfigID`, params, options).pipe(map(response => {
+    return this.http.get(`${environment.url}/asset/getLocationsByID/${params.ASSET_CONFIG_ID}`, options).pipe(map(response => {
       return response;
     }))
   }
@@ -158,6 +158,12 @@ export class AuthService {
   }
   getAllChartRequests(params: any): Observable<any> {
     return this.http.get(`${environment.url}/asset/allChartRequest/${params.IS_DRAGGED}`, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  
+  getLocationsByID(params: any): Observable<any> {
+    return this.http.get(`${environment.url}/asset/getLocationsByID/${params.ASSET_CONFIG_ID}`, options).pipe(map(response => {
       return response;
     }))
   }

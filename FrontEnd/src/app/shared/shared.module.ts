@@ -69,6 +69,7 @@ import { DashboardComponent } from '../components/dashboard/dashboard.component'
 import { WidgetComponent } from '../components/widget/widget.component';
 import { AddMacDetailsComponent } from '../components/dialogs/add-mac-details/add-mac-details.component';
 import { PlotlyComponent } from '../widgets/plotly/plotly.component';
+import { CardComponent } from '../widgets/card/card.component';
 
 // widgets
 import { HighlightsComponent } from '../widgets/highlights/highlights.component';
@@ -104,7 +105,7 @@ import { GuageComponent } from '../widgets/plotly/guage/guage.component';
     AddAssetComponent,
     AssetTypeComponent,TooltipComponent, DashboardComponent, WidgetComponent,
     AddMacDetailsComponent,
-    PlotlyComponent,
+    PlotlyComponent,CardComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
     HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent
   ],

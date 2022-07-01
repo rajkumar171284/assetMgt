@@ -4,10 +4,12 @@ import { WidgetComponent } from '../../components/widget/widget.component';
 import { AuthService } from '../../services/auth.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ResizeEvent } from "angular-resizable-element";
-import { from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
-import { __addAssetDevice } from '../../myclass';
+import { __addAssetDevice,widgetResponse } from '../../myclass';
+import { I } from '@angular/cdk/keycodes';
+import * as moment from 'moment';
 
 declare let $: any;
 interface Item {
@@ -37,7 +39,7 @@ interface toDrag {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-
+  errMessage:any;
   dragDisabledArr: any[] = [];
   isVisible = false;
   isWidgetOpen = true;
@@ -51,25 +53,19 @@ export class DashboardComponent implements OnInit {
   toEditRequest: any;
   dragDisabled = false;
   hide = false;
-  dataFromMessages$: Observable<any> | undefined;
+  widgetResponse: any = new widgetResponse()
 
-  // newDevice: __addAssetDevice = {
-  //   PID: 0,
-  //   ASSET_CONFIG_ID: 0,
-  //   DEVICE_ID: undefined,
-  //   VALUE: undefined,
-  //   STATUS: undefined,
-  //   LATITUDE: undefined,
-  //   LONGITUDE: undefined,
-  //   LOCATION: undefined,
-  //   LAST_UPDATE_TIME: undefined
-  // };
+  dataFromMessages$: Observable<any> | undefined;
+  
   public data: any = {};
   @ViewChild('container', { read: ElementRef })
   public readonly containerElement: any;
 
   @ViewChild('element') theElement: any;
-
+  todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
+  todayEndDate: any = moment().endOf('day').toString();
+  WIDGET_REQUEST:any;
+  
   getElement() {
     return this.theElement.nativeElement;
   }
@@ -113,7 +109,25 @@ export class DashboardComponent implements OnInit {
   async getMappedChartRequest() {
     const session = await this.dataService.getSessionData();
     this.dataService.getAllChartRequests({ IS_DRAGGED: 1 }).subscribe(res => {
+      if (res && res.data.length > 0) {
 
+        // forkJoin(res.data.map((reqt: any) => this.dataService.getAllLocationsByConfigID(reqt).subscribe(locations => {
+        //   console.log(locations)
+        //   if (locations && locations.data.length > 0) {
+
+        //     for (let item of res.data) {
+        //       // item.LOCATION=[];  
+        //       item.LOCATION = locations.data.filter((obj: any) => {
+        //         console.log(obj.ASSET_CONFIG_ID, item.ASSET_CONFIG_ID)
+        //         return obj.ASSET_CONFIG_ID == item.ASSET_CONFIG_ID;
+        //       })
+             
+        //     }
+
+        //   }
+        // })))
+      }
+      console.log(res.data)
       this.doneList = res.data.map((el: chartItem) => {
         return el;
       });
@@ -192,13 +206,12 @@ export class DashboardComponent implements OnInit {
       this.getMappedChartRequest();
       this.getAllChartRequest();
       // get all locations & devices
-      // const configId=await this.getRequestDetails(pid,'json')
-
-      // this.dataService.getAssetConfigDetailsById(configId).subscribe(response=>{
-      //   console.log(response)
-      // })
+      // const configDetails=await this.getRequestDetails(pid,'json');
+      // console.log(configDetails)
+      // this.filterSrc(configDetails);
     })
   }
+  
   removeRequest(item: any) {
     this.dataService.deleteChartRequests({ PID: item }).subscribe(res => {
       this.ngOnInit();
@@ -241,21 +254,6 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  // onResizeEnd(event: any): void {
-  //   console.log('Element was resized', event);
-  // }
-  // visible: boolean = false;
-  //   breakpoint: number = 768;
-  // onResize2(event:any) {
-  //   console.log(event,event.target)
-  //   const w = event.target.innerWidth;
-  //   // if (w >= this.breakpoint) {
-  //   //   this.visible = true;
-  //   // } else {
-  //   //   // whenever the window is less than 768, hide this component.
-  //   //   this.visible = false;
-  //   // }
-  // }
   async saveWidget(data: any) {
     console.log('data', data)
 
@@ -268,7 +266,7 @@ export class DashboardComponent implements OnInit {
       data.SQL_QUERY = 'sql';
 
       this.dataService.addChartRequest(data).subscribe(res => {
-        console.log(res)
+
         this.openSnackBar();
 
       })
@@ -279,4 +277,6 @@ export class DashboardComponent implements OnInit {
       duration: 5 * 1000,
     });
   }
+
+
 }

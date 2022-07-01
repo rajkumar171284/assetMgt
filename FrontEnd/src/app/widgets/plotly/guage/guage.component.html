@@ -1,23 +1,28 @@
-<div class="g-flex">
-    <form class="form-container p-2" [formGroup]="newForm">
-        <!-- <mat-label>Plot by</mat-label> -->
+{{errMessage?errMessage:''}}
 
-        <mat-select placeholder="Select Device" (selectionChange)="onDeviceChange()" formControlName="DEVICE_ID">
-            <mat-option *ngFor="let key of myGraph;let idx=index" [value]="idx">
-                {{key.DEVICE_ID}}
-            </mat-option>
+<div *ngIf="name">
 
-        </mat-select>
-    </form>
-</div>
-<div  *ngFor="let item of myGraph;let i=index">
+    <div *ngIf="name.length>0" class="g-flex">
+        <form class="form-container p-2" [formGroup]="newForm">
+            <!-- <mat-label>Plot by</mat-label> -->
 
-    <div class="g-flex" *ngIf="i==selectedDevice">
-        <!-- {{item.DEVICE_ID}} -->
-        <div  *ngFor="let sensor of item.units">
+            <mat-select placeholder="Select Device" (selectionChange)="onDeviceChange()" formControlName="DEVICE_ID">
+                <mat-option *ngFor="let key of myGraph;let idx=index" [value]="idx">
+                    {{key.DEVICE_ID}}
+                </mat-option>
+
+            </mat-select>
+        </form>
+    </div>
+    <div *ngFor="let item of myGraph;let i=index">
+
+        <div class="g-flex" *ngIf="i==selectedDevice">
+            <!-- {{item.DEVICE_ID}} -->
+            <div *ngFor="let sensor of item.units">
 
 
-            <plotly-plot [data]="sensor.data" [layout]="sensor.layout" [useResizeHandler]="true"></plotly-plot>
+                <plotly-plot [data]="sensor.data" [layout]="sensor.layout" [useResizeHandler]="true"></plotly-plot>
+            </div>
         </div>
     </div>
 </div>

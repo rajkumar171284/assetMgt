@@ -105,7 +105,14 @@ export class WidgetComponent implements OnInit {
 
   async getAllAssets() {
     const session = await this.dataService.getSessionData();
-    let params = { COMPANY_ID: session.COMPANY_ID };
+    let params = {}
+    if(session.COMPANY_TYPE=='CORP'){
+      // get all
+      params = { COMPANY_ID: 0 };
+    }else{
+      params = { COMPANY_ID: session.COMPANY_ID };
+    }
+    
     this.dataService.getAssetConfig(params).subscribe(res => {
       this.options = res.data;
     })

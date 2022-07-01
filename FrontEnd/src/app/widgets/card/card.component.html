@@ -1,29 +1,9 @@
+
 <form class="form-container p-2" [formGroup]="newForm">
-    <div *ngIf="filterShow1">
 
-        <mat-form-field>
-            <mat-label>Plot by</mat-label>
-            <mat-select placeholder="Select Unit" (selectionChange)="onFilterChange()" formControlName="PLOT_TYPE">
-                <mat-option *ngFor="let key of filterBy" [value]="key">
-                    {{key}}
-                </mat-option>
-
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Select xAxes</mat-label>
-            <mat-select placeholder="Select xAxes" (selectionChange)="onFilterChange()" formControlName="PLOT_XAXES">
-                <mat-option *ngFor="let key of filterXaxes" [value]="key">
-                    {{key}}
-                </mat-option>
-
-            </mat-select>
-        </mat-form-field>
-
-    </div>
 
     <!--  -->
-    <div *ngIf="filterShow2">
+    <div>
         <mat-form-field appearance="fill">
             <mat-label>Select Loction</mat-label>
             <mat-select placeholder="" formControlName="LOCATION">
@@ -50,27 +30,34 @@
         <button mat-button (click)="filterSrc()">
             <mat-icon>search</mat-icon>
         </button>
-        
-        
 
     </div>
-   
+    <div>
+    </div>
 </form>
 
 <!-- <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
     (mouseleave)="mouseLeave($event)"></plotly-plot> -->
-    <!-- <div style="position: absolute;bottom:20px;z-index:999">
-        <mat-card>fdf{{widgetResponse.data && widgetResponse.data.length==0?'No':''}}</mat-card>
-    </div> -->
-<div>
-    <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
-    (mouseleave)="mouseLeave($event)"></plotly-plot>
-</div>
-<div *ngIf="showGuage">
- 
-    <!-- <app-guage [name]="widgetResponse.totalDevice"></app-guage> -->
+
+<div *ngIf="widgetResponse.totalDevice">
+
+    <div class="parent" *ngFor="let item of widgetResponse.totalDevice;let i=index">
+        <div class="g-flex">
+          <mat-label class="p-header" color="primary">{{item.DEVICE_ID}}</mat-label>
+        </div>
+        <div class="g-flex">
+            
+            <div *ngFor="let sensor of item.units">
+                <mat-card class="tcard">
+                    <div>{{sensor.key}}</div>
+
+                    <div>{{sensor.value}}</div>
+                </mat-card>
 
 
+            </div>
+        </div>
+    </div>
+
 </div>
-<mat-spinner *ngIf="loading"></mat-spinner>
 {{errMessage?errMessage:''}}
