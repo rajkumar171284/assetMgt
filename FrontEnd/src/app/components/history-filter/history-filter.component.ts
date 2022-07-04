@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter,OnInit, Input, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { __addAssetDevice } from '../../myclass';
 import { interval } from 'rxjs';
-import * as moment from 'moment';
+import * as moment from 'moment'
 
 interface _device {
   DEVICE_ID: any
@@ -21,14 +21,16 @@ class widgetResponse {
 
 };
 @Component({
-  selector: 'app-card',
-  templateUrl: './card.component.html',
-  styleUrls: ['./card.component.scss']
+  selector: 'app-history-filter',
+  templateUrl: './history-filter.component.html',
+  styleUrls: ['./history-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CardComponent implements OnChanges, OnDestroy {
+export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy  {
 
   @Input() WIDGET_REQUEST: any;
-  errMessage: any;
+  @Output() sendToParent= new EventEmitter();
+  errMessage: string = '';
   labelMessage2: any;
   deviceType: string = '';
   chartName: any;
@@ -68,7 +70,7 @@ export class CardComponent implements OnChanges, OnDestroy {
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
   widgetResponse: any = new widgetResponse()
-
+  loading = false;
   newDevice: __addAssetDevice = {
     PID: 0,
     ASSET_CONFIG_ID: 0,
@@ -84,29 +86,35 @@ export class CardComponent implements OnChanges, OnDestroy {
   myInterval: Subscription | undefined;
   filterShow1: boolean = false;
   filterShow2: boolean = false;
-  @Input() selectedDevice: any;
 
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
-  deviceList: _device[] = []
+  deviceList: _device[] = [];
+  showGuage = false;
   constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
 
-    // console.log(moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString())
     this.newForm = this.fb.group({
       PLOT_XAXES: [''],
       PLOT_TYPE: [''],
       LOCATION: ['', this.filterShow2 ? Validators.required : ''],
       START_DATE: ['', this.filterShow2 ? Validators.required : ''],
       END_DATE: ['', this.filterShow2 ? Validators.required : ''],
-      DEVICE_ID: []
+      DEVICE_ID: ['']
     })
-
 
 
   }
 
   ngOnInit(): void {
+    if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
+      this.filterShow2 = true;
+      this.filterShow1 = false;
 
+    } else {
+      this.filterShow1 = true;
+      this.filterShow2 = true;
+
+    }
 
   }
   ngOnDestroy(): void {
@@ -114,39 +122,29 @@ export class CardComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(changes, this.pMap)
+    console.log(this.WIDGET_REQUEST)
     // 
     if (this.WIDGET_REQUEST) {
-      this.widgetResponse = new widgetResponse()
+      this.widgetResponse = new widgetResponse();
 
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-
-      // console.log('chart reqs:', this.WIDGET_REQUEST.CHART_NAME, this.WIDGET_REQUEST.ASSET_CONFIG_ID, this.WIDGET_REQUEST.WIDGET_DATA)
-      if (this.WIDGET_REQUEST.WIDGET_TYPE==1111) {
+      if (this.WIDGET_REQUEST.WIDGET_TYPE) {
         this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
-          // console.log(locations)
+
           if (locations && locations.data.length > 0) {
 
             this.widgetResponse.totalLocations = locations.data;
             this.newForm.patchValue({
               START_DATE: new Date(this.todayStartDate),
               END_DATE: new Date(this.todayEndDate),
-              LOCATION:this.widgetResponse.totalLocations[0].LOCATION,
-              DEVICE_ID: this.widgetResponse.totalLocations[0].MAC_ADDRESS
+              LOCATION: this.widgetResponse.totalLocations[0].LOCATION,
+              DEVICE_ID:this.widgetResponse.totalLocations[0].MAC_ADDRESS
+
             })
-            if (this.WIDGET_REQUEST.CHART_NAME) {
+            this.filterSrc()
 
-
-              this.filterShow2 = true;
-              this.filterShow1 = false;
-
-              this.filterSrc()
-            } else {
-              this.filterShow1 = true;
-              this.filterShow2 = false;
-              // this.getDeviceLog()
-
-            }
+          } else {
+            // no device
 
           }
         })
@@ -162,37 +160,38 @@ export class CardComponent implements OnChanges, OnDestroy {
     return this.newForm.value;
   }
   filterSrc() {
+    this.loading = true;
     this.errMessage = '';
     this.WIDGET_REQUEST.LOCATION = this.VALUES.LOCATION;
     this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
     this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
     this.WIDGET_REQUEST.DEVICE_ID=  this.VALUES.DEVICE_ID;
-
     console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
-    // this.getDeviceLog();
+    this.getDeviceLog();
   }
 
-  async getDeviceLog(result:any) {
+  getDeviceLog() {
     // loader
-    // this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(async result => {
-      console.log(result)
+    this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
+      // console.log(result)
       const set = false;
+
       if (result && result.data.length > 0 && !set) {
-        
         this.widgetResponse.data = result.data;
         this.widgetResponse.protocol = result.protocol;
-        this.widgetResponse.totalDevice = result.totalDevice
+        this.widgetResponse.totalDevice = result.totalDevice;
+        
         const protocol = result.protocol;
         // console.log('MQTT',protocol)
         if (protocol && protocol[0].CONN_NAME == 'MQTT') {
           // console.log('MQTT')
           this.getMQTTdata()
         }
+        console.log(this.widgetResponse)
         // const objectKeys = await result.data.map(this.getKEYS)
         for (let sensor of this.widgetResponse.totalDevice) {
           sensor.history = [];
           sensor.unitsArr = [];
-          sensor.units = [];
           sensor.history = this.widgetResponse.data.filter((obj: any) => {
             return obj.DEVICE_ID == sensor.DEVICE_ID;
           }).map((resp: any) => {
@@ -215,72 +214,77 @@ export class CardComponent implements OnChanges, OnDestroy {
             try {
               VALUE = JSON.parse(VALUE);
               sensor.VALUE = VALUE;
-              let aIndex = 0;
-              for (let a of Object.keys(VALUE)) {
-                let key: any = a;
-                var object: any = {};
-                object.key = key;
-                object.totalValue = 0;
-                sensor.unitsArr.push(object);
-                // latest value      
-                if (key != 'location' && key != 'date' && key != 'sensorId') {
-                  var object2: any = {};
-                  object2.key = key;
-                  object2.value = Object.values(VALUE)[aIndex];
-                  sensor.units.push(object2);
-                }
-                aIndex++;
-              }
+              // for (let a of Object.keys(VALUE)) {
+              //   let key: any = a;
+              //   if (key != 'location' && key != 'date' && key != 'sensorId') {
+              //     var object: any = {};
+              //     object.key = key;
+              //     object.totalValue = 0;
+              //     sensor.unitsArr.push(object);
+
+              //   }
+              // }
             } catch (err) {
               VALUE = JSON.stringify(VALUE);
               sensor.VALUE = VALUE;
-              let aIndex = 0;
-              for (let a of Object.keys(VALUE)) {
-                let key: any = a;
+              // for (let a of Object.keys(VALUE)) {
+              //   let key: any = a;
+              //   if (key != 'location' && key != 'date' && key != 'sensorId') {
+              //     var object: any = {};
+              //     object.key = key;
+              //     object.totalValue = 0;
+              //     sensor.unitsArr.push(object);
+              //   }
+              // }
+
+            }
+            for (let a of Object.keys(VALUE)) {
+              // dynamic key wise getting value 
+              let key: any = a;
+              if (key != 'location' && key != 'date' && key != 'sensorId') {
                 var object: any = {};
                 object.key = key;
                 object.totalValue = 0;
+                object.data = [];
                 sensor.unitsArr.push(object);
 
-
-                // latest value      
-                if (key != 'location' && key != 'date' && key != 'sensorId') {
-                  var object2: any = {};
-                  object2.key = key;
-                  object2.value = Object.values(VALUE)[aIndex];
-                  sensor.units.push(object2);
-                }
-
-                aIndex++;
               }
-
             }
           }
 
-          // get total units value- later calc
-          // for (let unit of sensor.unitsArr) {
-          //   sensor.history.forEach((Item: any) => {
-          //     let vIndex = 0;
-          //     for (let v of Object.keys(Item)) {
-          //       if (v === unit.key) {
-          //         // console.log(Object.keys(Item)[vIndex])
-          //         unit.totalValue = unit.totalValue + Object.values(Item)[vIndex]
-          //       }
-          //       vIndex++;
-          //     }
-          //   })
-          // }
+          // get total units value
+          for (let unit of sensor.unitsArr) {
+            sensor.history.forEach((Item: any) => {
+              let vIndex = 0;
+              for (let v of Object.keys(Item)) {
+
+                if (v === unit.key) {
+                  unit.totalValue = unit.totalValue + Object.values(Item)[vIndex];
+                  unit.data.push(Object.values(Item)[vIndex]);
+                }
+                vIndex++;
+              }
+            })
+          }
+
+
 
         }
-
-        // console.log(this.widgetResponse)
-
+        this.sendToParent.emit(this.widgetResponse);
         this.ref.detectChanges();
+        console.log(this.widgetResponse)
+        
+
+
 
       } else {
-        this.errMessage = 'No data found.'
+        this.errMessage = 'No Data found..';
+
       }
-    // })
+      this.loading = false;
+      // console.log(this.loading)
+      this.ref.detectChanges();
+    })
 
   }
 
@@ -299,10 +303,7 @@ export class CardComponent implements OnChanges, OnDestroy {
             DEVICE_ID: result.DEVICE_ID
           })
         }
-        console.log(this.deviceList)
-        // for (let a of Object.keys(VALUE)) {
-        //   console.log(arr)
-        // }
+
       } catch (err) {
         const VALUE = JSON.parse(JSON.stringify(result.VALUE));
         let index = this.deviceList.findIndex((item: _device) => {
@@ -314,12 +315,8 @@ export class CardComponent implements OnChanges, OnDestroy {
             DEVICE_ID: result.DEVICE_ID
           })
         }
-        console.log(this.deviceList)
-        // console.log('stringify',VALUE); 
-        // console.log('stringify',VALUE.activePower); 
-        for (let a of Object.keys(VALUE)) {
-          // console.log(a)
-        }
+
+
       }
 
 
@@ -382,12 +379,11 @@ export class CardComponent implements OnChanges, OnDestroy {
     }
 
     this.graph1.data = newArr;
-    // this.graph1.layout.width = 820;
     this.graph1.layout.height = 340;
     this.graph1.responsive = true;
 
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
-    console.log(this.graph1)
+    // console.log(this.graph1)
   }
 
   pieChart(result: any) {
@@ -427,7 +423,7 @@ export class CardComponent implements OnChanges, OnDestroy {
     this.data = [traceA];
 
     var layout = {
-      title: "Area Under Forest for Different Countries"
+      title: ""
     };
     this.graph1.data = this.data;
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
@@ -438,7 +434,7 @@ export class CardComponent implements OnChanges, OnDestroy {
   hover(event: any): void {
     // The hover event has a lot of information about cursor location.
     // The bar the user is hovering over is in "pointIndex"
-    console.log(event)
+    // console.log(event)
     this.interactivePlotSubject$.next(
       [this.graph2.data[event.points[0].pointIndex]]
     );
@@ -463,7 +459,6 @@ export class CardComponent implements OnChanges, OnDestroy {
 
           const res = response.data;
           const value = JSON.parse(JSON.stringify(response.data));
-          // console.log(value.activePower)
 
           this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
           this.newDevice.DEVICE_ID = res.sensorId;
@@ -493,27 +488,14 @@ export class CardComponent implements OnChanges, OnDestroy {
       VALUE = JSON.parse(VALUE);
       data.VALUE = VALUE;
       return data;
-      // for (let a of Object.keys(VALUE)) {
-      //   console.log(arr)
-      // }
+
     } catch (err) {
       VALUE = JSON.parse(VALUE);
       data.VALUE = VALUE;
       return data;
-      // console.log('stringify',VALUE); 
-      // console.log('stringify',VALUE.activePower); 
-      // for (let a of Object.keys(VALUE)) {
-      //   // console.log(a)
-      // }
+
     }
 
   }
-  getFromChild(data:any){
-    
-    console.log('getFromChild',data)
-    if(data){
-      this.getDeviceLog(data)
-      
-    }
-  }
+
 }

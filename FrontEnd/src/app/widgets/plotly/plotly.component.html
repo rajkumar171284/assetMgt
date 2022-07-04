@@ -23,40 +23,13 @@
     </div>
 
     <!--  -->
-    <div *ngIf="filterShow2">
-        <mat-form-field appearance="fill">
-            <mat-label>Select Loction</mat-label>
-            <mat-select placeholder="" formControlName="LOCATION">
-                <mat-option *ngFor="let key of widgetResponse.totalLocations" [value]="key.LOCATION">
-                    {{key.LOCATION}}
-                </mat-option>
-
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-            <mat-label>Enter date range</mat-label>
-            <mat-date-range-input [rangePicker]="picker">
-                <input matStartDate formControlName="START_DATE" placeholder="Start date">
-                <input matEndDate formControlName="END_DATE" placeholder="End date">
-            </mat-date-range-input>
-            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
-
-            <!-- <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-            <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error> -->
-        </mat-form-field>
-
-        <button mat-button (click)="filterSrc()">
-            <mat-icon>search</mat-icon>
-        </button>
-        
-        
-
-    </div>
+   
    
 </form>
-
+<div *ngIf="filterShow2">
+    <app-history-filter (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
+           
+</div>
 <!-- <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
     (mouseleave)="mouseLeave($event)"></plotly-plot> -->
     <!-- <div style="position: absolute;bottom:20px;z-index:999">

@@ -203,6 +203,9 @@ mat-card-content{
     padding-bottom: 4px;
 
 }
+.mat-card-header.sub-hdr{
+    flex-direction:column !important;
+}
 .img-box,.c-time11,.c-time21{
     display: flex;
     flex-direction: row;

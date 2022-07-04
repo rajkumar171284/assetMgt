@@ -514,7 +514,7 @@ router.post('/AssetConfigDetailsByID', (req, res) => {
 })
 router.get('/getLocationsByID/:ASSET_CONFIG_ID', (req, res) => {
 
-    let sql = `SELECT LOCATION ,ASSET_CONFIG_ID FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
+    let sql = `SELECT LOCATION ,MAC_ADDRESS ,ASSET_CONFIG_ID FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
     let todo = [req.params.ASSET_CONFIG_ID];
 
     db.query(sql, todo, (err, result) => {
@@ -694,10 +694,10 @@ router.post('/getDeviceHistory', (req, res) => {
     let sql3, sql4;
     //AND LOCATION=? 
 
-    sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND LOCATION=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
+    sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND LOCATION=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
     let todo = [req.body.ASSET_CONFIG_ID]
     // req.body.LOCATION,
-    let todo2 = [req.body.ASSET_CONFIG_ID, req.body.LOCATION, req.body.START_DATE, req.body.END_DATE]
+    let todo2 = [req.body.ASSET_CONFIG_ID, req.body.LOCATION, req.body.DEVICE_ID,req.body.START_DATE, req.body.END_DATE]
 
     db.query(sql, todo2, (err, result) => {
         if (err) throw err;

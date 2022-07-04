@@ -33,6 +33,9 @@ class chartitem {
 interface toDrag {
   isDraggable: any;
 }
+interface dragOption{
+  dragDisabled:false
+}
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -40,7 +43,8 @@ interface toDrag {
 })
 export class DashboardComponent implements OnInit {
   errMessage:any;
-  dragDisabledArr: any[] = [];
+  // dragDisabledArr: Observable<dragOption[]> | undefined;
+  dragDisabledArr: any[]=[];
   isVisible = false;
   isWidgetOpen = true;
   dragStatus: number = 0;
@@ -111,21 +115,7 @@ export class DashboardComponent implements OnInit {
     this.dataService.getAllChartRequests({ IS_DRAGGED: 1 }).subscribe(res => {
       if (res && res.data.length > 0) {
 
-        // forkJoin(res.data.map((reqt: any) => this.dataService.getAllLocationsByConfigID(reqt).subscribe(locations => {
-        //   console.log(locations)
-        //   if (locations && locations.data.length > 0) {
-
-        //     for (let item of res.data) {
-        //       // item.LOCATION=[];  
-        //       item.LOCATION = locations.data.filter((obj: any) => {
-        //         console.log(obj.ASSET_CONFIG_ID, item.ASSET_CONFIG_ID)
-        //         return obj.ASSET_CONFIG_ID == item.ASSET_CONFIG_ID;
-        //       })
-             
-        //     }
-
-        //   }
-        // })))
+       
       }
       console.log(res.data)
       this.doneList = res.data.map((el: chartItem) => {
@@ -204,11 +194,7 @@ export class DashboardComponent implements OnInit {
     // console.log(data)
     this.dataService.chartRequestChangeStatus(params).subscribe(async res => {
       this.getMappedChartRequest();
-      this.getAllChartRequest();
-      // get all locations & devices
-      // const configDetails=await this.getRequestDetails(pid,'json');
-      // console.log(configDetails)
-      // this.filterSrc(configDetails);
+      
     })
   }
   
@@ -254,10 +240,7 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  async saveWidget(data: any) {
-    console.log('data', data)
-
-
+  async saveWidget(data: any) {    
     if (data) {
       const session = await this.dataService.getSessionData();
       data.COMPANY_ID = session.COMPANY_ID;

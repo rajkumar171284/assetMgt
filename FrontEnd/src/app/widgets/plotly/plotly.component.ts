@@ -100,13 +100,14 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
       LOCATION: ['', this.filterShow2 ? Validators.required : ''],
       START_DATE: ['', this.filterShow2 ? Validators.required : ''],
       END_DATE: ['', this.filterShow2 ? Validators.required : ''],
+      DEVICE_ID: ['']
     })
 
 
   }
 
   ngOnInit(): void {
-    if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
+    if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
       this.filterShow2 = true;
       this.filterShow1 = false;
 
@@ -128,14 +129,19 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
       this.widgetResponse = new widgetResponse();
 
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-
-      // console.log('chart reqs:', this.WIDGET_REQUEST.CHART_NAME, this.WIDGET_REQUEST.ASSET_CONFIG_ID, this.WIDGET_REQUEST.WIDGET_DATA)
-      if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTS') {
+      if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTSewew') {
         this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
 
           if (locations && locations.data.length > 0) {
 
             this.widgetResponse.totalLocations = locations.data;
+            this.newForm.patchValue({
+              START_DATE: new Date(this.todayStartDate),
+              END_DATE: new Date(this.todayEndDate),
+              LOCATION: this.widgetResponse.totalLocations[0].LOCATION,
+              DEVICE_ID:this.widgetResponse.totalLocations[0].MAC_ADDRESS
+
+            })
             if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
 
 
@@ -144,16 +150,18 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
               // console.log(this.filterShow2)
 
               // run tatapower api to get random data those to be saved in db
-              this.newForm.patchValue({
-                START_DATE: new Date(this.todayStartDate),
-                END_DATE: new Date(this.todayEndDate), LOCATION: this.widgetResponse.totalLocations[0].LOCATION
+              // this.newForm.patchValue({
+              //   START_DATE: new Date(this.todayStartDate),
+              //   END_DATE: new Date(this.todayEndDate),
+              //   LOCATION: this.widgetResponse.totalLocations[0].LOCATION,
+              //   DEVICE_ID:this.widgetResponse.totalLocations[0].MAC_ADDRESS
 
-              })
+              // })
 
-              this.filterSrc()
+              // this.filterSrc()
             } else {
 
-              this.getDeviceLog()
+              // this.getDeviceLog()
 
             }
 
@@ -172,19 +180,20 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   get VALUES() {
     return this.newForm.value;
   }
-  filterSrc() {
-    this.loading = true;
-    this.errMessage = '';
-    this.WIDGET_REQUEST.LOCATION = this.VALUES.LOCATION;
-    this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
-    this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
-    console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
-    this.getDeviceLog();
-  }
+  // filterSrc() {
+  //   this.loading = true;
+  //   this.errMessage = '';
+  //   this.WIDGET_REQUEST.LOCATION = this.VALUES.LOCATION;
+  //   this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
+  //   this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
+  //   this.WIDGET_REQUEST.DEVICE_ID=  this.VALUES.DEVICE_ID;
+  //   console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
+  //   // this.getDeviceLog();
+  // }
 
-  getDeviceLog() {
+  getDeviceLog(result:any) {
     // loader
-    this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
+    // this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
       // console.log(result)
       const set = false;
 
@@ -192,81 +201,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
         this.widgetResponse.data = result.data;
         this.widgetResponse.protocol = result.protocol;
         this.widgetResponse.totalDevice = result.totalDevice
-        const protocol = result.protocol;
-        // console.log('MQTT',protocol)
-        if (protocol && protocol[0].CONN_NAME == 'MQTT') {
-          // console.log('MQTT')
-          this.getMQTTdata()
-        }
-        console.log(this.widgetResponse)
-        // const objectKeys = await result.data.map(this.getKEYS)
-        for (let sensor of this.widgetResponse.totalDevice) {
-          sensor.history = [];
-          sensor.unitsArr = [];
-          sensor.history = this.widgetResponse.data.filter((obj: any) => {
-            return obj.DEVICE_ID == sensor.DEVICE_ID;
-          }).map((resp: any) => {
-            let VALUE = resp.VALUE;
-            resp.newVALUE = '';
-            try {
-              resp.newVALUE = JSON.parse(VALUE);
-            } catch (err) {
-              resp.newVALUE = JSON.stringify(VALUE);
-            }
-            return resp.newVALUE;
-          })
-          // setup unique object
-          let index = this.widgetResponse.data.findIndex((obj: any) => {
-            return obj.DEVICE_ID == sensor.DEVICE_ID;
-          })
-          if (index != -1) {
-
-            let VALUE = this.widgetResponse.data[index].VALUE;
-            try {
-              VALUE = JSON.parse(VALUE);
-              sensor.VALUE = VALUE;
-              for (let a of Object.keys(VALUE)) {
-                let key: any = a;
-                if (key != 'location' && key != 'date' && key != 'sensorId') {
-                  var object: any = {};
-                  object.key = key;
-                  object.totalValue = 0;
-                  sensor.unitsArr.push(object);
-
-                }
-              }
-            } catch (err) {
-              VALUE = JSON.stringify(VALUE);
-              sensor.VALUE = VALUE;
-              for (let a of Object.keys(VALUE)) {
-                let key: any = a;
-                if (key != 'location' && key != 'date' && key != 'sensorId') {
-                  var object: any = {};
-                  object.key = key;
-                  object.totalValue = 0;
-                  sensor.unitsArr.push(object);
-                }
-              }
-
-            }
-          }
-
-          // get total units value
-          for (let unit of sensor.unitsArr) {
-            sensor.history.forEach((Item: any) => {
-              let vIndex = 0;
-              for (let v of Object.keys(Item)) {
-                if (v === unit.key) {
-                  unit.totalValue = unit.totalValue + Object.values(Item)[vIndex]
-                }
-                vIndex++;
-              }
-            })
-          }
-
-
-
-        }
+      
 
         // console.log(this.widgetResponse)
         if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
@@ -300,49 +235,73 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
         //   })
         // }
         // console.log(result)
-        else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line') {
-          console.log('line')
+        else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line'||this.WIDGET_REQUEST.CHART_NAME.toLowerCase()=='bar') {
+          console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase() ,this.WIDGET_REQUEST.CONFIG_NAME)
           let linedata: any = [];
           let index = 0;
           for (let a of this.widgetResponse.totalDevice) {
+            
             let xArray = a.history.map((z: any) => {
               let dt = new Date(z.date);
-              return moment(dt).format("DD-MM-YYYY HH:mm:ss")
+              return dt;
             });
 
-            const unique = [...new Set(xArray.map((uniq: any) => uniq))];
+            const unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
 
-            // format VALUE json as key & value
-            let newVALUE: any = [];
-            Object.keys(a.VALUE).forEach((item: any, index) => {
-              if (item != 'location' && item != 'date' && item != 'sensorId') {
-                newVALUE.push({
-                  key: item, value: Object.values(a.VALUE)[index]
-                })
-              }
-            })
+            for (let units of a.unitsArr) {
+              // format VALUE json as key & value
+              let newVALUE: any = [];
+              Object.keys(a.VALUE).forEach((item: any, index) => {
+                if (item != 'location' && item != 'date' && item != 'sensorId') {
+                  newVALUE.push({
+                    key: item, value: Object.values(a.VALUE)[index]
+                  })
+                }
+              })
 
-            let yArray = newVALUE.map((z: any) => z.value);
-            
-            let trace = {
-              x: unique,
-              y: yArray, mode: 'lines+points',
-              type: 'scatter', name: a.DEVICE_ID
-            };
-            linedata.push(trace)
+              // let yArray = newVALUE.map((z: any) => z.value);
+
+              let trace = {
+                x: unique,
+                // y: yArray, 
+                y: units.data,
+                mode: 'lines+points',
+                type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
+                // name: a.DEVICE_ID,
+                name: units.key
+              };
+              linedata.push(trace)
+            }
+
             index++;
 
           }
-         
+
           // // Define Layout
           var layout = {
             yaxis: { autorange: true, title: "" },
-            title: "",
             showlegend: true,
-            xaxis: {
-              // tickformat: '%d/%m',
-            }
+            autosize: true,
+            width: 900,
+            height: 500,
+            margin: {
+              l: 50,
+              r: 50,
+              b: 50,
+              t: 50,
+              pad: 4
+            },
+            // paper_bgcolor: '#7f7f7f',
+            // plot_bgcolor: '#c7c7c7'
           };
+          // var layout = {
+          //   yaxis: { autorange: true, title: "" },
+          //   title: "",
+          //   showlegend: true,
+          //   xaxis: {
+          //     // tickformat: '%d/%m',
+          //   }
+          // };
 
           // Display using Plotly
           this.graph1.data = linedata;
@@ -352,9 +311,18 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
         }
         else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
           this.pieChart(result)
-        } else {
+        } else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'barz'){
 
           // default
+          this.newForm.patchValue({
+            PLOT_TYPE: this.filterBy[0],
+            PLOT_XAXES: this.filterXaxes[0]
+          })
+          // console.log(this.newForm.value)
+
+
+          this.barChart(result)
+        }else{
           this.newForm.patchValue({
             PLOT_TYPE: this.filterBy[0],
             PLOT_XAXES: this.filterXaxes[0]
@@ -374,7 +342,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
       this.loading = false;
       // console.log(this.loading)
       this.ref.detectChanges();
-    })
+    // })
 
   }
 
@@ -469,14 +437,72 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this.graph1.data = newArr;
-    // this.graph1.layout.width = 820;
     this.graph1.layout.height = 340;
     this.graph1.responsive = true;
 
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
-    console.log(this.graph1)
+    // console.log(this.graph1)
   }
 
+  barChart(result: any) {
+
+    let plotArray: any = [];
+    if (this.newForm.value.PLOT_XAXES == 'DEVICE') {
+      for (let a of result.totalDevice) {
+        a.key = `D${a.DEVICE_ID}`;
+        a.totalSpeed = 0;
+        a.totalKM = 0;
+        result.data.filter((x: any) => {
+          return x.DEVICE_ID == a.DEVICE_ID;
+        }).map((resp: any) => {
+          const value = JSON.parse(resp.VALUE);
+          a.totalSpeed = a.totalSpeed + value.speed;
+          a.totalKM = a.totalKM + value.odometer;
+        })
+        plotArray.push(a)
+      }
+    } else {
+      // loc axes
+      for (let a of result.Locations) {
+        a.key = a.LOCATION;
+        a.totalSpeed = 0;
+        a.totalKM = 0;
+        result.data.filter((x: any) => {
+          return x.LOCATION == a.LOCATION;
+        }).map((resp: any) => {
+          const value = JSON.parse(resp.VALUE);
+          a.totalSpeed = a.totalSpeed + value.speed;
+          a.totalKM = a.totalKM + value.odometer;
+
+        })
+        plotArray.push(a)
+      }
+    }
+
+    // 
+    let newArr: any = [];
+    for (let el of plotArray) {
+      let xData;
+
+      if (this.newForm.value.PLOT_TYPE == 'SPEED') {
+        xData = el.totalSpeed;
+      } else if (this.newForm.value.PLOT_TYPE == 'KM') {
+        xData = el.totalKM
+      }
+      let item: any = {
+        x: [el.key], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ? this.WIDGET_REQUEST.CHART_NAME.toLowerCase() : ''
+      }
+      newArr.push(item)
+
+    }
+
+    this.graph1.data = newArr;
+    this.graph1.layout.height = 340;
+    this.graph1.responsive = true;
+
+    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
+    // console.log(this.graph1)
+  }
   pieChart(result: any) {
 
     let itemValue = result.totalDevice.map((z: any) => z.totalSpeed);
@@ -514,7 +540,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     this.data = [traceA];
 
     var layout = {
-      title: "Area Under Forest for Different Countries"
+      title: ""
     };
     this.graph1.data = this.data;
     this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
@@ -525,7 +551,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   hover(event: any): void {
     // The hover event has a lot of information about cursor location.
     // The bar the user is hovering over is in "pointIndex"
-    console.log(event)
+    // console.log(event)
     this.interactivePlotSubject$.next(
       [this.graph2.data[event.points[0].pointIndex]]
     );
@@ -550,7 +576,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
           const res = response.data;
           const value = JSON.parse(JSON.stringify(response.data));
-          // console.log(value.activePower)
 
           this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
           this.newDevice.DEVICE_ID = res.sensorId;
@@ -573,26 +598,28 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
 
-  async getParsed(data: any) {
-    if (!data) return;
-    let VALUE = data.VALUE;
-    try {
-      VALUE = JSON.parse(VALUE);
-      data.VALUE = VALUE;
-      return data;
-      // for (let a of Object.keys(VALUE)) {
-      //   console.log(arr)
-      // }
-    } catch (err) {
-      VALUE = JSON.parse(VALUE);
-      data.VALUE = VALUE;
-      return data;
-      // console.log('stringify',VALUE); 
-      // console.log('stringify',VALUE.activePower); 
-      // for (let a of Object.keys(VALUE)) {
-      //   // console.log(a)
-      // }
-    }
+  // async getParsed(data: any) {
+  //   if (!data) return;
+  //   let VALUE = data.VALUE;
+  //   try {
+  //     VALUE = JSON.parse(VALUE);
+  //     data.VALUE = VALUE;
+  //     return data;
 
+  //   } catch (err) {
+  //     VALUE = JSON.parse(VALUE);
+  //     data.VALUE = VALUE;
+  //     return data;
+
+  //   }
+
+  // }
+  getFromChild(data:any){
+    
+    console.log('getFromChild',data)
+    if(data){
+      this.getDeviceLog(data)
+      
+    }
   }
 }

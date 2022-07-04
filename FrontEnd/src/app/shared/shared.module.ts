@@ -94,6 +94,7 @@ import { AccessrightsDirective } from '../directives/accessrights.directive';
 import { ResizableModule } from 'angular-resizable-element';
 import {TableVirtualScrollModule} from 'ng-table-virtual-scroll';
 import { GuageComponent } from '../widgets/plotly/guage/guage.component';
+import { HistoryFilterComponent } from '../components/history-filter/history-filter.component';
 
 
 @NgModule({
@@ -107,7 +108,7 @@ import { GuageComponent } from '../widgets/plotly/guage/guage.component';
     AddMacDetailsComponent,
     PlotlyComponent,CardComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent
+    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent
   ],
   imports: [
     CommonModule,PlotlyModule,
