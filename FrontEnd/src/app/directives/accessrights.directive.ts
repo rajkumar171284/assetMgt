@@ -18,12 +18,10 @@ export class AccessrightsDirective {
     set appAccessrights(val:any){
       const session = this.dataService.getSessionData();
 
-      if(session && session.ROLE=='ADMIN' && session.COMPANY_TYPE=='CORP'){
-        // console.log(val)
+      if(session && session.ROLE=='ADMIN' && session.COMPANY_TYPE=='CORP'){        
 
         this.viewContainer.createEmbeddedView(this.templateRef);
-      } else {
-        // console.log(val)
+      } else {        
    
         this.viewContainer.clear();
       }

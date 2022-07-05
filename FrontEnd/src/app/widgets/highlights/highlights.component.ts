@@ -87,7 +87,7 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
 
   getAllMACAddress() {
     this.dataService.getMACByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
-      console.log('highlights', res)
+      // console.log('highlights', res)
       // this.ref.detectChanges();
       if (res && res.data) {
         this.WIDGET_REQUEST.MAC_COUNT = res.data.length;

@@ -7,7 +7,6 @@ const cors = require('cors');
 const authRouter = require('./routes/auth.js');
 const usersRouter = require('./routes/users.js');
 const assetRouter = require('./routes/assets.js');
-const bleRouter = require('./routes/ble.js');
 const mqttRouter = require("./routes/mqtt.js");
 const mapRouter = require("./routes/maps.js");
 
@@ -36,7 +35,6 @@ app.use(cors({
 app.use('/api', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/asset', assetRouter);
-app.use('/api/asset', bleRouter);
 app.use('/api/mqtt', mqttRouter);
 app.use('/api/maps', mapRouter);
 // Handling Errors

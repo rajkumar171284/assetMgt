@@ -71,7 +71,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       ASSET_ID: ['', Validators.required],
       INDUSTRIAL_TYPE: ['', Validators.required],
       INDUSTRIAL_DATA_SOURCE: [''],
-      CONNECTION_TYPE: ['', Validators.required],
+      CONNECTION_TYPE: [''],
       TRACKING_DEVICE: [''],
       SENSOR: ['', Validators.required],
       SENSOR_CATEGORY: [''],
@@ -265,6 +265,11 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     }
 
   }
-  
+  unselect(e:any): void {
+    this.newForm.patchValue({
+      CONNECTION_TYPE:''
+    })
+ }
+ 
 
 }

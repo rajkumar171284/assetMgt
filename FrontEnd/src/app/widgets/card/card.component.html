@@ -22,4 +22,7 @@
     </div>
 
 </div>
+<div *ngIf="loading" class="overlay"> 
+    <mat-spinner ></mat-spinner>
+</div>
 {{errMessage?errMessage:''}}

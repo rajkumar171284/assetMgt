@@ -26,7 +26,7 @@ class widgetResponse {
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent implements OnChanges, OnDestroy {
-
+  loading=true;
   @Input() WIDGET_REQUEST: any;
   errMessage: any;
   labelMessage2: any;
@@ -144,7 +144,6 @@ export class CardComponent implements OnChanges, OnDestroy {
             } else {
               this.filterShow1 = true;
               this.filterShow2 = false;
-              // this.getDeviceLog()
 
             }
 
@@ -174,8 +173,8 @@ export class CardComponent implements OnChanges, OnDestroy {
 
   async getDeviceLog(result:any) {
     // loader
-    // this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(async result => {
-      console.log(result)
+    this.errMessage ='';
+    // console.log(result)
       const set = false;
       if (result && result.data.length > 0 && !set) {
         
@@ -280,7 +279,7 @@ export class CardComponent implements OnChanges, OnDestroy {
       } else {
         this.errMessage = 'No data found.'
       }
-    // })
+    
 
   }
 
@@ -512,6 +511,7 @@ export class CardComponent implements OnChanges, OnDestroy {
     
     console.log('getFromChild',data)
     if(data){
+      this.loading=false;
       this.getDeviceLog(data)
       
     }

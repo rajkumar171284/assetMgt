@@ -1,4 +1,3 @@
-
 <form class="form-container p-2" [formGroup]="newForm">
 
     <div class="filter">
@@ -20,6 +19,16 @@
 
             </mat-select>
         </mat-form-field>
+        <!-- <mat-form-field appearance="outline">
+            <mat-label>Enter start date</mat-label>
+
+            <input matInput  type="datetime" formControlName="START_DATE" placeholder="Start date">
+
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Enter end date</mat-label>
+            <input matInput  type="datetime-local" formControlName="END_DATE" placeholder="End date">
+        </mat-form-field> -->
         <mat-form-field appearance="outline">
             <mat-label>Enter date range</mat-label>
             <mat-date-range-input [rangePicker]="picker">
@@ -30,8 +39,6 @@
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-date-range-picker #picker></mat-date-range-picker>
 
-            <!-- <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-            <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error> -->
         </mat-form-field>
 
         <button mat-button (click)="filterSrc()">

@@ -110,8 +110,7 @@
               "src/styles.scss",
               "./node_modules/angular-resize-element/bundles/style.scss"   
             ],
-            "scripts": [
-            ]
+            "scripts": []
           }
         }
       }

@@ -1,4 +1,4 @@
-<form class="form-container p-2" [formGroup]="newForm">
+<!-- <form class="form-container p-2" [formGroup]="newForm">
     <div *ngIf="filterShow1">
 
         <mat-form-field>
@@ -22,28 +22,33 @@
 
     </div>
 
-    <!--  -->
-   
-   
-</form>
+    
+
+
+</form> -->
 <div *ngIf="filterShow2">
-    <app-history-filter (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
-           
+    <app-history-filter (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
+
 </div>
 <!-- <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
     (mouseleave)="mouseLeave($event)"></plotly-plot> -->
-    <!-- <div style="position: absolute;bottom:20px;z-index:999">
+<!-- <div style="position: absolute;bottom:20px;z-index:999">
         <mat-card>fdf{{widgetResponse.data && widgetResponse.data.length==0?'No':''}}</mat-card>
     </div> -->
-<div>
+<div class="text-center text-danger text-uppercase">
+    {{errMessage?errMessage:''}}
+</div>
+<div [appToHide]="isDataFound">
+
     <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
-    (mouseleave)="mouseLeave($event)"></plotly-plot>
+        (mouseleave)="mouseLeave($event)"></plotly-plot>
 </div>
 <div *ngIf="showGuage">
- 
+
     <!-- <app-guage [name]="widgetResponse.totalDevice"></app-guage> -->
 
 
 </div>
-<mat-spinner *ngIf="loading"></mat-spinner>
-{{errMessage?errMessage:''}}
+<div *ngIf="loading" class="overlay">
+    <mat-spinner></mat-spinner>
+</div>

@@ -71,7 +71,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
   widgetResponse: any = new widgetResponse()
-  loading = false;
+  loading = true;
   newDevice: __addAssetDevice = {
     PID: 0,
     ASSET_CONFIG_ID: 0,
@@ -87,6 +87,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   myInterval: Subscription | undefined;
   filterShow1: boolean = false;
   filterShow2: boolean = false;
+  isDataFound: boolean = false;
 
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
@@ -139,7 +140,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
               START_DATE: new Date(this.todayStartDate),
               END_DATE: new Date(this.todayEndDate),
               LOCATION: this.widgetResponse.totalLocations[0].LOCATION,
-              DEVICE_ID:this.widgetResponse.totalLocations[0].MAC_ADDRESS
+              DEVICE_ID: this.widgetResponse.totalLocations[0].MAC_ADDRESS
 
             })
             if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
@@ -191,199 +192,152 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   //   // this.getDeviceLog();
   // }
 
-  getDeviceLog(result:any) {
-    // loader
-    // this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
+  getDeviceLog(result: any) {
+    // console.log(result)
+    const set = false;
+
+    if (result && result.data.length > 0 && !set) {
+      this.widgetResponse.data = result.data;
+      this.widgetResponse.protocol = result.protocol;
+      this.widgetResponse.totalDevice = result.totalDevice
+
+
+      // console.log(this.widgetResponse)
+      if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
+        this.showGuage = true;
+        var data = [
+          {
+            domain: { x: [0, 1], y: [0, 1] },
+            value: 270,
+            title: { text: "Speed" },
+            type: "indicator",
+            mode: "gauge+number"
+          }
+        ];
+        this.graph1.data = data;
+        this.graph1.layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+
+      }
+
+      // get x axes as  
+      // this.ref.detectChanges();
+      // return;
+      // for (let a of result.totalDevice) {
+      //   a.totalSpeed = 0;
+      //   a.totalKM = 0;
+      //   result.data.filter((x: any) => {
+      //     return x.DEVICE_ID == a.DEVICE_ID;
+      //   }).map((resp: any) => {
+      //     const value = JSON.parse(resp.VALUE);
+      //     a.totalSpeed = a.totalSpeed + value.speed;
+      //     a.totalKM = a.totalKM + value.odometer;
+      //   })
+      // }
       // console.log(result)
-      const set = false;
 
-      if (result && result.data.length > 0 && !set) {
-        this.widgetResponse.data = result.data;
-        this.widgetResponse.protocol = result.protocol;
-        this.widgetResponse.totalDevice = result.totalDevice
-      
 
-        // console.log(this.widgetResponse)
-        if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
-          this.showGuage = true;
-          var data = [
-            {
-              domain: { x: [0, 1], y: [0, 1] },
-              value: 270,
-              title: { text: "Speed" },
-              type: "indicator",
-              mode: "gauge+number"
-            }
-          ];
-          this.graph1.data = data;
-          this.graph1.layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+      else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line') {
+        console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase(), this.WIDGET_REQUEST.CONFIG_NAME)
+        let linedata: any = [];
+        let newVALUE: any = [];
+        let index = 0;
+        for (let a of this.widgetResponse.totalDevice) {
 
-        }
+          let xArray = a.history.map((z: any) => {
+            let dt = new Date(z.LAST_UPDATE_TIME);
+            return dt;
+          });
 
-        // get x axes as  
-        // this.ref.detectChanges();
-        // return;
-        // for (let a of result.totalDevice) {
-        //   a.totalSpeed = 0;
-        //   a.totalKM = 0;
-        //   result.data.filter((x: any) => {
-        //     return x.DEVICE_ID == a.DEVICE_ID;
-        //   }).map((resp: any) => {
-        //     const value = JSON.parse(resp.VALUE);
-        //     a.totalSpeed = a.totalSpeed + value.speed;
-        //     a.totalKM = a.totalKM + value.odometer;
-        //   })
-        // }
-        // console.log(result)
-        else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line'||this.WIDGET_REQUEST.CHART_NAME.toLowerCase()=='bar') {
-          console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase() ,this.WIDGET_REQUEST.CONFIG_NAME)
-          let linedata: any = [];
-          let index = 0;
-          for (let a of this.widgetResponse.totalDevice) {
-            
-            let xArray = a.history.map((z: any) => {
-              let dt = new Date(z.date);
-              return dt;
-            });
+          const unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
 
-            const unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
+          for (let units of a.unitsArr) {
+            // format VALUE json as key & value
 
-            for (let units of a.unitsArr) {
-              // format VALUE json as key & value
-              let newVALUE: any = [];
-              Object.keys(a.VALUE).forEach((item: any, index) => {
-                if (item != 'location' && item != 'date' && item != 'sensorId') {
-                  newVALUE.push({
-                    key: item, value: Object.values(a.VALUE)[index]
-                  })
-                }
-              })
+            Object.keys(a.VALUE).forEach((item: any, index) => {
+              if (item != 'location' && item != 'date' && item != 'sensorId') {
+                newVALUE.push({
+                  key: item, value: Object.values(a.VALUE)[index]
+                })
+              }
+            })
 
-              // let yArray = newVALUE.map((z: any) => z.value);
+            // let yArray = newVALUE.map((z: any) => z.value);
 
-              let trace = {
-                x: unique,
-                // y: yArray, 
-                y: units.data,
-                mode: 'lines+points',
-                type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
-                // name: a.DEVICE_ID,
-                name: units.key
-              };
-              linedata.push(trace)
-            }
-
-            index++;
-
+            let trace = {
+              x: unique,
+              // y: yArray, 
+              y: units.data,
+              mode: 'lines+points',
+              type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
+              // name: a.DEVICE_ID,
+              name: units.key
+            };
+            linedata.push(trace)
           }
 
-          // // Define Layout
-          var layout = {
-            yaxis: { autorange: true, title: "" },
-            showlegend: true,
-            autosize: true,
-            width: 900,
-            height: 500,
-            margin: {
-              l: 50,
-              r: 50,
-              b: 50,
-              t: 50,
-              pad: 4
-            },
-            // paper_bgcolor: '#7f7f7f',
-            // plot_bgcolor: '#c7c7c7'
-          };
-          // var layout = {
-          //   yaxis: { autorange: true, title: "" },
-          //   title: "",
-          //   showlegend: true,
-          //   xaxis: {
-          //     // tickformat: '%d/%m',
-          //   }
-          // };
-
-          // Display using Plotly
-          this.graph1.data = linedata;
-          this.graph1.layout = layout;
-          console.log(linedata)
+          index++;
 
         }
-        else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
-          this.pieChart(result)
-        } else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'barz'){
 
-          // default
-          this.newForm.patchValue({
-            PLOT_TYPE: this.filterBy[0],
-            PLOT_XAXES: this.filterXaxes[0]
-          })
-          // console.log(this.newForm.value)
-
-
-          this.barChart(result)
-        }else{
-          this.newForm.patchValue({
-            PLOT_TYPE: this.filterBy[0],
-            PLOT_XAXES: this.filterXaxes[0]
-          })
-          // console.log(this.newForm.value)
-
-
-          this.xAndYaxesChart(result)
-        }
+        // // Define Layout
+        var layout = {
+          yaxis: { autorange: true, title: "" },
+          showlegend: true,
+          autosize: true,
+          width: 900,
+          height: 500,
+          margin: {
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
+            pad: 4
+          },
+          // paper_bgcolor: '#7f7f7f',
+          // plot_bgcolor: '#c7c7c7'
+        };
 
 
+        // Display using Plotly
+        this.graph1.data = linedata;
+        this.graph1.layout = layout;
+        console.log(linedata)
 
+      }
+      else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
+        this.pieChart(result)
+      } else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'bar') {
+
+        // default
+        // this.newForm.patchValue({
+        //   PLOT_TYPE: this.filterBy[0],
+        //   PLOT_XAXES: this.filterXaxes[0]
+        // })
+        // console.log(this.newForm.value)
+
+
+        this.barChart(result)
       } else {
-        this.errMessage = 'No Data found..';
-
-      }
-      this.loading = false;
-      // console.log(this.loading)
-      this.ref.detectChanges();
-    // })
-
-  }
-
-  getKEYS(result: any) {
-    if (result) {
-
-      try {
-        const VALUE = JSON.parse(result.VALUE);
-        // console.log('parse', VALUE);
-        let index = this.deviceList.findIndex((item: any) => {
-
-          return item.DEVICE_ID == result.DEVICE_ID;
+        this.newForm.patchValue({
+          PLOT_TYPE: this.filterBy[0],
+          PLOT_XAXES: this.filterXaxes[0]
         })
-        if (index == -1) {
-          this.deviceList.push({
-            DEVICE_ID: result.DEVICE_ID
-          })
-        }
-
-      } catch (err) {
-        const VALUE = JSON.parse(JSON.stringify(result.VALUE));
-        let index = this.deviceList.findIndex((item: _device) => {
-
-          return item.DEVICE_ID == result.DEVICE_ID;
-        })
-        if (index == -1) {
-          this.deviceList.push({
-            DEVICE_ID: result.DEVICE_ID
-          })
-        }
+        // console.log(this.newForm.value)
 
 
+        this.xAndYaxesChart(result)
       }
 
 
 
-      // console.log(VALUE.activePower)
-
+    } else {
+      this.errMessage = 'No Data found..';
 
     }
+    this.loading = false;
+    this.ref.detectChanges();
   }
+
   xAndYaxesChart(result: any) {
 
     let plotArray: any = [];
@@ -445,62 +399,70 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   barChart(result: any) {
+    console.log('bar', result)
+    let unique: any = [];
+    let data: any = [];
+    
+    let xArray: any = [];
+   
+    for (let a of this.widgetResponse.totalDevice) {
+      if (a.history.length > 0) {
+        xArray = a.history.map((z: any) => {
+          let dt = new Date(z.LAST_UPDATE_TIME);
+          return dt;
+        });
 
-    let plotArray: any = [];
-    if (this.newForm.value.PLOT_XAXES == 'DEVICE') {
-      for (let a of result.totalDevice) {
-        a.key = `D${a.DEVICE_ID}`;
-        a.totalSpeed = 0;
-        a.totalKM = 0;
-        result.data.filter((x: any) => {
-          return x.DEVICE_ID == a.DEVICE_ID;
-        }).map((resp: any) => {
-          const value = JSON.parse(resp.VALUE);
-          a.totalSpeed = a.totalSpeed + value.speed;
-          a.totalKM = a.totalKM + value.odometer;
-        })
-        plotArray.push(a)
-      }
-    } else {
-      // loc axes
-      for (let a of result.Locations) {
-        a.key = a.LOCATION;
-        a.totalSpeed = 0;
-        a.totalKM = 0;
-        result.data.filter((x: any) => {
-          return x.LOCATION == a.LOCATION;
-        }).map((resp: any) => {
-          const value = JSON.parse(resp.VALUE);
-          a.totalSpeed = a.totalSpeed + value.speed;
-          a.totalKM = a.totalKM + value.odometer;
+        unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
+        // console.log(unique)
+        let yArray: any = [];
+        for (let units of a.unitsArr) {
+          // format VALUE json as key & value
 
-        })
-        plotArray.push(a)
+          Object.keys(a.VALUE).forEach((item: any, index) => {
+            if (item != 'location' && item != 'date' && item != 'sensorId') {
+              yArray.push(Object.values(a.VALUE)[index]
+              )
+            }
+          })
+
+          // let yArray = newVALUE.map((z: any) => z.value);
+
+          // let trace = {
+          //   x: unique,
+          //   // y: yArray, 
+          //   y: units.data,
+          //   mode: 'lines+points',
+          //   type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
+          //   // name: a.DEVICE_ID,
+          //   name: units.key
+          // };
+          // linedata.push(trace)
+          data.push({
+            x: unique,
+            y: yArray,
+            type: "bar",
+            name:units.key
+          })
+        }
       }
+      // index++;
+
     }
 
-    // 
-    let newArr: any = [];
-    for (let el of plotArray) {
-      let xData;
+    // let xArray = ["Italy","France","Spain","USA","Argentina"];
+    // let yArray = [55, 49, 44, 24, 15];
 
-      if (this.newForm.value.PLOT_TYPE == 'SPEED') {
-        xData = el.totalSpeed;
-      } else if (this.newForm.value.PLOT_TYPE == 'KM') {
-        xData = el.totalKM
-      }
-      let item: any = {
-        x: [el.key], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ? this.WIDGET_REQUEST.CHART_NAME.toLowerCase() : ''
-      }
-      newArr.push(item)
-
-    }
-
-    this.graph1.data = newArr;
+    // var data = [{
+    //   x: unique,
+    //   y: yArray,
+    //   type: "bar"
+    // }];
+    this.graph1.data = data;
+    this.graph1.layout.width = 800;
     this.graph1.layout.height = 340;
     this.graph1.responsive = true;
 
-    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
+    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
     // console.log(this.graph1)
   }
   pieChart(result: any) {
@@ -563,63 +525,25 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   onFilterChange() {
     this.xAndYaxesChart(this.widgetResponse)
-
-
   }
 
-  getMQTTdata() {
-    const time = interval(6000);
-    this.myInterval = time.subscribe(() => {
-      this.dataService.getMqtt({}).subscribe(response => {
-        // console.log('getMqtt',)
-        if (response) {
-
-          const res = response.data;
-          const value = JSON.parse(JSON.stringify(response.data));
-
-          this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
-          this.newDevice.DEVICE_ID = res.sensorId;
-          this.newDevice.STATUS = true;
-          this.newDevice.VALUE = JSON.stringify(value);
-          this.newDevice.UNITS = JSON.stringify(value);
-          this.newDevice.LOCATION = res.location;
-          this.newDevice.LAST_UPDATE_TIME = res.date;
-
-          // console.log(this.newDevice)
-
-          this.dataService.saveDeviceHistory(this.newDevice).subscribe(resp => {
-            // console.log(resp)
-
-          })
-
-        }
-      })
-    })
+  getLoader(data: boolean) {
+    this.loading = data;
   }
+  getFromChild(data: any) {
 
-
-  // async getParsed(data: any) {
-  //   if (!data) return;
-  //   let VALUE = data.VALUE;
-  //   try {
-  //     VALUE = JSON.parse(VALUE);
-  //     data.VALUE = VALUE;
-  //     return data;
-
-  //   } catch (err) {
-  //     VALUE = JSON.parse(VALUE);
-  //     data.VALUE = VALUE;
-  //     return data;
-
-  //   }
-
-  // }
-  getFromChild(data:any){
-    
-    console.log('getFromChild',data)
-    if(data){
+    console.log('getFromChild', data)
+    if (data) {
+      this.errMessage = '';
+      this.loading = false;
+      this.isDataFound = true;
       this.getDeviceLog(data)
-      
+
+    } else {
+      this.isDataFound = false;
+      // no record- data empty array
+      this.loading = false;
+      this.errMessage = 'No data found..Please try other dates.'
     }
   }
 }

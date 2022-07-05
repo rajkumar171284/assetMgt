@@ -78,29 +78,8 @@
 
                     </mat-form-field>
                 </div>
-                <div class="col-md-4">
-                    <mat-form-field>
-                        <mat-label>SELECT PROTOCOL</mat-label>
-                        <mat-select formControlName="CONNECTION_TYPE">
-                            <mat-option *ngFor="let key of assetConn" [value]="key.PID">
-                                {{key.CONN_NAME}}
-                            </mat-option>
-
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <!-- <div class="col-md-4">
-                    <mat-form-field>
-                        <mat-label>TRACKING DEVICE </mat-label>
-                        <mat-select formControlName="TRACKING_DEVICE">
-
-                            <mat-option *ngFor="let key of trackingDevices" [value]="key">
-                                {{key}}
-                            </mat-option>
-
-                        </mat-select>
-                    </mat-form-field>
-                </div> -->
+                
+               
            
                 <div class="col-md-4">
                     <mat-form-field>
@@ -144,6 +123,25 @@
 
                         </mat-select>
                     </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field>
+
+                        <mat-label>SELECT PROTOCOL</mat-label>
+                       
+                        <mat-select  formControlName="CONNECTION_TYPE">
+                            <mat-option *ngFor="let key of assetConn" [value]="key.PID">
+                                {{key.CONN_NAME}}
+                            </mat-option>
+
+                        </mat-select>
+
+                    </mat-form-field>
+
+                </div>
+                <div class="col-md-4">
+                    <mat-icon (click)="unselect($event)">refresh</mat-icon>Reset Protocol
+
                 </div>
             </div>
 
