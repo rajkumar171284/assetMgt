@@ -85,6 +85,7 @@ export class CardComponent implements OnChanges, OnDestroy {
   filterShow1: boolean = false;
   filterShow2: boolean = false;
   @Input() selectedDevice: any;
+  isDataFound: boolean = false;
 
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
@@ -507,13 +508,20 @@ export class CardComponent implements OnChanges, OnDestroy {
     }
 
   }
-  getFromChild(data:any){
-    
-    console.log('getFromChild',data)
-    if(data){
-      this.loading=false;
-      this.getDeviceLog(data)
+  getFromChild(data: any) {
+    this.loading = false;
+    console.log('getFromChild', data)
+    if (data) {
+      this.errMessage = '';
       
+      this.isDataFound = true;
+      this.getDeviceLog(data)
+
+    } else {
+      this.isDataFound = false;
+      // no record- data empty array      
+      this.errMessage = 'No data found..Please try other dates.'
     }
+    console.log(this.loading, this.errMessage)
   }
 }

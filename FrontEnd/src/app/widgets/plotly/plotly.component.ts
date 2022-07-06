@@ -181,22 +181,12 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   get VALUES() {
     return this.newForm.value;
   }
-  // filterSrc() {
-  //   this.loading = true;
-  //   this.errMessage = '';
-  //   this.WIDGET_REQUEST.LOCATION = this.VALUES.LOCATION;
-  //   this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
-  //   this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
-  //   this.WIDGET_REQUEST.DEVICE_ID=  this.VALUES.DEVICE_ID;
-  //   console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
-  //   // this.getDeviceLog();
-  // }
 
   getDeviceLog(result: any) {
     // console.log(result)
-    const set = false;
+    // const set = false;
 
-    if (result && result.data.length > 0 && !set) {
+    if (result && result.data.length > 0) {
       this.widgetResponse.data = result.data;
       this.widgetResponse.protocol = result.protocol;
       this.widgetResponse.totalDevice = result.totalDevice
@@ -239,46 +229,39 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
       else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line') {
         console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase(), this.WIDGET_REQUEST.CONFIG_NAME)
         let linedata: any = [];
-        let newVALUE: any = [];
+        let newVALUE: any = [], xArray: any = [];
         let index = 0;
         for (let a of this.widgetResponse.totalDevice) {
+          if (a.history.length > 0) {
 
-          let xArray = a.history.map((z: any) => {
-            let dt = new Date(z.LAST_UPDATE_TIME);
-            return dt;
-          });
+            xArray = a.history.map((z: any) => {
+              let dt = new Date(z.LAST_UPDATE_TIME);
+              return dt;
+            });
+            // const unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
 
-          const unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
+            // y value
+            for (let units of a.unitsArr) {
+              // format VALUE json as key & value
 
-          for (let units of a.unitsArr) {
-            // format VALUE json as key & value
-
-            Object.keys(a.VALUE).forEach((item: any, index) => {
-              if (item != 'location' && item != 'date' && item != 'sensorId') {
-                newVALUE.push({
-                  key: item, value: Object.values(a.VALUE)[index]
-                })
-              }
-            })
-
-            // let yArray = newVALUE.map((z: any) => z.value);
-
-            let trace = {
-              x: unique,
-              // y: yArray, 
-              y: units.data,
-              mode: 'lines+points',
-              type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
-              // name: a.DEVICE_ID,
-              name: units.key
-            };
-            linedata.push(trace)
+              let trace = {
+                x: xArray,
+                // y: yArray, 
+                y: units.data,
+                mode: 'lines+points',
+                type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
+                // name: a.DEVICE_ID,
+                name: units.key
+              };
+              linedata.push(trace)
+            }
           }
+
+
 
           index++;
 
         }
-
         // // Define Layout
         var layout = {
           yaxis: { autorange: true, title: "" },
@@ -302,6 +285,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
         this.graph1.data = linedata;
         this.graph1.layout = layout;
         console.log(linedata)
+
 
       }
       else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
@@ -330,10 +314,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
 
 
-    } else {
-      this.errMessage = 'No Data found..';
-
-    }
+    } 
     this.loading = false;
     this.ref.detectChanges();
   }
@@ -399,12 +380,12 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   barChart(result: any) {
-    console.log('bar', result)
+    // console.log('bar', result)
     let unique: any = [];
     let data: any = [];
-    
+
+    // let xArray: any = [];
     let xArray: any = [];
-   
     for (let a of this.widgetResponse.totalDevice) {
       if (a.history.length > 0) {
         xArray = a.history.map((z: any) => {
@@ -412,34 +393,11 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
           return dt;
         });
 
-        unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
-        // console.log(unique)
-        let yArray: any = [];
         for (let units of a.unitsArr) {
-          // format VALUE json as key & value
 
-          Object.keys(a.VALUE).forEach((item: any, index) => {
-            if (item != 'location' && item != 'date' && item != 'sensorId') {
-              yArray.push(Object.values(a.VALUE)[index]
-              )
-            }
-          })
-
-          // let yArray = newVALUE.map((z: any) => z.value);
-
-          // let trace = {
-          //   x: unique,
-          //   // y: yArray, 
-          //   y: units.data,
-          //   mode: 'lines+points',
-          //   type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
-          //   // name: a.DEVICE_ID,
-          //   name: units.key
-          // };
-          // linedata.push(trace)
           data.push({
-            x: unique,
-            y: yArray,
+            x: xArray,
+            y: units.data,
             type: "bar",
             name:units.key
           })
@@ -449,14 +407,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
     }
 
-    // let xArray = ["Italy","France","Spain","USA","Argentina"];
-    // let yArray = [55, 49, 44, 24, 15];
 
-    // var data = [{
-    //   x: unique,
-    //   y: yArray,
-    //   type: "bar"
-    // }];
     this.graph1.data = data;
     this.graph1.layout.width = 800;
     this.graph1.layout.height = 340;
@@ -531,19 +482,19 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     this.loading = data;
   }
   getFromChild(data: any) {
-
+    this.loading = false;
     console.log('getFromChild', data)
     if (data) {
       this.errMessage = '';
-      this.loading = false;
+      
       this.isDataFound = true;
       this.getDeviceLog(data)
 
     } else {
       this.isDataFound = false;
-      // no record- data empty array
-      this.loading = false;
+      // no record- data empty array      
       this.errMessage = 'No data found..Please try other dates.'
     }
+    console.log(this.loading, this.errMessage)
   }
 }

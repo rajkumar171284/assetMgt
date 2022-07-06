@@ -11,19 +11,40 @@ export interface config {
     Sensor_Data_Type: string,
     MAC_Address: string
 }
-export interface __addAssetDevice{
-    PID :number,
-    ASSET_CONFIG_ID:number,
-    DEVICE_ID:any,
-    VALUE:any,
-    UNITS:any,
-    STATUS:any,
-    LATITUDE:any,
-    LONGITUDE:any,
-    LOCATION:any,
-    LAST_UPDATE_TIME:any
+export interface __addAssetDevice {
+    PID: number,
+    ASSET_CONFIG_ID: number,
+    DEVICE_ID: any,
+    VALUE: any,
+    UNITS: any,
+    STATUS: any,
+    LATITUDE: any,
+    LONGITUDE: any,
+    LOCATION: any,
+    LAST_UPDATE_TIME: any
 }
-export const _protocolType=['HTTP','HTTPS','MQTT']
+export const _protocolType = ['HTTP', 'HTTPS', 'MQTT']
+export const _dateFilters = [
+    { key: 'Last 5 min', state: 'minutes', step: 5 }, {
+        key: 'Last 15 min', state: 'minutes', step: 15
+    }, { key: 'Last 30 min', state: 'minutes', step: 30 }, {
+        key: 'Last 1 hr', state: 'hours', step: 1
+    }, { key: 'Last 3 hrs', state: 'hours', step: 3 }, {
+        key: 'Last 6 hrs', state: 'hours', step: 6
+    }
+    , { key: 'Last 12 hrs', state: 'hours', step: 12 }, {
+        key: 'Last 24 hrs', state: 'hours', step: 24
+    }
+    , { key: 'Last 2 days', state: 'days', step: 2 }, {
+        key: 'Last 7 days', state: 'days', step: 7
+    }
+]
+
+export const _xAxes = [{ key: 'LOCATION', state: false }, {
+    key: 'DEVICE', state: false
+}, { key: 'DATE-WISE', state: false }, {
+    key: 'SENSOR', state: false
+}]
 
 export const _widgetSIZE = [{ name: 'Full width', file: 'col-md-12', isSelected: false },
 { name: 'Md width', file: 'col-md-7', isSelected: false },
@@ -55,8 +76,8 @@ export class widgetResponse {
     data: [] | undefined;
     status: '' | undefined;
     totalDevice: [] | undefined
-  
-  };
+
+};
 
 export const _assetTypes = ['Security',
     'Activity Trackers',
@@ -64,14 +85,14 @@ export const _assetTypes = ['Security',
     ' Augmented Reality',
     'Motion Detection'
 ];
-export const _deviceType = ["IMEI", "MAC ADDRESS","DEVICE ID"];
-export interface __deviceHistory{
-    PID:number;
-    ASSET_CONFIG_ID:number;
-     DEVICE_ID:any;
-    VALUE:any;
-    STATUS:any;
-    LATITUDE:any;
-    LONGITUDE:any;
-    LOCATION:string;
+export const _deviceType = ["IMEI", "MAC ADDRESS", "DEVICE ID"];
+export interface __deviceHistory {
+    PID: number;
+    ASSET_CONFIG_ID: number;
+    DEVICE_ID: any;
+    VALUE: any;
+    STATUS: any;
+    LATITUDE: any;
+    LONGITUDE: any;
+    LOCATION: string;
 }

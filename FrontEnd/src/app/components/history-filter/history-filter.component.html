@@ -30,9 +30,18 @@
             <input matInput  type="datetime-local" formControlName="END_DATE" placeholder="End date">
         </mat-form-field> -->
         <mat-form-field appearance="outline">
+            <mat-label>Select DateTime</mat-label>
+            <mat-select placeholder="" formControlName="filterStep">
+                <mat-option *ngFor="let key of dateFilters" [value]="key">
+                    {{key.key}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
             <mat-label>Enter date range</mat-label>
             <mat-date-range-input [rangePicker]="picker">
-                <input matStartDate formControlName="START_DATE" placeholder="Start date">
+                <input  matStartDate formControlName="START_DATE" placeholder="Start date">
                 <input matEndDate formControlName="END_DATE" placeholder="End date">
             </mat-date-range-input>
             <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>

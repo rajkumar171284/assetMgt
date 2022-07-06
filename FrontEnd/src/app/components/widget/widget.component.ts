@@ -12,7 +12,7 @@ import { map, startWith } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
-import { _widgetTYPE, _chartTYPE, _widgetSIZE } from '../../myclass';
+import { _widgetTYPE, _chartTYPE, _widgetSIZE,_xAxes } from '../../myclass';
 
 export interface Fruit {
   name: string;
@@ -29,7 +29,7 @@ export class WidgetComponent implements OnInit {
 
   widgetType = _widgetTYPE;
   chartTypes = _chartTYPE;
-
+  xAxesOPTION=_xAxes;
   widgetState = false;
   panelOpenState = true;
   panelOpenState2 = true;
@@ -49,6 +49,7 @@ export class WidgetComponent implements OnInit {
     CHART_TYPE: [this.chartChoosen ? Validators.required : null],
     WIDGET_DATA: ['', Validators.required], WIDGET_SIZE: [''],
     ASSET_CONFIG_ID: ['', Validators.required],
+    XAXES:[this.chartChoosen ? Validators.required : null],
     WIDGET_IMG: '',
     SQL_QUERY: [],
     IS_DRAGGED: 0
@@ -172,6 +173,9 @@ export class WidgetComponent implements OnInit {
           width: 230, height: 320
         }
         this.Values.WIDGET_SIZE=JSON.stringify(params);
+      }
+      if(!this.chartChoosen){
+        this.Values.XAXES=null;
       }
       this.dataService.addChartRequest(this.Values).subscribe(res => {
         console.log(res)

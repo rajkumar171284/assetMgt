@@ -4,7 +4,7 @@ import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { __addAssetDevice } from '../../myclass';
+import { __addAssetDevice, _dateFilters } from '../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment'
 var date = new Date()
@@ -27,7 +27,7 @@ class widgetResponse {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
-
+  dateFilters = _dateFilters;
   @Input() WIDGET_REQUEST: any;
   @Output() sendToParent = new EventEmitter();
   @Output() setLoader = new EventEmitter();
@@ -38,38 +38,12 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
   @Input('pMap') pMap: any;
   @Input() name: any;
   filterBy: any[] = ['KM', 'SPEED'];
-  newForm: FormGroup = this.fb.group({
-    PLOT_XAXES: [''],
-    PLOT_TYPE: [''],
-    LOCATION: [''],
-    START_DATE: [''],
-    END_DATE: ['']
-  })
+  newForm: FormGroup;
   filterXaxes: any[] = ['DEVICE', 'LOCATION'];
 
-  public data: any;
-  public layOut: any;
-  graph1: any = {
-    data: [
-      { x: [], y: [], type: '' },
-    ],
-    layout: {
-      width: 420, height: 300, marginLeft: -20,
-      title: ''
-    },
-    responsive: true
-  };
 
-  graph2 = {
-    data: [
-      { x: [1, 2, 3, 4, 5], y: [1, 4, 9, 4, 1], type: 'scatter' },
-      { x: [1, 2, 3, 4, 5], y: [1, 3, 6, 9, 6], type: 'scatter' },
-      { x: [1, 2, 3, 4, 5], y: [1, 2, 4, 5, 6], type: 'scatter' },
-    ],
-    layout: { title: 'Some Data to Highlight' }
-  };
 
-  interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
+
   widgetResponse: any = new widgetResponse()
   loading = false;
   newDevice: __addAssetDevice = {
@@ -87,7 +61,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
   myInterval: Subscription | undefined;
   filterShow1: boolean = false;
   filterShow2: boolean = false;
-  todayStartDate=date.setDate(date.getDate() - 1);
+  todayStartDate = date.setDate(date.getDate() - 1);
   // todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
   deviceList: _device[] = [];
@@ -100,12 +74,13 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
       LOCATION: ['', this.filterShow2 ? Validators.required : ''],
       START_DATE: ['', this.filterShow2 ? Validators.required : ''],
       END_DATE: ['', this.filterShow2 ? Validators.required : ''],
-      DEVICE_ID: ['']
+      DEVICE_ID: [''],
+      filterStep: ['']
     })
     this.newForm.patchValue({
-      START_DATE: new Date(this.todayStartDate),
-      END_DATE: new Date(this.todayEndDate)
-
+      // START_DATE: new Date(this.todayStartDate),
+      // END_DATE: new Date(this.todayEndDate),
+      filterStep: this.dateFilters[0]
     })
 
   }
@@ -140,15 +115,17 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
 
             this.widgetResponse.totalLocations = locations.data;
             this.newForm.patchValue({
-            
+
               LOCATION: this.widgetResponse.totalLocations[0].LOCATION,
               DEVICE_ID: this.widgetResponse.totalLocations[0].MAC_ADDRESS
 
             })
             this.filterSrc()
 
-          } else {
-            // no device
+            //     this.errMessage = 'No Data found..';
+            // // no record found then 
+            // this.sendToParent.emit(false);
+            // this.ref.detectChanges();
 
           }
         })
@@ -163,13 +140,53 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
   get VALUES() {
     return this.newForm.value;
   }
-  filterSrc() {
-    this.loading = true;
+  getDateSteps() {
+
+    let enddate = moment().format("YYYY-MM-DD HH:mm:ss").toString();
+
+    let state: any = `${this.VALUES.filterStep.state}`;
+    let step: any = this.VALUES.filterStep.step;
+    let startdate = moment().subtract(step, state).format("YYYY-MM-DD HH:mm:ss").toString();
+    console.log(startdate);
+    return {
+      START_DATE: startdate, END_DATE: enddate,
+    }
+
+    
+    // console.log('end', end, step)
+    // if(this.VALUES.filterStep.state=='min'){
+
+    // }else if(this.VALUES.filterStep.state=='hr'){
+    //   moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
+    // }
+    // else if(this.VALUES.filterStep.state=='day'){
+    //   moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
+    // }
+
+
+  }
+  async filterSrc() {
+    // this.loading = true;
     this.setLoader.emit(true);
     this.errMessage = '';
     this.WIDGET_REQUEST.LOCATION = this.VALUES.LOCATION;
-    this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
-    this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
+    if (this.VALUES.filterStep) {
+      const dates = await this.getDateSteps();
+      // console.log(dates)
+      this.WIDGET_REQUEST.START_DATE = moment(dates.START_DATE).format("YYYY-MM-DD HH:mm:ss").toString();
+      this.WIDGET_REQUEST.END_DATE = moment(dates.END_DATE).format("YYYY-MM-DD HH:mm:ss").toString();
+
+    } 
+    
+    else if(this.VALUES.START_DATE && this.VALUES.END_DATE){
+      this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
+      this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
+  
+
+      this.newForm.patchValue({
+        filterStep:''
+      })
+    }
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;
     console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
     this.getDeviceLog();
@@ -179,20 +196,18 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
     // loader
     this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
       // console.log(result)
-      const set = false;
-
-      if (result && result.data.length > 0 && !set) {
+      if (result && result.data.length > 0) {
         this.widgetResponse.data = result.data;
         this.widgetResponse.protocol = result.protocol;
         this.widgetResponse.totalDevice = result.totalDevice;
-       
+
         const protocol = result.protocol;
         // console.log('MQTT',protocol)
         if (protocol && protocol[0].CONN_NAME == 'MQTT') {
           // written api for tat power data
           this.getMQTTdata()
         }
-        
+
 
         for (let device of this.widgetResponse.totalDevice) {
           device.history = [];
@@ -203,14 +218,14 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
             let VALUE = resp.VALUE;
             resp.newVALUE = '';
             try {
-              const newVALUE= JSON.parse(VALUE);
+              const newVALUE = JSON.parse(VALUE);
               // update date 
-              newVALUE.LAST_UPDATE_TIME= resp.LAST_UPDATE_TIME;
+              newVALUE.LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
               resp.newVALUE = newVALUE;
             } catch (err) {
-              const newVALUE= JSON.stringify(VALUE);
+              const newVALUE = JSON.stringify(VALUE);
 
-              JSON.parse(newVALUE).LAST_UPDATE_TIME= resp.LAST_UPDATE_TIME;
+              JSON.parse(newVALUE).LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
               resp.newVALUE = newVALUE;
             }
             return resp.newVALUE;
@@ -225,10 +240,10 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
             try {
               VALUE = JSON.parse(VALUE);
               device.VALUE = VALUE;
-              
+
             } catch (err) {
               VALUE = JSON.stringify(VALUE);
-              device.VALUE = VALUE;              
+              device.VALUE = VALUE;
 
             }
             for (let a of Object.keys(VALUE)) {
@@ -265,7 +280,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
         }
         this.sendToParent.emit(this.widgetResponse);
         this.ref.detectChanges();
-        console.log(this.widgetResponse)
+        // console.log(this.widgetResponse)
 
       } else {
         this.errMessage = 'No Data found..';
@@ -273,136 +288,18 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
         this.sendToParent.emit(false);
         this.ref.detectChanges();
       }
-      this.loading = false;
+      // this.loading = false;
+      this.setLoader.emit(false);
       this.ref.detectChanges();
     })
 
   }
 
 
-  xAndYaxesChart(result: any) {
-
-    let plotArray: any = [];
-    if (this.newForm.value.PLOT_XAXES == 'DEVICE') {
-      for (let a of result.totalDevice) {
-        a.key = `D${a.DEVICE_ID}`;
-        a.totalSpeed = 0;
-        a.totalKM = 0;
-        result.data.filter((x: any) => {
-          return x.DEVICE_ID == a.DEVICE_ID;
-        }).map((resp: any) => {
-          const value = JSON.parse(resp.VALUE);
-          a.totalSpeed = a.totalSpeed + value.speed;
-          a.totalKM = a.totalKM + value.odometer;
-        })
-        plotArray.push(a)
-      }
-    } else {
-      // loc axes
-      for (let a of result.Locations) {
-        a.key = a.LOCATION;
-        a.totalSpeed = 0;
-        a.totalKM = 0;
-        result.data.filter((x: any) => {
-          return x.LOCATION == a.LOCATION;
-        }).map((resp: any) => {
-          const value = JSON.parse(resp.VALUE);
-          a.totalSpeed = a.totalSpeed + value.speed;
-          a.totalKM = a.totalKM + value.odometer;
-
-        })
-        plotArray.push(a)
-      }
-    }
-
-    // 
-    let newArr: any = [];
-    for (let el of plotArray) {
-      let xData;
-
-      if (this.newForm.value.PLOT_TYPE == 'SPEED') {
-        xData = el.totalSpeed;
-      } else if (this.newForm.value.PLOT_TYPE == 'KM') {
-        xData = el.totalKM
-      }
-      let item: any = {
-        x: [el.key], y: [`Total ${this.newForm.value.PLOT_TYPE} ${xData}`], type: this.WIDGET_REQUEST && this.WIDGET_REQUEST.CHART_NAME ? this.WIDGET_REQUEST.CHART_NAME.toLowerCase() : ''
-      }
-      newArr.push(item)
-
-    }
-
-    this.graph1.data = newArr;
-    this.graph1.layout.height = 340;
-    this.graph1.responsive = true;
-
-    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.newForm.value.PLOT_TYPE.toUpperCase()}` : '';
-    // console.log(this.graph1)
-  }
-
-  pieChart(result: any) {
-
-    let itemValue = result.totalDevice.map((z: any) => z.totalSpeed);
-    let itemID = result.totalDevice.map((z: any) => `D${z.DEVICE_ID}`)
-    var traceA = {
-      type: "pie",
-      values: itemValue,
-      labels: itemID,
-      hole: 0.25,
-      pull: [0.1, 0, 0, 0, 0],
-      direction: 'clockwise',
-      marker: {
-        colors: ['#CDDC39', '#673AB7', '#F44336', '#00BCD4', '#607D8B'],
-        line: {
-          color: 'black',
-          width: 1
-        }
-      },
-      textfont: {
-        family: 'Lato',
-        color: 'white',
-        size: 18
-      },
-      hoverlabel: {
-        bgcolor: 'black',
-        bordercolor: 'black',
-        font: {
-          family: 'Lato',
-          color: 'white',
-          size: 18
-        }
-      }
-    };
-
-    this.data = [traceA];
-
-    var layout = {
-      title: ""
-    };
-    this.graph1.data = this.data;
-    this.graph1.layout.title = this.WIDGET_REQUEST && this.WIDGET_REQUEST ? `${this.WIDGET_REQUEST.CONFIG_NAME} - Plot by ${this.WIDGET_REQUEST.WIDGET_DATA}` : '';
-
-  }
-
-  // We'll bind the hover event from plotly
-  hover(event: any): void {
-    // The hover event has a lot of information about cursor location.
-    // The bar the user is hovering over is in "pointIndex"
-    // console.log(event)
-    this.interactivePlotSubject$.next(
-      [this.graph2.data[event.points[0].pointIndex]]
-    );
-  }
-  // Reset to default when hovering stops
-  mouseLeave(event: Event): void {
-    this.interactivePlotSubject$.next(this.graph2.data);
-  }
-
-  onFilterChange() {
-    this.xAndYaxesChart(this.widgetResponse)
 
 
-  }
+
+
 
   getMQTTdata() {
     const time = interval(6000);

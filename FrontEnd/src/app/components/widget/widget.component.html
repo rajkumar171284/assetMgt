@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
     <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
-        General Settings
+        General Widget Settings
     </mat-grid-list>
 
 </mat-toolbar>
@@ -15,7 +15,7 @@
                 </mat-panel-title>
 
             </mat-expansion-panel-header>
-            <mat-grid-list  cols="4" rowHeight="2:2">
+            <mat-grid-list  cols="6" rowHeight="2:2">
 
                 <mat-grid-tile (click)="selectWidgetType(a)" class="chart-type" *ngFor="let a of widgetType">
 
@@ -38,7 +38,7 @@
                 </mat-panel-title>
 
             </mat-expansion-panel-header>
-            <mat-grid-list cols="4" rowHeight="2:2">
+            <mat-grid-list cols="6">
 
                 <mat-grid-tile (click)="selectType(a)" class="chart-type" *ngFor="let a of chartTypes">
 
@@ -50,8 +50,25 @@
                     </mat-card>
 
                 </mat-grid-tile>
-
+               
             </mat-grid-list>
+            <!-- <mat-grid-list cols="1">
+                <mat-grid-tile>
+                   
+                </mat-grid-tile>
+            </mat-grid-list> -->
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Select X-Axis</mat-label>
+
+                <mat-select formControlName="XAXES">
+
+                    <mat-option *ngFor="let key of xAxesOPTION" [value]="key.key">
+                        {{key.key}}
+                    </mat-option>
+
+                </mat-select>
+
+            </mat-form-field>
         </mat-expansion-panel>
 
         <mat-expansion-panel (opened)="panelOpenState2 = true" (closed)="panelOpenState2 = false">

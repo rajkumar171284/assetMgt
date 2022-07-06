@@ -89,14 +89,7 @@ export class DashboardComponent implements OnInit {
     // console.log('dash')
     this.getSession();
     this.getMappedChartRequest();
-
-
   }
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event: any) {
-  //   console.log('resize starts')
-  //   // this.dragDisabled = true;
-  // }
 
   async getSession() {
     const session = await this.dataService.getSessionData();
@@ -116,8 +109,7 @@ export class DashboardComponent implements OnInit {
       if (res && res.data.length > 0) {
 
        
-      }
-      console.log(res.data)
+      }      
       this.doneList = res.data.map((el: chartItem) => {
         return el;
       });
@@ -128,21 +120,22 @@ export class DashboardComponent implements OnInit {
         console.log(res)
         res.dragDisabled = false;
         this.dragDisabledArr = res;
-      })
-
-      console.log(this.dragDisabledArr)
+      })      
       this.getAllChartRequest();
 
     })
   }
   openDialog() {
     const dialogRef = this.dialog.open(WidgetComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      height: '90%',
+      width: '90%',
+      panelClass: 'full-screen-modal',
       data: this.toEditRequest ? this.toEditRequest : null
     });
     dialogRef.afterClosed().subscribe(result => {
-      // call all charts
-      this.getAllChartRequest();
+      // call all charts      
       this.getMappedChartRequest();
     });
   }

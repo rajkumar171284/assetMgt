@@ -40,8 +40,9 @@
 </div>
 <div [appToHide]="isDataFound">
 
-    <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
-        (mouseleave)="mouseLeave($event)"></plotly-plot>
+    <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true">
+        
+    </plotly-plot>
 </div>
 <div *ngIf="showGuage">
 
