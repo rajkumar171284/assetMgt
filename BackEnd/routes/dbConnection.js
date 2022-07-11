@@ -11,7 +11,7 @@ const config =require('../config');
  
 // }); 
 var conn = mysql.createConnection({
-  // protocol:'http:',  
+  protocol:'http:',  
   host: config.host, // Replace with your host name
   user: 'root',      // Replace with your database username
   password: '',      // Replace with your database password

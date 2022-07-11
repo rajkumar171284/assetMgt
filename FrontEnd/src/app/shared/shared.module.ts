@@ -96,6 +96,7 @@ import {TableVirtualScrollModule} from 'ng-table-virtual-scroll';
 import { GuageComponent } from '../widgets/plotly/guage/guage.component';
 import { HistoryFilterComponent } from '../components/history-filter/history-filter.component';
 import { ToHideDirective } from '../directives/to-hide.directive';
+import { ThemeService } from '../services/theme.service';
 
 
 @NgModule({

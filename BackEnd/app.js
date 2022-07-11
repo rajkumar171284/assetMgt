@@ -9,7 +9,7 @@ const usersRouter = require('./routes/users.js');
 const assetRouter = require('./routes/assets.js');
 const mqttRouter = require("./routes/mqtt.js");
 const mapRouter = require("./routes/maps.js");
-
+const config =require("./config.json");
 const fileUpload = require('express-fileupload');
 
 var bodyParser = require('body-parser')
@@ -47,10 +47,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-// app.listen(PORT, () => {
-//     console.log('server on ',PORT)
-// })
-server.listen(PORT, '127.0.0.1', function () {
+app.listen(PORT, () => {
+    console.log('server on ',PORT)
+})
+// console.log('config',config)
+server.listen(PORT,config.host, function () {
     server.close(function () {
         server.listen(8001, '10.1.1.139')
     })

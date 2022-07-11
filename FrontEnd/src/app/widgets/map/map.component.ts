@@ -1,4 +1,4 @@
-import { Component, OnInit, DoCheck,AfterViewInit, Output,EventEmitter,OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, DoCheck, AfterViewInit, Output, EventEmitter, OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
@@ -7,13 +7,14 @@ declare let $: any;
 
 declare let L: any;
 
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapComponent implements OnInit, AfterViewInit, OnChanges,DoCheck, OnDestroy {
+export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, OnDestroy {
 
   // Define our base layers so we can reference them multiple times
   streetMaps = tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -42,23 +43,23 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges,DoCheck, O
     // this.getWidgetdetails();
     const id = this.widgetIndex.toString();
     let that = this;
-    
-    let x=document.getElementById(id);
+
+    let x = document.getElementById(id);
     // console.log(id,doc,document.getElementById(id))
-      $(x).resizable({
-        stop: function (event: Event, ui: any) {
-          console.log(ui)
-          that.height = $(ui.size.height)[0];
-          that.width = $(ui.size.width)[0];
-          const params: any = {
-            width: that.width, height: that.height
-          }
-          that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
+    $(x).resizable({
+      stop: function (event: Event, ui: any) {
+        console.log(ui)
+        that.height = $(ui.size.height)[0];
+        that.width = $(ui.size.width)[0];
+        const params: any = {
+          width: that.width, height: that.height
         }
-      });
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
+      }
+    });
   }
   ngOnInit(): void {
-  
+
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.WIDGET_REQUEST) {
@@ -183,18 +184,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges,DoCheck, O
 
             ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID,
             DEVICE_ID: resp.deviceId,
-            VALUE: JSON.stringify({"speed":resp.speed,"odometer":resp.odometer,"battery":resp.battery}),
+            VALUE: JSON.stringify({ "speed": resp.speed, "odometer": resp.odometer, "battery": resp.battery }),
             STATUS: resp.ignitionStatus,
             LATITUDE: resp.latitude,
             LONGITUDE: resp.longitude,
             LOCATION: resp.region
-  }
+          }
         })
         // 
 
         forkJoin(newArr.map((result: any) => this.dataService.saveDeviceHistory(result))).subscribe((response: any) => {
 
-        })      
+        })
 
 
       }
@@ -233,12 +234,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges,DoCheck, O
   ngOnDestroy(): void {
     this.setInterval?.unsubscribe();
   }
-  getProp(type:string){
-    const prop =JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
-    if(type=='W'){
-       return prop.width
+  getProp(type: string) {
+    const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
+    if (type == 'W') {
+      return prop.width
     }
-    if(type=='H'){
+    if (type == 'H') {
       return prop.height
     }
   }

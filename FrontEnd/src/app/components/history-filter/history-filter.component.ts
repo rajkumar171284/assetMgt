@@ -140,7 +140,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
   get VALUES() {
     return this.newForm.value;
   }
-  getDateSteps() {
+  async getDateSteps() {
 
     let enddate = moment().format("YYYY-MM-DD HH:mm:ss").toString();
 
@@ -152,7 +152,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
       START_DATE: startdate, END_DATE: enddate,
     }
 
-    
+
     // console.log('end', end, step)
     // if(this.VALUES.filterStep.state=='min'){
 
@@ -166,25 +166,22 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
 
   }
   async filterSrc() {
-    // this.loading = true;
     this.setLoader.emit(true);
     this.errMessage = '';
     this.WIDGET_REQUEST.LOCATION = this.VALUES.LOCATION;
     if (this.VALUES.filterStep) {
       const dates = await this.getDateSteps();
-      // console.log(dates)
+
       this.WIDGET_REQUEST.START_DATE = moment(dates.START_DATE).format("YYYY-MM-DD HH:mm:ss").toString();
       this.WIDGET_REQUEST.END_DATE = moment(dates.END_DATE).format("YYYY-MM-DD HH:mm:ss").toString();
 
-    } 
-    
-    else if(this.VALUES.START_DATE && this.VALUES.END_DATE){
+    }
+
+    else if (this.VALUES.START_DATE && this.VALUES.END_DATE) {
       this.WIDGET_REQUEST.START_DATE = moment(this.VALUES.START_DATE).format("YYYY-MM-DD 00:00:00").toString();
       this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
-  
-
       this.newForm.patchValue({
-        filterStep:''
+        filterStep: ''
       })
     }
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;

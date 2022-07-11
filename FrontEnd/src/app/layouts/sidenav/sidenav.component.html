@@ -5,17 +5,18 @@
 
     </button>
     <div style="margin-left:1%;color:#fff">
-      <!-- <mat-list-item class="logo" role="listitem" >
-            <img class="" src="assets/inspirisys-logo.png"/>
-            
-          </mat-list-item> -->
+   
       <div>
         {{session && session.COMPANY_NAME?session.COMPANY_NAME:''}}
       </div>
       <div style="font-size:14px ;">
         Generic Asset Management
       </div>
+
     </div>
+    <div>
+      <mat-slide-toggle [checked]="isDarkTheme | async" (change)="toggleDarkTheme($event.checked)">
+        Light theme</mat-slide-toggle>    </div>
     <div class="logo-right logo">
       Hi,{{session && session.LOGIN_NAME?session.LOGIN_NAME:''}}
       <button (click)="logOut()" mat-button>
@@ -28,7 +29,7 @@
 
   </mat-toolbar>
 
-  <mat-sidenav-container class="example-container">
+  <mat-sidenav-container [ngClass]="{'dark-theme': isDarkTheme | async}" class="example-container">
     <mat-sidenav #sidenav mode="side" opened class="example-sidenav" [fixedInViewport]="options.value.fixed"
       [fixedTopGap]="options.value.top" [fixedBottomGap]="options.value.bottom">
 
