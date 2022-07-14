@@ -1,15 +1,20 @@
-import { Component, EventEmitter, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Input, OnDestroy, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
-import { Subject, BehaviorSubject, Subscription } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { __addAssetDevice, _dateFilters } from '../../myclass';
 import { interval } from 'rxjs';
-import * as moment from 'moment'
+import * as moment from 'moment';
+import { XAxisService } from '../../services/x-axis.service';
+
 var date = new Date()
 interface _device {
   DEVICE_ID: any
+}
+interface _filterKey {
+  name: any
 }
 class widgetResponse {
   totalLocations: [] | undefined;
@@ -26,9 +31,12 @@ class widgetResponse {
   styleUrls: ['./history-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
+
+export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
   dateFilters = _dateFilters;
   @Input() WIDGET_REQUEST: any;
+  @Input() xAxisName: any;
+
   @Output() sendToParent = new EventEmitter();
   @Output() setLoader = new EventEmitter();
   errMessage: string = '';
@@ -40,11 +48,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
   filterBy: any[] = ['KM', 'SPEED'];
   newForm: FormGroup;
   filterXaxes: any[] = ['DEVICE', 'LOCATION'];
-
-
-
-
-  widgetResponse: any = new widgetResponse()
+  widgetResponse: any = new widgetResponse();
   loading = false;
   newDevice: __addAssetDevice = {
     PID: 0,
@@ -56,7 +60,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
     LATITUDE: undefined,
     LONGITUDE: undefined,
     LOCATION: undefined,
-    LAST_UPDATE_TIME: undefined
+    LAST_UPDATE_TIME: undefined,
   };
   myInterval: Subscription | undefined;
   filterShow1: boolean = false;
@@ -66,26 +70,38 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
   todayEndDate: any = moment().endOf('day').toString();
   deviceList: _device[] = [];
   showGuage = false;
-  constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
+  isLOCATIONS = false;
+  myLOCATIONS: any = [];
+  mySENSORS: any = [];
+
+  xAxisData$!: Observable<any>;
+  constructor(public xaxisService: XAxisService, private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
 
     this.newForm = this.fb.group({
       PLOT_XAXES: [''],
       PLOT_TYPE: [''],
-      LOCATION: ['', this.filterShow2 ? Validators.required : ''],
+      LOCATION: ['', !this.isLOCATIONS ? Validators.required : ''],
+      SENSOR: ['', this.isLOCATIONS ? Validators.required : ''],
       START_DATE: ['', this.filterShow2 ? Validators.required : ''],
       END_DATE: ['', this.filterShow2 ? Validators.required : ''],
       DEVICE_ID: [''],
       filterStep: ['']
     })
     this.newForm.patchValue({
-      // START_DATE: new Date(this.todayStartDate),
-      // END_DATE: new Date(this.todayEndDate),
       filterStep: this.dateFilters[0]
     })
 
   }
+  ngDoCheck(): void {
 
+
+  }
   ngOnInit(): void {
+    // this.xAxisData$=
+    // this.xaxisService.getValue().subscribe(x=>{
+    //   console.log(x)
+    // });
+    // console.log(this.xAxisData$)
     if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
       this.filterShow2 = true;
       this.filterShow1 = false;
@@ -102,17 +118,17 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.WIDGET_REQUEST)
+    console.log(this.WIDGET_REQUEST, this.xAxisName)
     // 
     if (this.WIDGET_REQUEST) {
+      
       this.widgetResponse = new widgetResponse();
-
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
       if (this.WIDGET_REQUEST.WIDGET_TYPE) {
         this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
 
           if (locations && locations.data.length > 0) {
-
+console.log(locations)
             this.widgetResponse.totalLocations = locations.data;
             this.newForm.patchValue({
 
@@ -121,11 +137,6 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
 
             })
             this.filterSrc()
-
-            //     this.errMessage = 'No Data found..';
-            // // no record found then 
-            // this.sendToParent.emit(false);
-            // this.ref.detectChanges();
 
           }
         })
@@ -147,22 +158,10 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
     let state: any = `${this.VALUES.filterStep.state}`;
     let step: any = this.VALUES.filterStep.step;
     let startdate = moment().subtract(step, state).format("YYYY-MM-DD HH:mm:ss").toString();
-    console.log(startdate);
+    // console.log(startdate);
     return {
       START_DATE: startdate, END_DATE: enddate,
     }
-
-
-    // console.log('end', end, step)
-    // if(this.VALUES.filterStep.state=='min'){
-
-    // }else if(this.VALUES.filterStep.state=='hr'){
-    //   moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
-    // }
-    // else if(this.VALUES.filterStep.state=='day'){
-    //   moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
-    // }
-
 
   }
   async filterSrc() {
@@ -185,18 +184,23 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
       })
     }
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;
-    console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
+    // console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
     this.getDeviceLog();
   }
 
   getDeviceLog() {
     // loader
+    if (this.xAxisName) {
+      this.WIDGET_REQUEST.LOCATION = null;
+      
+    }
     this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
       // console.log(result)
       if (result && result.data.length > 0) {
         this.widgetResponse.data = result.data;
         this.widgetResponse.protocol = result.protocol;
         this.widgetResponse.totalDevice = result.totalDevice;
+
 
         const protocol = result.protocol;
         // console.log('MQTT',protocol)
@@ -285,7 +289,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
         this.sendToParent.emit(false);
         this.ref.detectChanges();
       }
-      // this.loading = false;
+      this.getFilterArr();
       this.setLoader.emit(false);
       this.ref.detectChanges();
     })
@@ -341,6 +345,39 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy {
       data.VALUE = VALUE;
       return data;
 
+    }
+
+  }
+
+  getFilterArr() {
+    // get xAxis ;
+    const xAxis = this.WIDGET_REQUEST.XAXES;
+    if (xAxis == 'LOCATION') {
+      // console.log(xAxis)
+      this.isLOCATIONS = true;
+      // hide loc from filter & get xaxes as LOCATIONS
+      // get sensors
+      this.mySENSORS = []
+      if (this.widgetResponse.totalDevice) {
+        this.widgetResponse.totalDevice.forEach((item: any) => {
+          item.unitsArr.forEach((result: any) => {
+            if (result.key)
+              this.mySENSORS.push({ name: result.key })
+
+          })
+        })
+      }
+
+      console.log(this.mySENSORS)
+    } else {
+      this.isLOCATIONS = false;
+
+      this.myLOCATIONS = this.widgetResponse.totalLocations.map((z: any) => {
+        return {
+          name: z.LOCATION
+        }
+      });
+      console.log(this.isLOCATIONS)
     }
 
   }

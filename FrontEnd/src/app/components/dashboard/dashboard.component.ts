@@ -171,7 +171,7 @@ export class DashboardComponent implements OnInit {
         event.previousIndex,
         event.currentIndex);
     }
-
+    this.dragDisabledArr.push({dragDisabled:false})
     const PID = parseInt(event.item.data);
     if (PID) {
       this.changeStatus(PID)

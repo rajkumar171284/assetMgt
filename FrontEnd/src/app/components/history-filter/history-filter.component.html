@@ -1,11 +1,20 @@
 <form class="form-container p-2" [formGroup]="newForm">
 
     <div class="filter">
-        <mat-form-field appearance="outline">
+        <mat-form-field *ngIf="!isLOCATIONS" appearance="outline">
             <mat-label>Select Loction</mat-label>
             <mat-select placeholder="" formControlName="LOCATION">
-                <mat-option *ngFor="let key of widgetResponse.totalLocations" [value]="key.LOCATION">
-                    {{key.LOCATION}}
+                <mat-option *ngFor="let key of myLOCATIONS" [value]="key.name">
+                    {{key.name}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="isLOCATIONS" appearance="outline">
+            <mat-label>Select Sensor</mat-label>
+            <mat-select placeholder="" formControlName="SENSOR">
+                <mat-option *ngFor="let key of mySENSORS" [value]="key.name">
+                    {{key.name}}
                 </mat-option>
 
             </mat-select>
@@ -41,7 +50,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Enter date range</mat-label>
             <mat-date-range-input [rangePicker]="picker">
-                <input  matStartDate formControlName="START_DATE" placeholder="Start date">
+                <input matStartDate formControlName="START_DATE" placeholder="Start date">
                 <input matEndDate formControlName="END_DATE" placeholder="End date">
             </mat-date-range-input>
             <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>

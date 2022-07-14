@@ -1,0 +1,21 @@
+<form [formGroup]="newForm">
+    <mat-radio-group  formControlName="XAXES" class="example-full-width" appearance="fill" aria-label="Select X-Axis">
+        <mat-radio-button (change)="getXaxis(key.key)" *ngFor="let key of xAxesOPTION" [value]="key.key">
+            {{key.key}}
+
+        </mat-radio-button>
+      </mat-radio-group>
+      
+<!-- <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Select X-Axis</mat-label>
+
+    <mat-select formControlName="XAXES">
+
+        <mat-option *ngFor="let key of xAxesOPTION" [value]="key.key">
+            {{key.key}}
+        </mat-option>
+
+    </mat-select>
+    
+</mat-form-field> -->
+</form>

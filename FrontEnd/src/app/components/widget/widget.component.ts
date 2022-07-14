@@ -49,7 +49,7 @@ export class WidgetComponent implements OnInit {
     CHART_TYPE: [this.chartChoosen ? Validators.required : null],
     WIDGET_DATA: ['', Validators.required], WIDGET_SIZE: [''],
     ASSET_CONFIG_ID: ['', Validators.required],
-    XAXES:[this.chartChoosen ? Validators.required : null],
+    XAXES:[''],
     WIDGET_IMG: '',
     SQL_QUERY: [],
     IS_DRAGGED: 0
@@ -59,7 +59,7 @@ export class WidgetComponent implements OnInit {
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     private _snackBar: MatSnackBar, @Inject(MAT_DIALOG_DATA) public data: any) {
 
-    console.log('widget', data)
+    // console.log('widget', data)
     if (data && data.PID) {
 
       if (data.CHART_NAME) {
@@ -173,10 +173,11 @@ export class WidgetComponent implements OnInit {
           width: 230, height: 320
         }
         this.Values.WIDGET_SIZE=JSON.stringify(params);
+      }if(this.chartChoosen){
+        // by default x axis as date wise        
+        this.Values.XAXES =this.xAxesOPTION[0].key
       }
-      if(!this.chartChoosen){
-        this.Values.XAXES=null;
-      }
+
       this.dataService.addChartRequest(this.Values).subscribe(res => {
         console.log(res)
         this.confirmClose();

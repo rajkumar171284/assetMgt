@@ -97,7 +97,7 @@ import { GuageComponent } from '../widgets/plotly/guage/guage.component';
 import { HistoryFilterComponent } from '../components/history-filter/history-filter.component';
 import { ToHideDirective } from '../directives/to-hide.directive';
 import { ThemeService } from '../services/theme.service';
-
+import { XAxisComponent } from '../components/x-axis/x-axis.component';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -110,7 +110,7 @@ import { ThemeService } from '../services/theme.service';
     AddMacDetailsComponent,
     PlotlyComponent,CardComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective
+    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent
   ],
   imports: [
     CommonModule,PlotlyModule,

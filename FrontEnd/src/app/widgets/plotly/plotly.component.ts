@@ -1,14 +1,16 @@
-import { Component, OnInit, Input, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { __addAssetDevice } from '../../myclass';
+import { __addAssetDevice, plotly_small_layout } from '../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment'
+import { XAxisComponent } from '../../components/x-axis/x-axis.component';
 
-
+const colors = ["(255,165,0)", "(255,105,180)", "(124,252,0)", "(0,128,0)", "(100,149,237)", "(64,224,208)", "(0,255,127)",
+  "(138,43,226)", "(153,50,204)", "(255,105,180)", "(0,191,255)", "(255,105,180)", "(210,105,30)", "(148,0,211)", "(65,105,225)", "(100,149,237)","(255,105,180)","(72,209,204)","(0,128,128)"]
 interface _device {
   DEVICE_ID: any
 }
@@ -29,7 +31,7 @@ class widgetResponse {
 
 })
 export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
-
+  @ViewChild('xAxis', { static: true }) xAxis!: XAxisComponent;
   @Input() WIDGET_REQUEST: any;
   errMessage: string = '';
   labelMessage2: any;
@@ -82,7 +84,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     LATITUDE: undefined,
     LONGITUDE: undefined,
     LOCATION: undefined,
-    LAST_UPDATE_TIME: undefined
+    LAST_UPDATE_TIME: undefined,
   };
   myInterval: Subscription | undefined;
   filterShow1: boolean = false;
@@ -93,6 +95,8 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   todayEndDate: any = moment().endOf('day').toString();
   deviceList: _device[] = [];
   showGuage = false;
+  plotlyIndex: number = 0;
+  singleView: any = [];
   constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
 
     this.newForm = this.fb.group({
@@ -105,6 +109,11 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     })
 
 
+  }
+
+  getXaxis(data: any) {
+    // console.log(data)
+    this.WIDGET_REQUEST.XAXES = data;
   }
 
   ngOnInit(): void {
@@ -130,50 +139,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
       this.widgetResponse = new widgetResponse();
 
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-      if (this.WIDGET_REQUEST.WIDGET_TYPE == 'CHARTSewew') {
-        this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
-
-          if (locations && locations.data.length > 0) {
-
-            this.widgetResponse.totalLocations = locations.data;
-            this.newForm.patchValue({
-              START_DATE: new Date(this.todayStartDate),
-              END_DATE: new Date(this.todayEndDate),
-              LOCATION: this.widgetResponse.totalLocations[0].LOCATION,
-              DEVICE_ID: this.widgetResponse.totalLocations[0].MAC_ADDRESS
-
-            })
-            if (this.WIDGET_REQUEST.CHART_NAME == "gauge") {
-
-
-              this.filterShow2 = true;
-              this.filterShow1 = false;
-              // console.log(this.filterShow2)
-
-              // run tatapower api to get random data those to be saved in db
-              // this.newForm.patchValue({
-              //   START_DATE: new Date(this.todayStartDate),
-              //   END_DATE: new Date(this.todayEndDate),
-              //   LOCATION: this.widgetResponse.totalLocations[0].LOCATION,
-              //   DEVICE_ID:this.widgetResponse.totalLocations[0].MAC_ADDRESS
-
-              // })
-
-              // this.filterSrc()
-            } else {
-
-              // this.getDeviceLog()
-
-            }
-
-          } else {
-
-          }
-        })
-
-
-      }
-
     }
 
   }
@@ -184,12 +149,13 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
   getDeviceLog(result: any) {
     // console.log(result)
-    // const set = false;
+
 
     if (result && result.data.length > 0) {
+
       this.widgetResponse.data = result.data;
       this.widgetResponse.protocol = result.protocol;
-      this.widgetResponse.totalDevice = result.totalDevice
+      this.widgetResponse.totalDevice = result.totalDevice;
 
 
       // console.log(this.widgetResponse)
@@ -227,10 +193,12 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
 
       else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line') {
+        this.plotlyIndex = 0;
         console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase(), this.WIDGET_REQUEST.CONFIG_NAME)
         let linedata: any = [];
         let newVALUE: any = [], xArray: any = [];
         let index = 0;
+        this.singleView = []
         for (let a of this.widgetResponse.totalDevice) {
           if (a.history.length > 0) {
 
@@ -248,12 +216,19 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
                 x: xArray,
                 // y: yArray, 
                 y: units.data,
-                mode: 'lines+points',
+                mode: 'scatter+points',
                 type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
                 // name: a.DEVICE_ID,
                 name: units.key
               };
-              linedata.push(trace)
+              linedata.push(trace);
+              // loop view
+              this.singleView.push({
+                data: [trace],
+                layout: new plotly_small_layout(),
+                useResize: true
+
+              })
             }
           }
 
@@ -314,7 +289,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
 
 
 
-    } 
+    }
     this.loading = false;
     this.ref.detectChanges();
   }
@@ -392,18 +367,36 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
           let dt = new Date(z.LAST_UPDATE_TIME);
           return dt;
         });
-
+        let index = 0;
         for (let units of a.unitsArr) {
-
-          data.push({
+          const newData = {
             x: xArray,
             y: units.data,
             type: "bar",
-            name:units.key
+            name: units.key,
+           
+          }
+          const newData2 = {
+            x: xArray,
+            y: units.data,
+            type: "bar",
+            name: units.key,
+            marker: {
+              color: `rgb${colors[index]}`
+            }
+          }
+          data.push(newData);
+          // loop view
+          this.singleView.push({
+            data: [newData2],
+            layout: new plotly_small_layout(),
+            useResize: true
+
           })
+          index++;
         }
       }
-      // index++;
+      // 
 
     }
 
@@ -482,11 +475,12 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     this.loading = data;
   }
   getFromChild(data: any) {
-    this.loading = false;
+    // this.loading = false;
+    this.widgetResponse = new widgetResponse();
     console.log('getFromChild', data)
     if (data) {
       this.errMessage = '';
-      
+
       this.isDataFound = true;
       this.getDeviceLog(data)
 

@@ -40,9 +40,9 @@ export const _dateFilters = [
     }
 ]
 
-export const _xAxes = [{ key: 'LOCATION', state: false }, {
-    key: 'DEVICE', state: false
-}, { key: 'DATE-WISE', state: false }, {
+export const _xAxes = [{ key: 'DATE-WISE', state: false },
+{ key: 'LOCATION', state: false },
+{ key: 'DEVICE', state: false }, {
     key: 'SENSOR', state: false
 }]
 
@@ -95,4 +95,20 @@ export interface __deviceHistory {
     LATITUDE: any;
     LONGITUDE: any;
     LOCATION: string;
+}
+export class plotly_small_layout {
+    yaxis= { autorange: true, title: "" };
+    showlegend= true;
+    autosize= true;
+    width= 500;
+    height=300;
+    margin= {
+        l: 50,
+        r: 50,
+        b: 50,
+        t: 50,
+        pad: 4
+    };
+    // paper_bgcolor: '#7f7f7f',
+    // plot_bgcolor: '#c7c7c7'
 }

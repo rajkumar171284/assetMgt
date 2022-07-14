@@ -27,7 +27,8 @@
 
 </form> -->
 <div *ngIf="filterShow2">
-    <app-history-filter (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
+    <app-history-filter [xAxisName]="WIDGET_REQUEST.XAXES" (setLoader)="getLoader($event)"
+        (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
 
 </div>
 <!-- <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
@@ -39,10 +40,30 @@
     {{errMessage?errMessage:''}}
 </div>
 <div [appToHide]="isDataFound">
+    <mat-tab-group [selectedIndex]="plotlyIndex">
+        <mat-tab label="Consolidated">
 
-    <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true">
-        
-    </plotly-plot>
+            <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true">
+
+            </plotly-plot>
+
+
+        </mat-tab>
+        <!-- <mat-tab label="Single View">
+            <div class="g-flex">
+                <div style *ngFor="let a of singleView">
+                    <plotly-plot [useResizeHandler]="a.useResize" [data]="a.data" [layout]="a.layout">
+
+                    </plotly-plot>
+                </div>
+            </div>
+        </mat-tab> -->
+    </mat-tab-group>
+
+
+</div>
+<div *ngIf="filterShow2">
+    <app-x-axis (xaxis)="getXaxis($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-x-axis>
 </div>
 <div *ngIf="showGuage">
 

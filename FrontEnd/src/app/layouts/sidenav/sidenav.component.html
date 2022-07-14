@@ -5,7 +5,7 @@
 
     </button>
     <div style="margin-left:1%;color:#fff">
-   
+
       <div>
         {{session && session.COMPANY_NAME?session.COMPANY_NAME:''}}
       </div>
@@ -16,7 +16,8 @@
     </div>
     <div>
       <mat-slide-toggle [checked]="isDarkTheme | async" (change)="toggleDarkTheme($event.checked)">
-        Light theme</mat-slide-toggle>    </div>
+        Light theme</mat-slide-toggle>
+    </div>
     <div class="logo-right logo">
       Hi,{{session && session.LOGIN_NAME?session.LOGIN_NAME:''}}
       <button (click)="logOut()" mat-button>

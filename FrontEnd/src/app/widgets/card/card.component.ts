@@ -171,7 +171,9 @@ export class CardComponent implements OnChanges, OnDestroy {
     console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
     // this.getDeviceLog();
   }
-
+getLoader(data: boolean) {
+    this.loading = data;
+  }
   async getDeviceLog(result:any) {
     // loader
     this.errMessage ='';
@@ -274,7 +276,7 @@ export class CardComponent implements OnChanges, OnDestroy {
         }
 
         // console.log(this.widgetResponse)
-
+        this.loading = false;//loader
         this.ref.detectChanges();
 
       } else {
@@ -510,14 +512,18 @@ export class CardComponent implements OnChanges, OnDestroy {
   }
   getFromChild(data: any) {
     this.loading = false;
+    this.widgetResponse = new widgetResponse();
+
     console.log('getFromChild', data)
     if (data) {
       this.errMessage = '';
-      
+      this.loading = true;
+
       this.isDataFound = true;
       this.getDeviceLog(data)
 
     } else {
+
       this.isDataFound = false;
       // no record- data empty array      
       this.errMessage = 'No data found..Please try other dates.'

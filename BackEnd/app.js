@@ -1,7 +1,7 @@
 const express = require('express');
 // const mysql = require('mysql');
 const createError = require('http-errors');
-const PORT = process.env.PORT | 4201;
+const PORT = process.env.PORT | 4202;
 const app = express();
 const cors = require('cors');
 const authRouter = require('./routes/auth.js');
@@ -47,10 +47,10 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log('server on ',PORT)
-})
-// console.log('config',config)
+// app.listen(PORT, () => {
+//     console.log('server on ',PORT)
+// })
+
 server.listen(PORT,config.host, function () {
     server.close(function () {
         server.listen(8001, '10.1.1.139')
