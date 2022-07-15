@@ -8,6 +8,7 @@ import { __addAssetDevice, _dateFilters } from '../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment';
 import { XAxisService } from '../../services/x-axis.service';
+import { ThemeService } from '../../services/theme.service';
 
 var date = new Date()
 interface _device {
@@ -36,6 +37,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   dateFilters = _dateFilters;
   @Input() WIDGET_REQUEST: any;
   @Input() xAxisName: any;
+  isDarkTheme: Observable<boolean> | undefined;
 
   @Output() sendToParent = new EventEmitter();
   @Output() setLoader = new EventEmitter();
@@ -121,14 +123,14 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
     console.log(this.WIDGET_REQUEST, this.xAxisName)
     // 
     if (this.WIDGET_REQUEST) {
-      
+
       this.widgetResponse = new widgetResponse();
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
       if (this.WIDGET_REQUEST.WIDGET_TYPE) {
         this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
 
           if (locations && locations.data.length > 0) {
-console.log(locations)
+            console.log(locations)
             this.widgetResponse.totalLocations = locations.data;
             this.newForm.patchValue({
 
@@ -190,10 +192,10 @@ console.log(locations)
 
   getDeviceLog() {
     // loader
-    if (this.xAxisName) {
-      this.WIDGET_REQUEST.LOCATION = null;
-      
-    }
+    // if (this.xAxisName) {
+    //   this.WIDGET_REQUEST.LOCATION = null;
+
+    // }
     this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
       // console.log(result)
       if (result && result.data.length > 0) {
@@ -204,6 +206,7 @@ console.log(locations)
 
         const protocol = result.protocol;
         // console.log('MQTT',protocol)
+
         if (protocol && protocol[0].CONN_NAME == 'MQTT') {
           // written api for tat power data
           this.getMQTTdata()
@@ -303,7 +306,7 @@ console.log(locations)
 
 
   getMQTTdata() {
-    const time = interval(6000);
+    const time = interval(60000);
     this.myInterval = time.subscribe(() => {
       this.dataService.getMqtt({}).subscribe(response => {
         // console.log('getMqtt',)
@@ -351,35 +354,56 @@ console.log(locations)
 
   getFilterArr() {
     // get xAxis ;
-    const xAxis = this.WIDGET_REQUEST.XAXES;
-    if (xAxis == 'LOCATION') {
-      // console.log(xAxis)
-      this.isLOCATIONS = true;
-      // hide loc from filter & get xaxes as LOCATIONS
-      // get sensors
-      this.mySENSORS = []
-      if (this.widgetResponse.totalDevice) {
-        this.widgetResponse.totalDevice.forEach((item: any) => {
-          item.unitsArr.forEach((result: any) => {
-            if (result.key)
-              this.mySENSORS.push({ name: result.key })
+    // const xAxis = this.WIDGET_REQUEST.XAXES;
+    // if (xAxis == 'LOCATION') {
+    //   // console.log(xAxis)
+    //   this.isLOCATIONS = true;
+    //   // hide loc from filter & get xaxes as LOCATIONS
+    //   // get sensors
+    //   this.mySENSORS = []
+    //   if (this.widgetResponse.totalDevice) {
+    //     this.widgetResponse.totalDevice.forEach((item: any) => {
+    //       item.unitsArr.forEach((result: any) => {
+    //         if (result.key)
+    //           this.mySENSORS.push({ name: result.key })
 
-          })
-        })
+    //       })
+    //     })
+    //   }
+
+    //   console.log(this.mySENSORS)
+    // } else {
+    //   this.isLOCATIONS = false;
+
+    //   this.myLOCATIONS = this.widgetResponse.totalLocations.map((z: any) => {
+    //     return {
+    //       name: z.LOCATION
+    //     }
+    //   });
+    //   console.log(this.isLOCATIONS)
+    // }
+
+    this.isLOCATIONS = false;
+
+    this.myLOCATIONS = this.widgetResponse.totalLocations.map((z: any) => {
+      return {
+        name: z.LOCATION
       }
-
-      console.log(this.mySENSORS)
-    } else {
-      this.isLOCATIONS = false;
-
-      this.myLOCATIONS = this.widgetResponse.totalLocations.map((z: any) => {
-        return {
-          name: z.LOCATION
-        }
-      });
-      console.log(this.isLOCATIONS)
-    }
+    });
 
   }
-
+  // hideFilterStep:boolean=false;
+  addEvent(_change: any, event: any) {
+    // console.log(this.VALUES)
+    this.newForm.patchValue({
+      filterStep: ''
+    })
+    // this.hideFilterStep=true;
+  }
+  resetDatePickerVal(event: any){
+    this.newForm.patchValue({
+      START_DATE: null,END_DATE:null
+    })
+    // this.hideFilterStep=false;
+  }
 }

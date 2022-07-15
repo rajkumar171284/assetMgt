@@ -10,6 +10,7 @@ import { TooltipComponent } from '../../components/tooltip/tooltip.component';
 import { __addAssetDevice,widgetResponse } from '../../myclass';
 import { I } from '@angular/cdk/keycodes';
 import * as moment from 'moment';
+import { switchMap } from 'rxjs/operators'
 
 declare let $: any;
 interface Item {
@@ -21,6 +22,8 @@ interface chartItem {
   CHART_TYPE: any;
   SQL_QUERY: any;
   IS_DRAGGED: number;
+  dragDisabled:boolean;
+
 }
 class chartitem {
   PID = 0;
@@ -29,6 +32,8 @@ class chartitem {
   CHART_TYPE = '';
   SQL_QUERY = '';
   IS_DRAGGED = 0;
+  dragDisabled=false;
+
 }
 interface toDrag {
   isDraggable: any;
@@ -54,6 +59,7 @@ export class DashboardComponent implements OnInit {
   overAllCharts: any = [];
   undraggedWidget: any[] = ['0'];
   draggedWidget: any[] = ['0'];
+  draggedWidget$:any[]=[];
   toEditRequest: any;
   dragDisabled = false;
   hide = false;
@@ -69,7 +75,7 @@ export class DashboardComponent implements OnInit {
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
   WIDGET_REQUEST:any;
-  
+  WIDGETREQUEST$!:Observable<any>;
   getElement() {
     return this.theElement.nativeElement;
   }
@@ -105,22 +111,33 @@ export class DashboardComponent implements OnInit {
 
   async getMappedChartRequest() {
     const session = await this.dataService.getSessionData();
+
+  
+
+
+
     this.dataService.getAllChartRequests({ IS_DRAGGED: 1 }).subscribe(res => {
       if (res && res.data.length > 0) {
-
+        // this.draggedWidget$ =res.data;
        
       }      
+      // this.draggedWidget$ = res.data.map((el: chartItem) => {
+      //   el.dragDisabled = false;
+      //   return el;
+      // });
       this.doneList = res.data.map((el: chartItem) => {
         return el;
       });
+      
       this.draggedWidget = res.data.length > 0 ? this.doneList.map(x => {
         return x.PID.toString();
       }) : ['0'];
       of(this.doneList).subscribe((res: any) => {
-        console.log(res)
+        // console.log(res)
         res.dragDisabled = false;
         this.dragDisabledArr = res;
-      })      
+      })    
+      this.draggedWidget$= this.doneList;
       this.getAllChartRequest();
 
     })
@@ -160,7 +177,16 @@ export class DashboardComponent implements OnInit {
       // console.log(this.undraggedWidget)
     })
   }
-
+  onDrop2(event: CdkDragDrop<any>){
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex);
+    }
+  }
   onDrop(event: CdkDragDrop<string[]>) {
     // console.log(event)
     if (event.previousContainer === event.container) {
@@ -198,8 +224,13 @@ export class DashboardComponent implements OnInit {
   }
   getRequestDetails(PID: any, val: string) {
     if (PID) {
+      // this.WIDGETREQUEST$=
       const value = this.overAllCharts.filter((obj: chartItem) => {
+       
         return obj.PID == parseInt(PID);
+      }).map((result:any)=>{
+        result.dragDisabled=false;
+        return result;
       })
       if (value[0] && val == 'n') {
         return value[0].WIDGET_TYPE;
@@ -207,7 +238,8 @@ export class DashboardComponent implements OnInit {
       else if (value[0] && val == 'd') {
         return value[0].WIDGET_DATA;
       } else if (value[0] && val == 'json') {
-        return value[0]
+        
+        return value[0];
       } else if (value[0] && val == 'l') {
         return value[0].CHART_TYPE
       } else if (value[0] && val == 'IMG') {

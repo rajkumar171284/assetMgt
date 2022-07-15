@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component,DoCheck, Output,EventEmitter, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
@@ -9,6 +9,8 @@ import { interval } from 'rxjs';
 import * as moment from 'moment'
 import { XAxisComponent } from '../../components/x-axis/x-axis.component';
 
+
+declare let $: any;
 const colors = ["(255,165,0)", "(255,105,180)", "(124,252,0)", "(0,128,0)", "(100,149,237)", "(64,224,208)", "(0,255,127)",
   "(138,43,226)", "(153,50,204)", "(255,105,180)", "(0,191,255)", "(255,105,180)", "(210,105,30)", "(148,0,211)", "(65,105,225)", "(100,149,237)","(255,105,180)","(72,209,204)","(0,128,128)"]
 interface _device {
@@ -30,9 +32,11 @@ class widgetResponse {
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
+export class PlotlyComponent implements OnInit, OnChanges, OnDestroy,DoCheck {
   @ViewChild('xAxis', { static: true }) xAxis!: XAxisComponent;
   @Input() WIDGET_REQUEST: any;
+  @Input() widgetIndex: any;
+
   errMessage: string = '';
   labelMessage2: any;
   deviceType: string = '';
@@ -90,6 +94,8 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
   filterShow1: boolean = false;
   filterShow2: boolean = false;
   isDataFound: boolean = false;
+  expandFilter:boolean = false;
+  @Output() _widgetData = new EventEmitter();
 
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
@@ -115,7 +121,39 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
     // console.log(data)
     this.WIDGET_REQUEST.XAXES = data;
   }
-
+  ngDoCheck(): void {
+  this.watchSize();    
+  }
+  watchSize(){
+    const id = this.widgetIndex.toString();
+    let that = this;
+    // if (this.Item.element)
+    // let doc=`#${{id}}`;
+    let x=document.getElementById(id);
+    // let x=document.getElementById("myDiv");
+    
+    // console.log(id,doc,document.getElementById(id))
+      $(x).resizable({
+        stop: function (event: Event, ui: any) {
+          console.log(ui)
+          const height = $(ui.size.height)[0];
+          const width = $(ui.size.width)[0];
+          const params: any = {
+            width: width, height: height
+          }
+          that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
+        }
+      });
+  }
+  getProp(type: string) {
+    const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
+    if (type == 'W') {
+      return prop.width
+    }
+    if (type == 'H') {
+      return prop.height
+    }
+  }
   ngOnInit(): void {
     if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
       this.filterShow2 = true;
@@ -226,8 +264,8 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
               this.singleView.push({
                 data: [trace],
                 layout: new plotly_small_layout(),
-                useResize: true
-
+                useResize: true,
+                autosize: true 
               })
             }
           }
@@ -242,8 +280,8 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
           yaxis: { autorange: true, title: "" },
           showlegend: true,
           autosize: true,
-          width: 900,
-          height: 500,
+          // width: 900,
+          // height: 500,
           margin: {
             l: 50,
             r: 50,
@@ -260,8 +298,13 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
         this.graph1.data = linedata;
         this.graph1.layout = layout;
         console.log(linedata)
-
-
+        Plotly.newPlot('myDiv', linedata, layout);
+      //   window.onresize = function() {
+      //     Plotly.relayout('myDiv', {
+      //         'xaxis.autorange': true,
+      //         'yaxis.autorange': true
+      //     });
+      // };
       }
       else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
         this.pieChart(result)
@@ -490,5 +533,20 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy {
       this.errMessage = 'No data found..Please try other dates.'
     }
     console.log(this.loading, this.errMessage)
+  }
+  saveWidget() {
+
+    this._widgetData.emit(this.WIDGET_REQUEST)
+  }
+  async editRequest(pid: any) {
+    // const data = await this.getRequestDetails(pid, 'json');
+
+    // this.toEditRequest = data;
+    // this.openDialog();
+  }
+  removeRequest(item: any) {
+    this.dataService.deleteChartRequests({ PID: item }).subscribe(res => {
+      this.ngOnInit();
+    })
   }
 }

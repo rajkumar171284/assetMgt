@@ -1,4 +1,4 @@
-<form class="form-container p-2" [formGroup]="newForm">
+<form [ngClass]="{'dark-theme': isDarkTheme | async}"  class="form-container p-2" [formGroup]="newForm">
 
     <div class="filter">
         <mat-form-field *ngIf="!isLOCATIONS" appearance="outline">
@@ -28,30 +28,29 @@
 
             </mat-select>
         </mat-form-field>
-        <!-- <mat-form-field appearance="outline">
-            <mat-label>Enter start date</mat-label>
-
-            <input matInput  type="datetime" formControlName="START_DATE" placeholder="Start date">
-
-        </mat-form-field>
         <mat-form-field appearance="outline">
-            <mat-label>Enter end date</mat-label>
-            <input matInput  type="datetime-local" formControlName="END_DATE" placeholder="End date">
-        </mat-form-field> -->
-        <mat-form-field appearance="outline">
-            <mat-label>Select DateTime</mat-label>
-            <mat-select placeholder="" formControlName="filterStep">
+            <mat-label>Select Time steps or Date range</mat-label>
+            <mat-select  (selectionChange)="resetDatePickerVal($event)" placeholder="" formControlName="filterStep">
                 <mat-option *ngFor="let key of dateFilters" [value]="key">
                     {{key.key}}
                 </mat-option>
 
             </mat-select>
+
+            <!-- <mat-date-range-input [rangePicker]="picker">
+                <input matStartDate (dateChange)="addEvent('change', $event)" formControlName="START_DATE" placeholder="">
+                <input matEndDate (dateChange)="addEvent('change', $event)" formControlName="END_DATE" placeholder="">
+            </mat-date-range-input>
+            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker> -->
         </mat-form-field>
+        
         <mat-form-field appearance="outline">
-            <mat-label>Enter date range</mat-label>
+            <!-- <mat-label>Enter date range</mat-label> -->
             <mat-date-range-input [rangePicker]="picker">
-                <input matStartDate formControlName="START_DATE" placeholder="Start date">
-                <input matEndDate formControlName="END_DATE" placeholder="End date">
+                <input matStartDate (dateChange)="addEvent('change', $event)" formControlName="START_DATE" placeholder="Start date">
+                <input matEndDate (dateChange)="addEvent('change', $event)" formControlName="END_DATE" placeholder="End date">
             </mat-date-range-input>
             <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>

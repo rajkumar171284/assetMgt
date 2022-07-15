@@ -8,10 +8,10 @@
 
     <form [formGroup]="newForm">
 
-        <mat-expansion-panel (opened)="widgetState = true" (closed)="widgetState = false">
+        <mat-expansion-panel [expanded]="widgetState" (opened)="widgetState = true" (closed)="widgetState = false">
             <mat-expansion-panel-header color="primary">
                 <mat-panel-title>
-                    Widget Type
+                    Select Widget Type
                 </mat-panel-title>
 
             </mat-expansion-panel-header>
@@ -31,10 +31,10 @@
             </mat-grid-list>
         </mat-expansion-panel>
 
-        <mat-expansion-panel *ngIf="getChartStatus()==true" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+        <mat-expansion-panel [expanded]="panelOpenState" *ngIf="getChartStatus()==true" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Chart Type
+                    Select Chart Type
                 </mat-panel-title>
 
             </mat-expansion-panel-header>
@@ -52,12 +52,8 @@
                 </mat-grid-tile>
                
             </mat-grid-list>
-            <!-- <mat-grid-list cols="1">
-                <mat-grid-tile>
-                   
-                </mat-grid-tile>
-            </mat-grid-list> -->
-            <!-- <mat-form-field class="example-full-width" appearance="fill">
+           
+            <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Select X-Axis</mat-label>
 
                 <mat-select formControlName="XAXES">
@@ -68,13 +64,13 @@
 
                 </mat-select>
 
-            </mat-form-field> -->
+            </mat-form-field>
         </mat-expansion-panel>
 
-        <mat-expansion-panel (opened)="panelOpenState2 = true" (closed)="panelOpenState2 = false">
+        <mat-expansion-panel  (opened)="panelOpenState2 = true" (closed)="panelOpenState2 = false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Data Source
+                    Select Data Source
                 </mat-panel-title>
 
             </mat-expansion-panel-header>
@@ -99,7 +95,7 @@
         <mat-expansion-panel (opened)="panelOpenState3 = true" (closed)="panelOpenState3 = false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    {{getChartStatus()==true?'Plot by':'Track by'}}
+                    Select {{getChartStatus()==true?'Plot by':'Track by'}}
                 </mat-panel-title>
 
             </mat-expansion-panel-header>

@@ -128,4 +128,16 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
       return prop.height
     }
   }
+
+  async editRequest(pid: any) {
+    // const data = await this.getRequestDetails(pid, 'json');
+
+    // this.toEditRequest = data;
+    // this.openDialog();
+  }
+  removeRequest(item: any) {
+    this.dataService.deleteChartRequests({ PID: item }).subscribe(res => {
+      this.ngOnInit();
+    })
+  }
 }

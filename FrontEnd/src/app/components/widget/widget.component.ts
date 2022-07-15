@@ -30,7 +30,7 @@ export class WidgetComponent implements OnInit {
   widgetType = _widgetTYPE;
   chartTypes = _chartTYPE;
   xAxesOPTION=_xAxes;
-  widgetState = false;
+  widgetState = true;
   panelOpenState = true;
   panelOpenState2 = true;
   panelOpenState3 = true;

@@ -128,3 +128,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   justify-content: center;
   align-items: center;
 }
+
+.mapped-close {
+  position: absolute;
+  top: 3px;
+  right: 13px;
+  z-index: 3;
+}
