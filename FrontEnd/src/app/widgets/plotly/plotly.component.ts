@@ -8,6 +8,8 @@ import { __addAssetDevice, plotly_small_layout } from '../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment'
 import { XAxisComponent } from '../../components/x-axis/x-axis.component';
+import { WidgetComponent } from '../../components/widget/widget.component';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 
 declare let $: any;
@@ -44,6 +46,8 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy,DoCheck {
   @Input('pMap') pMap: any;
   @Input() name: any;
   filterBy: any[] = ['KM', 'SPEED'];
+  @Input('positionTop') positionTop!:number;
+  @Input('positionLeft') positionLeft!:number;
   newForm: FormGroup = this.fb.group({
     PLOT_XAXES: [''],
     PLOT_TYPE: [''],
@@ -103,7 +107,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy,DoCheck {
   showGuage = false;
   plotlyIndex: number = 0;
   singleView: any = [];
-  constructor(private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
+  constructor(public dialog: MatDialog,private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
 
     this.newForm = this.fb.group({
       PLOT_XAXES: [''],
@@ -152,7 +156,11 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy,DoCheck {
     }
     if (type == 'H') {
       return prop.height
-    }
+    }else if(type == 't') {
+      return prop.top?prop.top:0
+    } else if(type == 'l') {
+      return prop.left?prop.left:0
+    } 
   }
   ngOnInit(): void {
     if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
@@ -171,7 +179,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy,DoCheck {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(changes, this.pMap)
+    console.log(changes, this.positionLeft,this.positionTop)
     // 
     if (this.WIDGET_REQUEST) {
       this.widgetResponse = new widgetResponse();
@@ -538,15 +546,31 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy,DoCheck {
 
     this._widgetData.emit(this.WIDGET_REQUEST)
   }
-  async editRequest(pid: any) {
-    // const data = await this.getRequestDetails(pid, 'json');
+  async editRequest(req: any) {
 
-    // this.toEditRequest = data;
-    // this.openDialog();
+    this.toEditRequest = req;
+    this.openDialog();
+  }
+  toEditRequest: any;
+
+  openDialog() {
+    const dialogRef = this.dialog.open(WidgetComponent, {
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      height: '90%',
+      width: '90%',
+      panelClass: 'full-screen-modal',
+      data: this.toEditRequest ? this.toEditRequest : null
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      // call all charts      
+    });
   }
   removeRequest(item: any) {
-    this.dataService.deleteChartRequests({ PID: item }).subscribe(res => {
+    console.log(item)
+    this.dataService.deleteChartRequests(item).subscribe(res => {
       this.ngOnInit();
+      
     })
   }
 }

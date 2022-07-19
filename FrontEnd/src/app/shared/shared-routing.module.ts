@@ -6,6 +6,7 @@ import { ControlPanelComponent } from '../components/control-panel/control-panel
 import { AuthGuard } from '../login/auth.guard';
 import { DashboardComponent } from '../components/dashboard/dashboard.component';
 import { ReportsComponent } from '../components/reports/reports.component';
+import { WidgetDashboardComponent } from '../components/widget-dashboard/widget-dashboard.component';
 
 const routes: Routes = [
   {
@@ -16,9 +17,14 @@ const routes: Routes = [
       {
         path: 'home/control-panel',
         component: ControlPanelComponent
-      },{
+      }
+      ,{
         path: 'home/dashboard',
         component: DashboardComponent
+      },
+      {
+        path: 'home/dashboard2',
+        component:WidgetDashboardComponent
       },{
         path: 'home/reports',
         component: ReportsComponent

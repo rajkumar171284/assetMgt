@@ -7,7 +7,7 @@ import { ResizeEvent } from "angular-resizable-element";
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
-import { __addAssetDevice,widgetResponse } from '../../myclass';
+import { __addAssetDevice, widgetResponse, _widgetRequest } from '../../myclass';
 import { I } from '@angular/cdk/keycodes';
 import * as moment from 'moment';
 import { switchMap } from 'rxjs/operators'
@@ -22,7 +22,7 @@ interface chartItem {
   CHART_TYPE: any;
   SQL_QUERY: any;
   IS_DRAGGED: number;
-  dragDisabled:boolean;
+  dragDisabled: boolean;
 
 }
 class chartitem {
@@ -32,14 +32,14 @@ class chartitem {
   CHART_TYPE = '';
   SQL_QUERY = '';
   IS_DRAGGED = 0;
-  dragDisabled=false;
+  dragDisabled = false;
 
 }
 interface toDrag {
   isDraggable: any;
 }
-interface dragOption{
-  dragDisabled:false
+interface dragOption {
+  dragDisabled: false
 }
 @Component({
   selector: 'app-dashboard',
@@ -47,9 +47,10 @@ interface dragOption{
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  errMessage:any;
+  @ViewChild('widgetIndex') widgetIndex!: any;
+  errMessage: any;
   // dragDisabledArr: Observable<dragOption[]> | undefined;
-  dragDisabledArr: any[]=[];
+  dragDisabledArr: any[] = [];
   isVisible = false;
   isWidgetOpen = true;
   dragStatus: number = 0;
@@ -59,14 +60,16 @@ export class DashboardComponent implements OnInit {
   overAllCharts: any = [];
   undraggedWidget: any[] = ['0'];
   draggedWidget: any[] = ['0'];
-  draggedWidget$:any[]=[];
+  draggedWidget$: _widgetRequest[] = [];
+  undraggedWidget$: any[] = [];
+
   toEditRequest: any;
   dragDisabled = false;
   hide = false;
   widgetResponse: any = new widgetResponse()
 
   dataFromMessages$: Observable<any> | undefined;
-  
+
   public data: any = {};
   @ViewChild('container', { read: ElementRef })
   public readonly containerElement: any;
@@ -74,17 +77,29 @@ export class DashboardComponent implements OnInit {
   @ViewChild('element') theElement: any;
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
-  WIDGET_REQUEST:any;
-  WIDGETREQUEST$!:Observable<any>;
+  WIDGET_REQUEST: any;
+  WIDGETREQUEST$!: Observable<any>;
+  @ViewChild("divBoard") divBoard!: ElementRef;
+
   getElement() {
-    return this.theElement.nativeElement;
+    if (this.widgetIndex)
+      return this.widgetIndex.nativeElement;
   }
-  //  ngOnChanges(changes: SimpleChanges): void {
-  //   console.log('resizable')
-  //  }
+
   ngAfterViewInit() {
-    // const element = this.getElement();
-    // element.resizable({ handles: "all" });
+    console.log('widgetIndex')
+    const x = this.getElement();    
+    $(x).resizable({
+      stop: function (event: Event, ui: any) {
+        console.log(ui)
+        const height = $(ui.size.height)[0];
+        const width = $(ui.size.width)[0];
+        const params: any = {
+          width: width, height: height
+        }
+        // this.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -112,33 +127,33 @@ export class DashboardComponent implements OnInit {
   async getMappedChartRequest() {
     const session = await this.dataService.getSessionData();
 
-  
-
-
 
     this.dataService.getAllChartRequests({ IS_DRAGGED: 1 }).subscribe(res => {
-      if (res && res.data.length > 0) {
-        // this.draggedWidget$ =res.data;
-       
-      }      
-      // this.draggedWidget$ = res.data.map((el: chartItem) => {
-      //   el.dragDisabled = false;
-      //   return el;
-      // });
-      this.doneList = res.data.map((el: chartItem) => {
-        return el;
-      });
-      
-      this.draggedWidget = res.data.length > 0 ? this.doneList.map(x => {
-        return x.PID.toString();
-      }) : ['0'];
-      of(this.doneList).subscribe((res: any) => {
-        // console.log(res)
-        res.dragDisabled = false;
-        this.dragDisabledArr = res;
-      })    
-      this.draggedWidget$= this.doneList;
-      this.getAllChartRequest();
+      if (res) {
+
+
+        this.doneList = res.data.map((el: chartItem) => {
+          return el;
+        });
+
+        this.draggedWidget = res.data.length > 0 ? this.doneList.map(x => {
+          return x.PID.toString();
+        }) : ['0'];
+        of(this.doneList).subscribe((res: any) => {
+          // console.log(res)
+          res.dragDisabled = false;
+          this.dragDisabledArr = res;
+          // this.draggedWidget$= res;
+        })
+
+        this.draggedWidget$ = this.doneList.map((item: any) => {
+          // item.top = 0;
+          // item.left = 0; 
+          item.dragDisabled = false;
+          return item;
+        });
+        this.getAllChartRequest();
+      }
 
     })
   }
@@ -174,10 +189,13 @@ export class DashboardComponent implements OnInit {
         return itm.PID.toString();
 
       })
-      // console.log(this.undraggedWidget)
+      of(res.data).subscribe(z => {
+        this.undraggedWidget$ = z;
+      })
+      console.log(this.undraggedWidget$)
     })
   }
-  onDrop2(event: CdkDragDrop<any>){
+  onDrop2(event: CdkDragDrop<any>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -186,8 +204,61 @@ export class DashboardComponent implements OnInit {
         event.previousIndex,
         event.currentIndex);
     }
+    const data = event.item.data;
+    if (data) {
+      this.changeStatus(data.PID)
+    }
   }
-  onDrop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<any[]>) {
+    const itemRect = event.item.element.nativeElement.getBoundingClientRect();
+    const top = Math.max(
+      0,
+      itemRect.top +
+      event.distance.y -
+      this.divBoard.nativeElement.getBoundingClientRect().top
+    );
+    const left = Math.max(
+      0,
+      itemRect.left +
+      event.distance.x -
+      this.divBoard.nativeElement.getBoundingClientRect().left
+    );
+
+    const isWithinSameContainer = event.previousContainer === event.container;
+
+    let toIndex = event.currentIndex;
+    if (event.container.sortingDisabled) {
+      const arr = event.container.data.sort((a, b) => a.top - b.top);
+      const targetIndex = arr.findIndex(item => item.top > top);
+
+      toIndex =
+        targetIndex === -1
+          ? isWithinSameContainer
+            ? arr.length - 1
+            : arr.length
+          : targetIndex;
+    }
+
+    const item = event.previousContainer.data[event.previousIndex];
+    console.log('item',item)
+    item.top = top;
+    item.left = left;
+
+    if (isWithinSameContainer) {
+      moveItemInArray(event.container.data, event.previousIndex, toIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        toIndex
+      );
+    }
+    console.log(item.top,item.left)
+    const data = event;
+    console.log(data)
+  }
+  onDrop(event: CdkDragDrop<any[]>) {
     // console.log(event)
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -197,10 +268,12 @@ export class DashboardComponent implements OnInit {
         event.previousIndex,
         event.currentIndex);
     }
-    this.dragDisabledArr.push({dragDisabled:false})
-    const PID = parseInt(event.item.data);
-    if (PID) {
-      this.changeStatus(PID)
+    this.dragDisabledArr.push({ dragDisabled: false })
+    const data = event.item.data;
+    console.log(data)
+
+    if (data) {
+      this.changeStatus(data.PID)
     }
 
   }
@@ -213,12 +286,12 @@ export class DashboardComponent implements OnInit {
     // console.log(data)
     this.dataService.chartRequestChangeStatus(params).subscribe(async res => {
       this.getMappedChartRequest();
-      
+
     })
   }
-  
+
   removeRequest(item: any) {
-    this.dataService.deleteChartRequests({ PID: item }).subscribe(res => {
+    this.dataService.deleteChartRequests(item).subscribe(res => {
       this.ngOnInit();
     })
   }
@@ -226,10 +299,10 @@ export class DashboardComponent implements OnInit {
     if (PID) {
       // this.WIDGETREQUEST$=
       const value = this.overAllCharts.filter((obj: chartItem) => {
-       
+
         return obj.PID == parseInt(PID);
-      }).map((result:any)=>{
-        result.dragDisabled=false;
+      }).map((result: any) => {
+        result.dragDisabled = false;
         return result;
       })
       if (value[0] && val == 'n') {
@@ -238,7 +311,7 @@ export class DashboardComponent implements OnInit {
       else if (value[0] && val == 'd') {
         return value[0].WIDGET_DATA;
       } else if (value[0] && val == 'json') {
-        
+
         return value[0];
       } else if (value[0] && val == 'l') {
         return value[0].CHART_TYPE
@@ -265,14 +338,17 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  async saveWidget(data: any) {    
+  async saveWidget(data: any) {
     if (data) {
       const session = await this.dataService.getSessionData();
       data.COMPANY_ID = session.COMPANY_ID;
       data.CREATED_BY = session.PID;
 
       data.SQL_QUERY = 'sql';
-
+      const WIDGET_SIZE=JSON.parse(data.WIDGET_SIZE);
+      WIDGET_SIZE.left=data.left;
+      WIDGET_SIZE.top=data.top;
+      data.WIDGET_SIZE=JSON.stringify(WIDGET_SIZE);
       this.dataService.addChartRequest(data).subscribe(res => {
 
         this.openSnackBar();
@@ -286,5 +362,13 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-
+  getProp(List:any,type: string) {
+    const prop = JSON.parse(List.WIDGET_SIZE)
+    if (type == 'W') {
+      return prop.width
+    }
+    if (type == 'H') {
+      return prop.height
+    }
+  }
 }

@@ -12,7 +12,7 @@ import { map, startWith } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
-import { _widgetTYPE, _chartTYPE, _widgetSIZE,_xAxes } from '../../myclass';
+import { _widgetTYPE, _chartTYPE, _widgetSIZE, _xAxes } from '../../myclass';
 
 export interface Fruit {
   name: string;
@@ -29,7 +29,7 @@ export class WidgetComponent implements OnInit {
 
   widgetType = _widgetTYPE;
   chartTypes = _chartTYPE;
-  xAxesOPTION=_xAxes;
+  xAxesOPTION = _xAxes;
   widgetState = true;
   panelOpenState = true;
   panelOpenState2 = true;
@@ -49,7 +49,7 @@ export class WidgetComponent implements OnInit {
     CHART_TYPE: [this.chartChoosen ? Validators.required : null],
     WIDGET_DATA: ['', Validators.required], WIDGET_SIZE: [''],
     ASSET_CONFIG_ID: ['', Validators.required],
-    XAXES:[''],
+    XAXES: [''],
     WIDGET_IMG: '',
     SQL_QUERY: [],
     IS_DRAGGED: 0
@@ -81,8 +81,8 @@ export class WidgetComponent implements OnInit {
         return result;
       })
       // set size by color
-      if(data.WIDGET_SIZE){
-        const size=this.widgetSize.filter(x => {
+      if (data.WIDGET_SIZE) {
+        const size = this.widgetSize.filter(x => {
           return x.name.toLowerCase() === data.WIDGET_SIZE.toLowerCase();
         }).map(result => {
           result.isSelected = true;
@@ -93,7 +93,7 @@ export class WidgetComponent implements OnInit {
       this.newForm.patchValue(data);
 
 
-    }else{
+    } else {
       // new entry
       this.newForm.patchValue({ IS_DRAGGED: 0 })
 
@@ -107,13 +107,13 @@ export class WidgetComponent implements OnInit {
   async getAllAssets() {
     const session = await this.dataService.getSessionData();
     let params = {}
-    if(session.COMPANY_TYPE=='CORP'){
+    if (session.COMPANY_TYPE == 'CORP') {
       // get all
       params = { COMPANY_ID: 0 };
-    }else{
+    } else {
       params = { COMPANY_ID: session.COMPANY_ID };
     }
-    
+
     this.dataService.getAssetConfig(params).subscribe(res => {
       this.options = res.data;
     })
@@ -166,16 +166,16 @@ export class WidgetComponent implements OnInit {
       this.Values.CREATED_BY = session.PID;
       // const query = `SELECT * FROM ${this.Values.CHART_TYPE} WHERE PID=${this.Values.CHART_DATA}`;
       // this.Values.SQL_QUERY = JSON.stringify(query);
-      this.Values.SQL_QUERY ='sql';
-      if(!this.Values.PID){
+      this.Values.SQL_QUERY = 'sql';
+      if (!this.Values.PID) {
         // if  add
         const params: any = {
-          width: 230, height: 320
+          width: 330, height: 320,left:0,top:0
         }
-        this.Values.WIDGET_SIZE=JSON.stringify(params);
-      }if(this.chartChoosen){
+        this.Values.WIDGET_SIZE = JSON.stringify(params);
+      } if (this.chartChoosen) {
         // by default x axis as date wise        
-        this.Values.XAXES =this.xAxesOPTION[0].key
+        this.Values.XAXES = this.xAxesOPTION[0].key
       }
 
       this.dataService.addChartRequest(this.Values).subscribe(res => {
@@ -213,9 +213,9 @@ export class WidgetComponent implements OnInit {
     console.log(status)
     return status;
   }
-  optionSelected(event:any){
-    
-    console.log('this.Values.ASSET_CONFIG_ID',this.Values.ASSET_CONFIG_ID)
+  optionSelected(event: any) {
+
+    console.log('this.Values.ASSET_CONFIG_ID', this.Values.ASSET_CONFIG_ID)
 
 
   }

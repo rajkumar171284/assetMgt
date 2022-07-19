@@ -78,7 +78,26 @@ export class widgetResponse {
     totalDevice: [] | undefined
 
 };
-
+export interface _widgetRequest {
+    ASSET_CONFIG_ID: number,
+    CHART_NAME: string,
+    CONFIG_NAME: string,
+    CONNECTION_TYPE: number,
+    CREATED_BY: number,
+    CREATED_DATE: string,
+    IS_DRAGGED: number,
+    MODIFY_BY: null
+    MODIFY_DATE: null
+    PID: number,
+    SQL_QUERY: string,
+    WIDGET_DATA: string,
+    WIDGET_IMG: string,
+    WIDGET_LABEL: null
+    WIDGET_SIZE: string,
+    WIDGET_TYPE: string,
+    XAXES: string,top:number,left:number,
+    dragDisabled:boolean
+}
 export const _assetTypes = ['Security',
     'Activity Trackers',
     'Industrial Security and Safety',
@@ -97,12 +116,12 @@ export interface __deviceHistory {
     LOCATION: string;
 }
 export class plotly_small_layout {
-    yaxis= { autorange: true, title: "" };
-    showlegend= true;
-    autosize= true;
-    width= 500;
-    height=300;
-    margin= {
+    yaxis = { autorange: true, title: "" };
+    showlegend = true;
+    autosize = true;
+    width = 500;
+    height = 300;
+    margin = {
         l: 50,
         r: 50,
         b: 50,

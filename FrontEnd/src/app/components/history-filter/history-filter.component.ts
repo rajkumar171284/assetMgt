@@ -130,7 +130,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
         this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
 
           if (locations && locations.data.length > 0) {
-            console.log(locations)
+            // console.log(locations)
             this.widgetResponse.totalLocations = locations.data;
             this.newForm.patchValue({
 

@@ -98,6 +98,7 @@ import { HistoryFilterComponent } from '../components/history-filter/history-fil
 import { ToHideDirective } from '../directives/to-hide.directive';
 import { ThemeService } from '../services/theme.service';
 import { XAxisComponent } from '../components/x-axis/x-axis.component';
+import { WidgetDashboardComponent } from '../components/widget-dashboard/widget-dashboard.component';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -110,7 +111,7 @@ import { XAxisComponent } from '../components/x-axis/x-axis.component';
     AddMacDetailsComponent,
     PlotlyComponent,CardComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent
+    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent
   ],
   imports: [
     CommonModule,PlotlyModule,

@@ -26,9 +26,21 @@
 
 
 </form> -->
-<mat-card #Item id="{{widgetIndex}}" [style.width.px]="getProp('W')" [style.height.px]="getProp('H')"
-    class="resizable mt-4 mb-3 my-card bg11">
+<div [style.top.px]="getProp('t')" [style.left.px]="getProp('l')" [style.width.px]="getProp('W')" [style.height.px]="getProp('H')" style="position:absolute;z-index:999">
 
+
+<mat-card [style.height.px]="getProp('H')" #Item id="{{widgetIndex}}" 
+    class="resizable mt-4 mb-3 my-card bg11 overflow-hidden">
+    <div [ngClass]="{'show':expandFilter,'hide':!expandFilter}">
+        <app-history-filter [xAxisName]="WIDGET_REQUEST.XAXES" (setLoader)="getLoader($event)"
+            (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
+
+    </div>
+
+    <span style="position: absolute;top:5px;left:5px;z-index:99">
+        <mat-icon (click)="expandFilter=!expandFilter" color="primary">search</mat-icon>
+
+    </span>
     
     <span appWidgetAccessIf  class="mapped-close">
         <mat-icon color="accent" (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled"> 
@@ -42,25 +54,25 @@
 
         <mat-icon (click)="removeRequest(WIDGET_REQUEST)" matTooltip="Remove Widget" color="warn">delete_outline</mat-icon>
 
+       
       </span>
 
     <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
         <mat-icon color="accent">save</mat-icon>
 
     </span>
-    <div *ngIf="filterShow2" [ngClass]="{'show':expandFilter}">
-        <app-history-filter [xAxisName]="WIDGET_REQUEST.XAXES" (setLoader)="getLoader($event)"
-            (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
-
-    </div>
+    
     <!-- <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
     (mouseleave)="mouseLeave($event)"></plotly-plot> -->
     <!-- <div style="position: absolute;bottom:20px;z-index:999">
         <mat-card>fdf{{widgetResponse.data && widgetResponse.data.length==0?'No':''}}</mat-card>
     </div> -->
-    <div class="text-center text-danger text-uppercase">
-        {{errMessage?errMessage:''}}
+    <div *ngIf="errMessage" class="pos-flex">
+        <div class="text-center text-danger text-uppercase">
+            {{errMessage?errMessage:''}}
+        </div>
     </div>
+    
     <div [appToHide]="isDataFound">
 
 
@@ -100,3 +112,4 @@
         <mat-spinner></mat-spinner>
     </div>
 </mat-card>
+</div>
