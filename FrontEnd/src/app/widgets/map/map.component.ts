@@ -3,6 +3,10 @@ import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { __deviceHistory } from '../../myclass';
+import {XAxisService} from '../../services/x-axis.service';
+import { WidgetComponent } from '../../components/widget/widget.component';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 declare let $: any;
 
 declare let L: any;
@@ -37,26 +41,55 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
   @Input() widgetIndex: any;
   public height: any;
   public width: any;
-  constructor(private dataService: AuthService, private ref: ChangeDetectorRef) { }
+  chartWidth: number=0;
+  chartHeight: number=0;
+  toEditRequest: any;
+  constructor(public dialog: MatDialog,public service:XAxisService,private dataService: AuthService, private ref: ChangeDetectorRef) { }
   ngDoCheck(): void {
-    // console.log('dochk', this.widgetIndex);
-    // this.getWidgetdetails();
+    this.watchSize();
+
+  }
+  watchSize() {
     const id = this.widgetIndex.toString();
     let that = this;
-
     let x = document.getElementById(id);
-    // console.log(id,doc,document.getElementById(id))
     $(x).resizable({
-      stop: function (event: Event, ui: any) {
-        console.log(ui)
-        that.height = $(ui.size.height)[0];
-        that.width = $(ui.size.width)[0];
+      stop: function (event: Event, ui: any) {        
+        let height:number = $(ui.size.height)[0];
+        let width:number = $(ui.size.width)[0];
         const params: any = {
-          width: that.width, height: that.height
+          width: width, height: height
         }
-        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
+        
+        that.chartWidth=width;
+        that.chartHeight=height;
+        // console.log('chartWidth',that.chartWidth,that.chartHeight)
+        const orgSize=JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE)
+        // 
+        console.log('orgSize',orgSize)
+        orgSize.width=width;
+        orgSize.height=height;
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
+ 
+        // 
+        that.service.changeMessage(orgSize);
+        that.ref.detectChanges();
       }
     });
+    
+  }
+  getProp(type: string) {
+    const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
+    if (type == 'W') {
+      return prop.width
+    }
+    if (type == 'H') {
+      return prop.height
+    } else if (type == 't') {
+      return prop.top ? prop.top : 0
+    } else if (type == 'l') {
+      return prop.left ? prop.left : 0
+    }
   }
   ngOnInit(): void {
 
@@ -70,6 +103,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     }
   }
   ngAfterViewInit(): void {
+    if(this.myMap){
+      this.myMap.remove();
+    }
     var mapOptions = {
       center: [17.385044, 78.486671],
       zoom: 4
@@ -77,11 +113,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     this.myMap = new L.map('map', mapOptions);
     var layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     this.myMap.addLayer(layer);
-    // this.myMap = L.map('map').setView([this.defaultLat, this.defaultLng], 5);
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //   maxZoom: 8,
-    //   attribution: '© OpenStreetMap'
-    // }).addTo(this.myMap);
+    
   }
   getLocationsByConfigID() {
     this.dataService.getAllLocationsByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
@@ -173,6 +205,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     const resultArr = res.data.filter((item: any) => {
       return item.MAC_STATUS === 1;
     })
+    console.log(resultArr)
     forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response: any) => {
       // console.log(response)
       this.markerArr = response;
@@ -233,18 +266,41 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
 
   ngOnDestroy(): void {
     this.setInterval?.unsubscribe();
-  }
-  getProp(type: string) {
-    const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
-    if (type == 'W') {
-      return prop.width
-    }
-    if (type == 'H') {
-      return prop.height
+    if(this.myMap) {
+      this.myMap.remove();
     }
   }
+ 
   saveWidget() {
 
     this._widgetData.emit(this.WIDGET_REQUEST)
+  }
+
+  async editRequest(req: any) {
+
+    this.toEditRequest = req;
+    this.openDialog();
+  }
+
+
+  openDialog() {
+    const dialogRef = this.dialog.open(WidgetComponent, {
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      height: '90%',
+      width: '90%',
+      panelClass: 'full-screen-modal',
+      data: this.toEditRequest ? this.toEditRequest : null
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      // call all charts      
+    });
+  }
+  removeRequest(item: any) {
+    console.log(item)
+    this.dataService.deleteChartRequests(item).subscribe(res => {
+      this.ngOnInit();
+
+    })
   }
 }

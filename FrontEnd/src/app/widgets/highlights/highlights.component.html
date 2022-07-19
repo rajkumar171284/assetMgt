@@ -1,9 +1,13 @@
-<mat-card #Item id="{{widgetIndex}}" [style.width.px] ="getProp('W')" [style.height.px]="getProp('H')" class="resizable mt-4 mb-3 my-card bg11">
+
+<div [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+[style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="div-absolute">
+
+<mat-card #divBoard id="{{widgetIndex}}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="resizable my-card bg11">
    
     <span appWidgetAccessIf  class="mapped-close">
-        <!-- <mat-icon color="accent" matTooltip="{{dragDisabledArr[idx].dragDisabled?'Drag disabled':'Drag enabled'}}"
-         (click)="dragDisabledArr[idx].dragDisabled=!dragDisabledArr[idx].dragDisabled"> 
-          {{dragDisabledArr[idx].dragDisabled?'layers_clear':'layers'}}</mat-icon> -->
+        <mat-icon color="accent" matTooltip="{{WIDGET_REQUEST.dragDisabled?'Drag disabled':'Drag enabled'}}"
+         (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled"> 
+          {{WIDGET_REQUEST.dragDisabled?'layers_clear':'layers'}}</mat-icon>
 
         <mat-icon (click)="editRequest(WIDGET_REQUEST)" matTooltip="Edit Widget" color="primary">edit</mat-icon>
 
@@ -66,3 +70,5 @@
         </mat-card-content>
     </div>
 </mat-card>
+
+</div>

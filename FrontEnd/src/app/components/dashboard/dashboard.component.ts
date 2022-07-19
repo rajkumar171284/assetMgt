@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChil
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { AuthService } from '../../services/auth.service';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop,CdkDragStart,CdkDragMove ,CdkDragEnd, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ResizeEvent } from "angular-resizable-element";
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,6 +11,7 @@ import { __addAssetDevice, widgetResponse, _widgetRequest } from '../../myclass'
 import { I } from '@angular/cdk/keycodes';
 import * as moment from 'moment';
 import { switchMap } from 'rxjs/operators'
+import {XAxisService} from '../../services/x-axis.service';
 
 declare let $: any;
 interface Item {
@@ -54,7 +55,7 @@ export class DashboardComponent implements OnInit {
   isVisible = false;
   isWidgetOpen = true;
   dragStatus: number = 0;
-  constructor(private _snackBar: MatSnackBar, public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) { }
+  constructor(public behavSubject:XAxisService,private _snackBar: MatSnackBar, public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) { }
   dataSource: chartItem[] = [];
   doneList: chartItem[] = []
   overAllCharts: any = [];
@@ -81,13 +82,17 @@ export class DashboardComponent implements OnInit {
   WIDGETREQUEST$!: Observable<any>;
   @ViewChild("divBoard") divBoard!: ElementRef;
 
+  // test
+  state = '';
+  position = '';
+
   getElement() {
     if (this.widgetIndex)
       return this.widgetIndex.nativeElement;
   }
 
   ngAfterViewInit() {
-    console.log('widgetIndex')
+    // console.log('widgetIndex')
     const x = this.getElement();    
     $(x).resizable({
       stop: function (event: Event, ui: any) {
@@ -101,7 +106,7 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
-
+ 
   ngOnInit(): void {
 
 
@@ -209,6 +214,21 @@ export class DashboardComponent implements OnInit {
       this.changeStatus(data.PID)
     }
   }
+  // dragStart(event:CdkDragStart<any[]>){
+  //   console.log('event',event)
+  // }
+  dragStarted(event: CdkDragStart) {
+    this.state = 'dragStarted';
+  }
+
+  dragEnded(event: CdkDragEnd) {
+    this.state = 'dragEnded';
+  }
+  dragMoved(event: CdkDragMove) {
+    console.log(event)
+    this.position = `> Position X: ${event.pointerPosition.x} - Y: ${event.pointerPosition.y}`;
+    console.log(this.position)
+  }
   drop(event: CdkDragDrop<any[]>) {
     const itemRect = event.item.element.nativeElement.getBoundingClientRect();
     const top = Math.max(
@@ -240,7 +260,7 @@ export class DashboardComponent implements OnInit {
     }
 
     const item = event.previousContainer.data[event.previousIndex];
-    console.log('item',item)
+    // console.log('item',item)
     item.top = top;
     item.left = left;
 
@@ -254,9 +274,16 @@ export class DashboardComponent implements OnInit {
         toIndex
       );
     }
-    console.log(item.top,item.left)
+    // console.log('top',top,'left',left)
+    this.behavSubject.setPosition({
+      'top':top,'left':left
+    })
     const data = event;
-    console.log(data)
+    // console.log(data)
+    const prop = JSON.parse(item.WIDGET_SIZE)
+    prop.top=top;
+    prop.left=left;
+    item.WIDGET_SIZE=JSON.stringify(prop)
   }
   onDrop(event: CdkDragDrop<any[]>) {
     // console.log(event)
@@ -345,10 +372,11 @@ export class DashboardComponent implements OnInit {
       data.CREATED_BY = session.PID;
 
       data.SQL_QUERY = 'sql';
-      const WIDGET_SIZE=JSON.parse(data.WIDGET_SIZE);
-      WIDGET_SIZE.left=data.left;
-      WIDGET_SIZE.top=data.top;
-      data.WIDGET_SIZE=JSON.stringify(WIDGET_SIZE);
+      // const WIDGET_SIZE=JSON.parse(data.WIDGET_SIZE);
+      // WIDGET_SIZE.left=data.left;
+      // WIDGET_SIZE.top=data.top;
+      // data.WIDGET_SIZE=JSON.stringify(WIDGET_SIZE);
+      console.log('save params ',data)
       this.dataService.addChartRequest(data).subscribe(res => {
 
         this.openSnackBar();

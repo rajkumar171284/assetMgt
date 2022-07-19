@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Input, OnDestroy, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
+import { Component, ViewChild,ElementRef,EventEmitter, OnInit, Input, OnDestroy, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription, Observable } from 'rxjs';
@@ -38,6 +38,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   @Input() WIDGET_REQUEST: any;
   @Input() xAxisName: any;
   isDarkTheme: Observable<boolean> | undefined;
+  @ViewChild("divBoard") divBoard!: ElementRef;
 
   @Output() sendToParent = new EventEmitter();
   @Output() setLoader = new EventEmitter();
@@ -75,6 +76,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   isLOCATIONS = false;
   myLOCATIONS: any = [];
   mySENSORS: any = [];
+  expandFilter:boolean = false;
 
   xAxisData$!: Observable<any>;
   constructor(public xaxisService: XAxisService, private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
@@ -90,7 +92,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       filterStep: ['']
     })
     this.newForm.patchValue({
-      filterStep: this.dateFilters[0]
+      filterStep: this.dateFilters[9]
     })
 
   }
@@ -188,6 +190,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;
     // console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
     this.getDeviceLog();
+    this.expandFilter=false;
   }
 
   getDeviceLog() {
@@ -197,8 +200,9 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
     // }
     this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
-      // console.log(result)
+      console.log('result',result)
       if (result && result.data.length > 0) {
+        console.log('result found',this.WIDGET_REQUEST.PID)
         this.widgetResponse.data = result.data;
         this.widgetResponse.protocol = result.protocol;
         this.widgetResponse.totalDevice = result.totalDevice;
@@ -287,13 +291,16 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
         // console.log(this.widgetResponse)
 
       } else {
+        console.log('result not found',this.WIDGET_REQUEST.PID)
         this.errMessage = 'No Data found..';
         // no record found then 
         this.sendToParent.emit(false);
         this.ref.detectChanges();
       }
       this.getFilterArr();
-      this.setLoader.emit(false);
+      
+      // this.setLoader.emit(false);
+      this.expandFilter=false;
       this.ref.detectChanges();
     })
 

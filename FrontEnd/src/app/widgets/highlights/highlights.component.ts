@@ -1,5 +1,8 @@
-import { Component, DoCheck, ViewChild, ViewContainerRef, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component,AfterViewInit, DoCheck, ViewChild, ElementRef, ViewContainerRef, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { XAxisService } from '../../services/x-axis.service';
+import { WidgetComponent } from '../../components/widget/widget.component';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 declare let $: any;
 @Component({
   selector: 'app-highlights',
@@ -7,7 +10,7 @@ declare let $: any;
   styleUrls: ['./highlights.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
+export class HighlightsComponent implements  OnInit, OnChanges, DoCheck {
   @Input() WIDGET_REQUEST: any;
   @Input() widgetIndex: any;
 
@@ -17,45 +20,53 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
   deviceType: string = '';
   public height: any;
   public width: any;
-  @ViewChild('Item', { read: ViewContainerRef }) Item: any;
-
-  constructor(private dataService: AuthService) { }
+  // @ViewChild('Item', { read: ViewContainerRef }) Item: any;
+  @ViewChild("divBoard") divBoard!: ElementRef;
+  chartWidth: number = 0;
+  chartHeight: number = 0;
+  widgetDiv:any;
+  constructor(public service: XAxisService, private dataService: AuthService) { }
   ngDoCheck(): void {
-    // console.log('dochk', this.widgetIndex);
-    // this.getWidgetdetails();
+    
+    this.watchSize();
+  }
+  
+  watchSize() {
     const id = this.widgetIndex.toString();
     let that = this;
-    // if (this.Item.element)
-    // let doc=`#${{id}}`;
-    let x=document.getElementById(id);
-    // console.log(id,doc,document.getElementById(id))
-      $(x).resizable({
-        stop: function (event: Event, ui: any) {
-          // console.log(ui)
-          that.height = $(ui.size.height)[0];
-          that.width = $(ui.size.width)[0];
-          const params: any = {
-            width: that.width, height: that.height
-          }
-          that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
+    let x = document.getElementById(id);
+    // console.log(x)
+    $(x).resizable({
+      stop: function (event: Event, ui: any) {
+        console.log(ui)
+        let height: number = $(ui.size.height)[0];
+        let width: number = $(ui.size.width)[0];
+        const params: any = {
+          width: width, height: height
         }
-      });
+
+        that.chartWidth = width;
+        that.chartHeight = height;
+        // console.log('chartWidth',that.chartWidth,that.chartHeight)
+        const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE)
+        // 
+        console.log('orgSize', orgSize)
+        orgSize.width = width;
+        orgSize.height = height;
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
+
+        // 
+        that.service.changeMessage(orgSize)
+      }
+    });
+
+  }
+  getElement() {
+    // if (this.divBoard)
+      return this.divBoard.nativeElement;
   }
   ngOnInit(): void {
-    let that = this;
-    // $(".resizable").resizable({
-    //   stop: function (event: Event, ui: any) {
-    //     // console.log(ui)
-    //     that.height = $(ui.size.height)[0];
-    //     that.width = $(ui.size.width)[0];
-    //     const params: any = {
-    //       width: that.width, height: that.height
-    //     }
-    //     that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
-    //   }
-    // });
-    // console.log(that.WIDGET_REQUEST)
-    // 
+
   }
   getWidgetdetails() {
     let that = this;

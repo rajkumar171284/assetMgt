@@ -42,12 +42,13 @@
               <div  *ngIf="List && List.WIDGET_TYPE==='CHARTS'">
 
 
-                <app-plotly (_widgetData)="saveWidget($event)" [widgetIndex]="idx" [WIDGET_REQUEST]="List"></app-plotly>
+                <app-plotly [positionTop]="List.top" [positionLeft]="List.left" (_widgetData)="saveWidget($event)" [widgetIndex]="idx" [WIDGET_REQUEST]="List"></app-plotly>
 
-                <div class="my-card-footer2">
+
+                <!-- <div class="my-card-footer2">
                 <mat-label>Asset Config:{{List.CONFIG_NAME}}</mat-label>
 
-              </div>
+              </div> -->
 
               </div>
             </div>
@@ -56,24 +57,16 @@
         </div>
 
 
-
+<!-- now -->
         <ng-container *ngIf="!hide">
-          <div class="row1 pb-4" cdkDropList #divBoard [cdkDropListData]="draggedWidget$"
-             (cdkDropListDropped)="drop($event)">
+          <div class="row1" cdkDropList #divBoard [cdkDropListData]="draggedWidget$"
+             (cdkDropListDropped)="drop($event)" >
 
-            <div class="row">
-
-
-
-              <!-- class="{{getRequestDetails(List,'size')}}" -->
-
-              <!-- cdkDrag [cdkDragDisabled]="dragDisabled||List=='0'" -->
-              <!-- cdkDropListOrientation="horizontal" -->
-
-
-
-              <div cdkDrag [cdkDragDisabled]="List.dragDisabled"
-                [ngClass]="{'col-md-12 ':!List,'col-md-12':!List}" class="mb-2"
+        
+              <div (cdkDragStarted)="dragStarted($event)"
+              (cdkDragEnded)="dragEnded($event)"
+              (cdkDragMoved)="dragMoved($event)" cdkDrag [cdkDragDisabled]="List.dragDisabled"
+                [ngClass]="{'col-md-12 ':!List,'col-md-12':!List}" class=""
                 *ngFor="let List of draggedWidget$;index as idx">
                 <div [ngClass]="{'draggedEmpty minWidgetHight':!List}"
                   class="rowd example-box1 resizable1 listed-charts" color="primary">
@@ -99,51 +92,50 @@
 
                 </span> -->
 
-                  <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')=='HIGHLIGHTS'">
+                  <div *ngIf="List.WIDGET_TYPE=='HIGHLIGHTS'">
 
                     <app-highlights  [widgetIndex]="idx" (_widgetData)="saveWidget($event)"
-                      [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-highlights>
+                      [WIDGET_REQUEST]="List"></app-highlights>
 
                   </div>
-                  <div class="" *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='TABLE'">
+                  <div class="" *ngIf="List.WIDGET_TYPE==='TABLE'">
 
-                    <app-table (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="getRequestDetails(List,'json')">
+                    <app-table (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List">
                     </app-table>
 
                   </div>
-                  <div *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='MAPS'">
+                  <div *ngIf="List.WIDGET_TYPE==='MAPS'">
+
+                    
 
                     <app-map [widgetIndex]="idx" (_widgetData)="saveWidget($event)"
-                      [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-map>
+                      [WIDGET_REQUEST]="List"></app-map>
 
                   </div>
-                  <div class="cardd" *ngIf="List.WIDGET_TYPE">
+                  <div *ngIf="List.WIDGET_TYPE=='CHARTS'">
 
                     <app-plotly [positionTop]="List.top" [positionLeft]="List.left" (_widgetData)="saveWidget($event)" [widgetIndex]="idx" [WIDGET_REQUEST]="List"></app-plotly>
 
                     <!-- <div class="my-card-footer2">
-                    <mat-label>Asset Config:{{getRequestDetails(List,'config')}}</mat-label>
+                    <mat-label>Asset Config:{{List.CONFIG_NAME}}</mat-label>
 
                   </div> -->
 
                   </div>
-                  <div class="card" *ngIf="getRequestDetails(List,'WIDGET_TYPE')==='SUMMARY'">
+                  <div class="card" *ngIf="List.WIDGET_TYPE==='SUMMARY'">
 
-                    <app-card [WIDGET_REQUEST]="getRequestDetails(List,'json')"></app-card>
+                    <app-card [WIDGET_REQUEST]="List"></app-card>
                     <!-- <mat-spinner></mat-spinner> -->
-                    <div class="my-card-footer2">
+                    <!-- <div class="my-card-footer2">
                       <mat-label>Asset Config:{{getRequestDetails(List,'config')}}</mat-label>
 
-                    </div>
+                    </div> -->
 
                   </div>
 
                 </div>
 
               </div>
-
-
-            </div>
 
           </div>
         </ng-container>

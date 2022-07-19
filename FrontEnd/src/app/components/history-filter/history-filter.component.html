@@ -1,3 +1,9 @@
+
+<span style="position: absolute;top:5px;left:5px;z-index:99">
+    <mat-icon (click)="expandFilter=!expandFilter" color="primary">search</mat-icon>
+
+</span>
+<div [ngClass]="{'show':expandFilter,'hide':!expandFilter}">
 <form [ngClass]="{'dark-theme': isDarkTheme | async}"  class="form-container p-2" [formGroup]="newForm">
 
     <div class="filter">
@@ -59,10 +65,16 @@
         </mat-form-field>
 
         <button color="primary" mat-raised-button (click)="filterSrc()">
-            <mat-icon>search</mat-icon> Search
+            <mat-icon>search</mat-icon> 
         </button>
+        <button color="warn" mat-raised-button (click)="expandFilter=false">
+            <mat-icon>close</mat-icon>
+        </button>
+
+
 
     </div>
     <div>
     </div>
 </form>
+</div>

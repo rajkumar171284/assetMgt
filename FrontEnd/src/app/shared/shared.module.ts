@@ -99,6 +99,8 @@ import { ToHideDirective } from '../directives/to-hide.directive';
 import { ThemeService } from '../services/theme.service';
 import { XAxisComponent } from '../components/x-axis/x-axis.component';
 import { WidgetDashboardComponent } from '../components/widget-dashboard/widget-dashboard.component';
+import { CommonChart1Component } from '../widgets/plotly/common-chart1/common-chart1.component';
+import { BarChartComponent } from '../widgets/plotly/bar-chart/bar-chart.component';
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -111,7 +113,7 @@ import { WidgetDashboardComponent } from '../components/widget-dashboard/widget-
     AddMacDetailsComponent,
     PlotlyComponent,CardComponent,
     MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent
+    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent
   ],
   imports: [
     CommonModule,PlotlyModule,
