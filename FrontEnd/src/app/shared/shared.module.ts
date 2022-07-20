@@ -80,7 +80,7 @@ import { PlotlyModule } from 'angular-plotly.js';
 import { MacReportsComponent } from '../components/mac-reports/mac-reports.component';
 import { ReportsComponent } from '../components/reports/reports.component';
 import { TableComponent } from '../widgets/table/table.component';
-import {MapComponent} from '../widgets/map/map.component';
+import { MapComponent } from '../widgets/map/map.component';
 PlotlyModule.plotlyjs = PlotlyJS;
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { UsersComponent } from '../components/users/users.component';
@@ -92,7 +92,7 @@ import { SanitizePipe } from '../sanitize.pipe';
 import { AccessrightsDirective } from '../directives/accessrights.directive';
 // import { ResizeDirective } from '../directives/resize.directive';
 import { ResizableModule } from 'angular-resizable-element';
-import {TableVirtualScrollModule} from 'ng-table-virtual-scroll';
+import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { GuageComponent } from '../widgets/plotly/guage/guage.component';
 import { HistoryFilterComponent } from '../components/history-filter/history-filter.component';
 import { ToHideDirective } from '../directives/to-hide.directive';
@@ -101,22 +101,25 @@ import { XAxisComponent } from '../components/x-axis/x-axis.component';
 import { WidgetDashboardComponent } from '../components/widget-dashboard/widget-dashboard.component';
 import { CommonChart1Component } from '../widgets/plotly/common-chart1/common-chart1.component';
 import { BarChartComponent } from '../widgets/plotly/bar-chart/bar-chart.component';
-
+import { AdminPanelComponent } from '../components/admin-panel/admin-panel.component';
+import { AlertPanelComponent } from '../components/alert-panel/alert-panel.component';
+import { AddAlertComponent } from '../components/dialogs/add-alert/add-alert.component';
+// import { AlertsListComponent } from '../components/alerts-list/alerts-list.component';
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
     AddAssetConfigComponent, AssetConnectionsTypeComponent,
-    AddSensorSubcategoryComponent, SensorsComponent,
+    AddSensorSubcategoryComponent, SensorsComponent, AddAlertComponent,
     AddSensorComponent,
     AddConnectionComponent,
     AddAssetComponent,
-    AssetTypeComponent,TooltipComponent, DashboardComponent, WidgetComponent,
+    AssetTypeComponent, TooltipComponent, DashboardComponent, WidgetComponent,
     AddMacDetailsComponent,
-    PlotlyComponent,CardComponent,
-    MacReportsComponent,ReportsComponent, TableComponent,
-    HighlightsComponent,MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent
+    PlotlyComponent, CardComponent,
+    MacReportsComponent, ReportsComponent, TableComponent,
+    HighlightsComponent, MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent, AdminPanelComponent, AlertPanelComponent
   ],
   imports: [
-    CommonModule,PlotlyModule,
+    CommonModule, PlotlyModule,
     SharedRoutingModule, FormsModule, ReactiveFormsModule,
     A11yModule,
     ClipboardModule,
@@ -162,7 +165,7 @@ import { BarChartComponent } from '../widgets/plotly/bar-chart/bar-chart.compone
     OverlayModule,
     PortalModule,
     ScrollingModule, HttpClientModule,
-    LeafletModule,AngularResizeElementModule,ResizableModule,TableVirtualScrollModule
+    LeafletModule, AngularResizeElementModule, ResizableModule, TableVirtualScrollModule
   ]
 })
 export class SharedModule { }

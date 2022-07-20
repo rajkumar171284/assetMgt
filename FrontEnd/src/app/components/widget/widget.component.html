@@ -7,6 +7,20 @@
 <mat-accordion>
 
     <form [formGroup]="newForm">
+        <mat-grid-list  cols="10" >
+        
+            <mat-form-field appearance="standard">
+              <mat-label style="color:#444" color="dark">SELECT COMPANY</mat-label>
+              <mat-select  formControlName="COMPANY_ID">
+      
+                <mat-option *ngFor="let key of companiesList" [value]="key.PID">
+                  {{key.COMPANY_NAME}}
+                </mat-option>
+      
+              </mat-select>
+            </mat-form-field>
+      
+          </mat-grid-list>
 
         <mat-expansion-panel [expanded]="widgetState" (opened)="widgetState = true" (closed)="widgetState = false">
             <mat-expansion-panel-header color="primary">

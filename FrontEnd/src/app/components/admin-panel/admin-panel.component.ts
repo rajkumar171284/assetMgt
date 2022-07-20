@@ -10,24 +10,19 @@ import { AddCompanyComponent } from '../../components/dialogs/add-company/add-co
 import { AuthService } from '../../services/auth.service';
 
 enum tabLabel {
+  'Users' = 0,
  
-  'Connections' = 0,
-  'Sensors' = 0,
-  'Asset' = 2,
+  'Clients' = 1,
  
-  'Configuration' = 3,
   
 }
-enum enum2 {
-  'Clients' = 5
-}
-// enum tabLabel {enum1,enum2};
+
 @Component({
-  selector: 'app-control-panel',
-  templateUrl: './control-panel.component.html',
-  styleUrls: ['./control-panel.component.scss']
+  selector: 'app-admin-panel',
+  templateUrl: './admin-panel.component.html',
+  styleUrls: ['./admin-panel.component.scss']
 })
-export class ControlPanelComponent implements OnInit {
+export class AdminPanelComponent implements OnInit {
   @ViewChild('tabG6roup') tabGroup: any;
 
   tabIndex: any = 0;
@@ -47,29 +42,9 @@ export class ControlPanelComponent implements OnInit {
   // tabLabel:enum1|undefined;
   ngOnInit(): void {
   
-    const session =  this.dataService.getSessionData();
-    if(session){
-      // enum tabLabel{
-      //   'Users' = 0,
-      //   'Connections' = 1,
-      //   'Sensors' = 2,
-      //   'Asset' = 3,
-      //   'Configuration' = 4,
-      //   // 'Clients' = 5
-      // }
-      // type this.tabLabel=typeof tabLabel
-    }
-    // enum enum1 {
-    //   'Users' = 0,
-    //   'Connections' = 1,
-    //   'Sensors' = 2,
-    //   'Asset' = 3,
-    //   'Configuration' = 4,
-    //   // 'Clients' = 5
-    // }
-    // enum enum2 {
-    //   'Clients' = 5
-    // }
+    // const session =  this.dataService.getSessionData();
+  
+   
   }
   async getAllComp() {
     const session = await this.dataService.getSessionData();
@@ -84,45 +59,29 @@ export class ControlPanelComponent implements OnInit {
   }
   openDialog() {
     this.updateConn = false;
-    console.log(this.tabIndex, tabLabel.Connections, tabLabel.Sensors)
-    if (this.tabIndex === tabLabel.Connections) {
-      let dialogRef = this.dialog.open(AddConnectionComponent, {
-        width: '100px',
-        data: null
-      });
-      dialogRef.afterClosed().subscribe(result => {
-
-        this.updateConn = true;
-      });
-    } else if (this.tabIndex === tabLabel.Sensors) {
-      let dialogRef = this.dialog.open(AddSensorComponent, {
-        width: '800px',
-        data: null
-      });
-      dialogRef.afterClosed().subscribe(result => {
-
-        this.updateSensor = true;
-      });
-    } else if (this.tabIndex === tabLabel.Configuration) {
-      const dialogRef = this.dialog.open(AddAssetConfigComponent, {
-        // width: '1000px',
-        data: null
-      });
-      dialogRef.afterClosed().subscribe(result => {
-
-        this.updateConfig = true;
-      });
-    } else if (this.tabIndex === tabLabel.Asset) {
-      const dialogRef = this.dialog.open(AddAssetComponent, {
+     if (this.tabIndex === tabLabel.Users) {
+      const dialogRef = this.dialog.open(AddUsersComponent, {
         width: '800px',
         data: null
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        this.updateAsset = true;
+        this.updateUser = true;
+      });
+    } else if (this.tabIndex === tabLabel.Clients) {
+      this.updateComp = 'init';
+      const dialogRef = this.dialog.open(AddCompanyComponent, {
+        width: '800px',
+        data: null
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('afterClosed')
+        this.updateComp = 'afterClosed';
+        this.tabIndex=4;
+       
       });
     }
-   
 
 
   }

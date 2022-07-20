@@ -15,7 +15,7 @@ router.post('/asset/login', (req, res) => {
     const sql = 'SELECT user_tbl.*,company_tbl.COMPANY_TYPE,company_tbl.COMPANY_NAME FROM user_tbl LEFT JOIN company_tbl ON user_tbl.COMPANY_ID= company_tbl.PID WHERE user_tbl.LOGIN_NAME=? AND user_tbl.PASSWORD=?';
     let todo = [LOGIN_NAME, PASSWORD];
     db.query(sql, todo, (err, result) => {
-        
+
         if (err) {
             // throw err;
             // return res.status(400).send({
@@ -45,55 +45,6 @@ router.post('/asset/login', (req, res) => {
     })
 })
 
-// router.post('/asset/login2', (req, res, next) => {
-//     const LOGIN_NAME = req.body.LOGIN_NAME;
-//     const PASSWORD = req.body.PASSWORD;
 
-//     let sql = `SELECT * FROM user_tbl WHERE LOGIN_NAME=${LOGIN_NAME}`;
-
-//     db.query(sql, (err, result) => {
-//         // user does not exists
-//         if (err) {
-//             throw err;
-//             return res.status(400).send({
-//                 msg: err
-//             });
-//         }
-//         if (!result.length) {
-//             return res.status(401).send({
-//                 msg: 'Email or password is incorrect!'
-//             });
-//         }
-//         // check password
-//         bcrypt.compare(
-//             req.body.password,
-//             result[0]['password'],
-//             (bErr, bResult) => {
-//                 // wrong password
-//                 if (bErr) {
-//                     throw bErr;
-//                     return res.status(401).send({
-//                         msg: 'Email or password is incorrect!'
-//                     });
-//                 }
-//                 if (bResult) {
-//                     const token = jwt.sign({ id: result[0].id }, 'the-super-strong-secrect', { expiresIn: '1h' });
-//                     db.query(
-//                         `UPDATE users SET last_login = now() WHERE id = '${result[0].id}'`
-//                     );
-//                     return res.status(200).send({
-//                         msg: 'Logged in!',
-//                         token,
-//                         user: result[0]
-//                     });
-//                 }
-//                 return res.status(401).send({
-//                     msg: 'Username or password is incorrect!'
-//                 });
-//             }
-//         );
-//     }
-//     );
-// });
 
 module.exports = router;

@@ -313,7 +313,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
 
   getMQTTdata() {
-    const time = interval(60000);
+    const time = interval(600000);
     this.myInterval = time.subscribe(() => {
       this.dataService.getMqtt({}).subscribe(response => {
         // console.log('getMqtt',)

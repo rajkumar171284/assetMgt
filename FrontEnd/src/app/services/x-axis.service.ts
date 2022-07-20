@@ -40,7 +40,7 @@ export class XAxisService {
   getProp(type: string,WIDGET_REQUEST:any) {
     const prop = JSON.parse(WIDGET_REQUEST.WIDGET_SIZE)
     if (type == 'W') {
-      return prop.width
+      return prop.width;
     }
     if (type == 'H') {
       return prop.height

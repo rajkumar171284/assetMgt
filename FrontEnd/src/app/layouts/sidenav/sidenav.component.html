@@ -14,10 +14,10 @@
       </div>
 
     </div>
-    <div>
+    <!-- <div>
       <mat-slide-toggle [checked]="isDarkTheme | async" (change)="toggleDarkTheme($event.checked)">
         Light theme</mat-slide-toggle>
-    </div>
+    </div> -->
     <div class="logo-right logo">
       Hi,{{session && session.LOGIN_NAME?session.LOGIN_NAME:''}}
       <button (click)="logOut()" mat-button>
@@ -51,11 +51,22 @@
             <mat-icon> bar_chart</mat-icon>
             <!-- Dashboard -->
           </a>
-          <a appWidgetAccessIf mat-list-item matTooltip="Admin Panel" routerLink="/home/control-panel"
+          <a appWidgetAccessIf mat-list-item matTooltip="Admin Panel" routerLink="/home/admin-panel"
+            routerLinkActive="active-list-item">
+            <mat-icon> account_box</mat-icon>
+          </a>
+
+          <a appWidgetAccessIf mat-list-item matTooltip="Config Panel" routerLink="/home/control-panel"
             routerLinkActive="active-list-item">
             <mat-icon> settings</mat-icon>
 
-            <!-- Control Panel -->
+           
+          </a>
+          <a appWidgetAccessIf mat-list-item matTooltip="Config Alerts" routerLink="/home/alert"
+            routerLinkActive="active-list-item">
+            <mat-icon> add_alert</mat-icon>
+
+           
           </a>
           <a mat-list-item matTooltip="Reports" routerLink="/home/reports" routerLinkActive="active-list-item">
             <mat-icon>reorder</mat-icon>

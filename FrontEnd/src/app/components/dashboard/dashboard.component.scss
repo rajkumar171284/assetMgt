@@ -7,13 +7,7 @@
 .widgetDraggedPanel{
 
   padding-top:40px ;
-
-
-
-
-
-  padding-bottom: 100px;
-    
+position: relative;    
 }
 .undraggedBlock{
     width: 100%;
@@ -63,7 +57,18 @@
 .widget-panel {
     // background-color: dodgerblue;
     background: linear-gradient(315deg, dodgerblue 0%, #0c0c0c 74%);
-    position: relative;transition: .5s all;
+    position: relative;
+    
+
+    overflow-x: hidden;
+    overflow-y: scroll;transition: .5s all;
+    padding: 5px;
+}
+.footer-container{
+  position: absolute;bottom: 0;z-index: 99;
+  width: 100%;display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;padding: 5px;
 }
 .closed{
     cursor: pointer;

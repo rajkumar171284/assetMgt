@@ -93,6 +93,10 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
         this.donutPlots()
 
+      }else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'scatter') {
+
+        this.scatterPlots()
+
       }
     }
   }
@@ -247,7 +251,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
       textfont: {
         family: 'Lato',
         color: 'white',
-        size: 18
+        size: 14
       },
       hoverlabel: {
         bgcolor: 'black',
@@ -255,7 +259,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
         font: {
           family: 'Lato',
           color: 'white',
-          size: 18
+          size: 14
         }
       }
     };
@@ -331,9 +335,35 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
 
   scatterPlots() {
-    var xArray = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
-    var yArray = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
+    // var xArray = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
+    // var yArray = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
+    let xArray: any = [];
+    let yArray: any = [];
+    // let unique: any = [];
+    // // let data: any = [];
+    // let labelArr: any = [];
 
+    // let linedata: any = [];
+    // let xArray: any = [];
+    for (let a of this.totalDevice) {
+      if (a.history.length > 0) {
+
+        // xArray = a.history.map((z: any) => {
+        //   let dt = new Date(z.LAST_UPDATE_TIME);
+        //   return dt;
+        // });
+
+        // y value
+        for (let units of a.unitsArr) {
+          // format VALUE json as key & value
+          xArray.push(units.key)
+          yArray.push(units.totalValue)
+
+        }
+      }
+
+
+    }
     // Define Data
     var data = [{
       x: xArray,
@@ -343,12 +373,18 @@ export class CommonChart1Component implements OnInit, OnChanges {
     }];
 
     // Define Layout
-    var layout = {
-      xaxis: { range: [40, 160], title: "Square Meters" },
-      yaxis: { range: [5, 16], title: "Price in Millions" },
-      title: "House Prices vs. Size"
-    };
+    // var layout = {
+    //   xaxis: { range: [40, 160], title: "Square Meters" },
+    //   yaxis: { range: [5, 16], title: "Price in Millions" },
+    //   title: "House Prices vs. Size"
+    // };
+    this.graph1.data = data;
+    this.graph1.layout.width = this.chartWidth;
+    this.graph1.layout.height = this.chartHeight;
 
+    this.graph1.responsive = true;
+
+    this.graph1.layout.title = this.WIDGET_REQUEST.CONFIG_NAME;
     // Plotly.newPlot("myPlot", data, layout);
   }
 

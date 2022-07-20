@@ -7,14 +7,13 @@ import { TooltipComponent } from '../../../components/tooltip/tooltip.component'
 import { _deviceType } from '../../../myclass';
 
 @Component({
-  selector: 'app-add-asset-config',
-  templateUrl: './add-asset-config.component.html',
-  styleUrls: ['./add-asset-config.component.scss'], providers: [AuthService]
+  selector: 'app-add-alert',
+  templateUrl: './add-alert.component.html',
+  styleUrls: ['./add-alert.component.scss']
 })
-export class AddAssetConfigComponent implements OnInit, OnChanges {
-  @Input() tabIndex: any;
-  companiesList: any = [];
+export class AddAlertComponent implements OnInit {
 
+  @Input() tabIndex: any;
   industryType = ['Healthcare',
     'Manufacturing',
     'Agriculture', 'Energy',
@@ -46,7 +45,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     ' Status data',
     'Location data',
     'Automation data',
-    'Actionable data ',]
+    'Actionable data ']
+
+  deviceType = _deviceType;
   durationInSeconds = 5;
   @Output() dialogClose: any = new EventEmitter();
   newForm: FormGroup;
@@ -57,70 +58,44 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   public typeName: any;
   macActive = true;
   macInactive = false;
-  public demo1TabIndex = 0;
-  deviceType = _deviceType;
-
-  conn=['MQTT'];
-  configRouter=['NODEJS','PYTHON','MQTT']
-
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
     this.newForm = this.fb.group({
       PID: [''],
-      CONFIG_NAME: ['', Validators.required],
-      ASSET_ID: ['', Validators.required],
-      INDUSTRIAL_TYPE: ['', Validators.required],
-      INDUSTRIAL_DATA_SOURCE: [''],
-      CONNECTION_TYPE: [''],
-      TRACKING_DEVICE: [''],
-      SENSOR: ['', Validators.required],
-      SENSOR_CATEGORY: [''],
-      SENSOR_DATA_TYPE: ['', Validators.required],
-      COMPANY_ID: ['', Validators.required],
-      METHOD:[],
-      HOST:'',
-
-      MAC_DETAILS: this.fb.array([])
+      ALERT_NAME:['',Validators.required],
+      ASSET_CONFIG_ID:['',Validators.required],
+      THRESHOLD_MIN:['',Validators.required],
+      THRESHOLD_MAX:['',Validators.required],
+      THRESHOLD_AVG:['',Validators.required],
+      // MAC_DETAILS: this.fb.array([])
 
     })
-
-    if (data) {
+    console.log(data)
+    this.getAllAssets();
+    this.data=data;
+    if (data && data.MAC_NAME) {
       console.log(data)
       // edit
       this.typeName = data;
-      this.newForm.patchValue(data);
+      
+    
+    } else {
+      // add
       this.newForm.patchValue({
-        SENSOR: parseInt(data.SENSOR),
-        ASSET_TYPE: parseInt(data.ASSET_TYPE),
-        // CONNECTION_TYPE:JSON.parse(data.CONNECTION_TYPE)
-
+        PID: data && data.PID?data.PID:'',
       })
+    
     }
-
-   
   }
   get MAC_DETAILS(): FormArray {
     return this.newForm.get('MAC_DETAILS') as FormArray;
   }
-  updateMAC() {
-    const item = this.fb.group({
-      PID:'',
-      MAC_NAME: ['', Validators.required],
-      MAC_ADDRESS: ['', Validators.required],
-      MAC_STATUS: true,
-      LOCATION: ['', Validators.required],
-    })
-
-    this.MAC_DETAILS.push(item)
-
-  }
+  
 
   ngOnChanges(changes: SimpleChanges): void {
-    // this.updateMAC();
-    // this.initCall();
-    // this.getAllComp();
+
+    this.initCall()
   }
-  
   initCall() {
     this.dataService.getAssetConn({}).subscribe(conn => {
       if (conn) {
@@ -133,30 +108,25 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
             this.assetTypes = sens.data;
 
             // if edit MAC the call by config ID
-            if (this.typeName) {
-              this.dataService.getMACByConfigID(this.typeName).subscribe(res => {
-                console.log(res)
-                this.getAllComp();
-                if (res && res.data.length > 0) {
-                  this.newForm.patchValue({
-                    MAC_DETAILS: res.data.map((item: any) => {
-                      return {
-                        PID:item.PID,
-                        MAC_NAME: item.MAC_NAME,
-                        MAC_ADDRESS: item.MAC_ADDRESS,
-                        MAC_STATUS: item.MAC_STATUS?true:false,
-                        LOCATION: item.LOCATION
+            // if (this.typeName) {
+            //   this.dataService.getMACByConfigID(this.typeName).subscribe(res => {
+            //     console.log(res)
+            //     if (res && res.data.length > 0) {
+            //       this.newForm.patchValue({
+            //         MAC_DETAILS: res.data.map((item: any) => {
+            //           return {
+            //             PID: item.PID,
+            //             MAC_NAME: item.MAC_NAME,
+            //             MAC_ADDRESS: item.MAC_ADDRESS,
+            //             MAC_STATUS: item.MAC_STATUS ? true : false,
+            //             LOCATION: item.LOCATION
 
-                      }
-                    })
-                  })
-                }
-              })
-            }else{
-              // new asset config
-              console.log('sds')
-              this.getAllComp();
-            }
+            //           }
+            //         })
+            //       })
+            //     }
+            //   })
+            // }
 
 
 
@@ -168,33 +138,37 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     })
   }
   ngOnInit(): void {
-    this.updateMAC();
-    this.initCall();
   }
-  getAllComp() {
-    // const session = await this.dataService.getSessionData();
-  
-    this.dataService.getAllCompanies().subscribe(res => {
-      this.companiesList = res.data;
-    })
-  }
+
   async confirmData() {
 
     // const msg = await this.findInvalidControls();
     // console.log(msg)
 
-    if(this.newForm.get('COMPANY_ID')?.valid && this.newForm.get('CONFIG_NAME')?.valid && this.newForm.get('ASSET_ID')?.valid && this.newForm.get('INDUSTRIAL_TYPE')?.valid && this.newForm.get('INDUSTRIAL_DATA_SOURCE')?.valid && this.newForm.get('CONNECTION_TYPE')?.valid
-    && this.newForm.get('TRACKING_DEVICE')?.valid && this.newForm.get('SENSOR')?.valid && this.newForm.get('SENSOR_CATEGORY')?.valid && this.newForm.get('SENSOR_DATA_TYPE')?.valid){
-      this.demo1TabIndex = 1;
-
+    if (this.newForm.valid) {
+      const session = await this.dataService.getSessionData();
+      this.Values.COMPANY_ID = session.COMPANY_ID
+      this.Values.CREATED_BY = session.PID;
+      console.log(this.Values)
+      this.dataService.addMACByConfigID(this.Values).subscribe(res => {
+        console.log(res)
+        this.dialogClose.emit(true);
+        this.confirmClose();
+        this.openSnackBar()
+      })
     }
+  }
+  async updateData() {
+
+    // const msg = await this.findInvalidControls();
+    // console.log(msg)
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
-      
+      this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
-      this.Values.CONFIG_NAME =this.Values.CONFIG_NAME.toUpperCase();
-      this.dataService.addAssetConfig(this.Values).subscribe(res => {
+      console.log(this.Values)
+      this.dataService.updateDeviceByID(this.Values).subscribe(res => {
         console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
@@ -244,32 +218,21 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   }
   addMAC(e: Event) {
     e.stopPropagation()
-    this.updateMAC()
   }
 
-  updateConfig(){
-
-  }
-  async updateDeviceDetails(){
-    if (this.newForm.valid) {
-      const session = await this.dataService.getSessionData();
-      this.Values.COMPANY_ID = session.COMPANY_ID
-      this.Values.CREATED_BY = session.PID;
-      // console.log(this.Values)
-      this.dataService.updateDeviceByID(this.Values).subscribe(res => {
-        // console.log(res)
-        this.dialogClose.emit(true);
-        this.confirmClose();
-        this.openSnackBar()
-      })
+   getAllAssets() {
+    const session =  this.dataService.getSessionData();
+    let params = {}
+    if (session.COMPANY_TYPE == 'CORP') {
+      // get all
+      params = { COMPANY_ID: 0 };
+    } else {
+      params = { COMPANY_ID: session.COMPANY_ID };
     }
 
-  }
-  unselect(e:any): void {
-    this.newForm.patchValue({
-      CONNECTION_TYPE:''
+    this.dataService.getAssetConfig(params).subscribe(res => {
+      this.assetTypes = res.data;
     })
- }
- 
+  }
 
 }

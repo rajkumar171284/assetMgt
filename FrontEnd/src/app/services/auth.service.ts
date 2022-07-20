@@ -157,7 +157,7 @@ export class AuthService {
     }))
   }
   getAllChartRequests(params: any): Observable<any> {
-    return this.http.get(`${environment.url}/asset/allChartRequest/${params.IS_DRAGGED}`, options).pipe(map(response => {
+    return this.http.get(`${environment.url}/asset/allChartRequest/${params.IS_DRAGGED}/${params.COMPANY_ID}`, options).pipe(map(response => {
       return response;
     }))
   }
@@ -238,4 +238,11 @@ export class AuthService {
       return response;
     }))
   }
+
+  settingWidgetLayout(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/asset/setWidgetLayout`,params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  
 }

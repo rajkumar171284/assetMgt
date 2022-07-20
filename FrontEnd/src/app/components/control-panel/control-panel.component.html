@@ -6,10 +6,7 @@
 
 </mat-toolbar>
 <mat-tab-group #tabGroup mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
-  <mat-tab label="Users">
-    <app-users [tabIndex]="tabIndex"></app-users>
-
-  </mat-tab>
+ 
   <mat-tab label="Protocol">
     <app-asset-connections-type [tabIndex]="updateConn"></app-asset-connections-type>
   </mat-tab>
@@ -22,11 +19,6 @@
     <app-asset-type [tabIndex]="updateAsset"></app-asset-type>
   </mat-tab>
 
-  <mat-tab appWidgetAccessIf label="Clients">
-    <app-company-list [updateData]="updateComp" [cType]="'CLIENT'" [tabIndex]="tabIndex"
-      (dialogClose)="dialogClose($event)"></app-company-list>
-
-  </mat-tab>
   <mat-tab label="Asset Configuration">
 
     <app-config [tabIndex]="updateConfig" (dialogClose)="dialogClose($event)"></app-config>

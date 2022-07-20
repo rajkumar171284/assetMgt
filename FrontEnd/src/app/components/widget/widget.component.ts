@@ -42,18 +42,18 @@ export class WidgetComponent implements OnInit {
   options: any[] = [];
   options2: any[] = ['STATUS', 'LOCATION', 'COUNT'];
   newForm: FormGroup = this.fb.group({
-    PID: [''],
+    PID: [''], COMPANY_ID: ['', Validators.required],
     WIDGET_TYPE: ['', Validators.required],
     isChartSelected: false,
     CHART_NAME: [this.chartChoosen ? Validators.required : null],
-    CHART_TYPE: [this.chartChoosen ? Validators.required : null],
+    CHART_TYPE: [],
     WIDGET_DATA: ['', Validators.required], WIDGET_SIZE: [''],
     ASSET_CONFIG_ID: ['', Validators.required],
     XAXES: [''],
     WIDGET_IMG: '',
     SQL_QUERY: [],
-    IS_DRAGGED: 0
-
+    IS_DRAGGED: 0,
+    LOADED: false
   });
 
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
@@ -98,6 +98,7 @@ export class WidgetComponent implements OnInit {
       this.newForm.patchValue({ IS_DRAGGED: 0 })
 
     }
+    this.getAllComp();
   }
 
   ngOnInit(): void {
@@ -129,6 +130,7 @@ export class WidgetComponent implements OnInit {
       WIDGET_IMG: a.file
     })
 
+    console.log(this.Values)
 
   }
   selectWidgetType(a: any) {
@@ -159,10 +161,10 @@ export class WidgetComponent implements OnInit {
 
   }
   async confirmData() {
-
+    console.log(this.newForm)
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
-      this.Values.COMPANY_ID = session.COMPANY_ID;
+      // this.Values.COMPANY_ID = session.COMPANY_ID;
       this.Values.CREATED_BY = session.PID;
       // const query = `SELECT * FROM ${this.Values.CHART_TYPE} WHERE PID=${this.Values.CHART_DATA}`;
       // this.Values.SQL_QUERY = JSON.stringify(query);
@@ -170,16 +172,17 @@ export class WidgetComponent implements OnInit {
       if (!this.Values.PID) {
         // if  add
         const params: any = {
-          width: 330, height: 320,left:0,top:0
+          width: 330, height: 320, left: 0, top: 0
         }
         this.Values.WIDGET_SIZE = JSON.stringify(params);
+        this.Values.LOADED = false;
       } if (this.chartChoosen) {
         // by default x axis as date wise        
         this.Values.XAXES = this.xAxesOPTION[0].key
       }
 
       this.dataService.addChartRequest(this.Values).subscribe(res => {
-        console.log(res)
+        // console.log(res)
         this.confirmClose();
         this.openSnackBar()
       })
@@ -218,5 +221,13 @@ export class WidgetComponent implements OnInit {
     console.log('this.Values.ASSET_CONFIG_ID', this.Values.ASSET_CONFIG_ID)
 
 
+  }
+  companiesList: any = [];
+  getAllComp() {
+    this.dataService.getAllCompanies().subscribe(res => {
+      this.companiesList = res.data;
+
+
+    })
   }
 }

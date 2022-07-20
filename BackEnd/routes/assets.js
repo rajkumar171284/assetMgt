@@ -456,13 +456,13 @@ router.post('/addChartRequest', (req, res) => {
     let errMessage;
     if (req.body.PID) {
         // update
-        sql = 'UPDATE widget_request_tbl SET WIDGET_TYPE=?,WIDGET_IMG=?, ASSET_CONFIG_ID=?,CHART_NAME = ?,WIDGET_DATA=?,WIDGET_SIZE=?,XAXES=?,SQL_QUERY=?,IS_DRAGGED=?,MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.CREATED_BY, new Date(), req.body.PID];
+        sql = 'UPDATE widget_request_tbl SET WIDGET_TYPE=?,WIDGET_IMG=?, ASSET_CONFIG_ID=?,CHART_NAME = ?,WIDGET_DATA=?,WIDGET_SIZE=?,XAXES=?,SQL_QUERY=?,IS_DRAGGED=?,LOADED=?,COMPANY_ID=?,MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
+        todo = [req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED,req.body.LOADED,req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = ' updated'
     } else {
         // add new
-        sql = `INSERT INTO widget_request_tbl(PID,WIDGET_TYPE,WIDGET_IMG, ASSET_CONFIG_ID,CHART_NAME,WIDGET_DATA,WIDGET_SIZE,XAXES,SQL_QUERY,IS_DRAGGED, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
-        todo = ['', req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.CREATED_BY, new Date()];
+        sql = `INSERT INTO widget_request_tbl(PID,WIDGET_TYPE,WIDGET_IMG, ASSET_CONFIG_ID,CHART_NAME,WIDGET_DATA,WIDGET_SIZE,XAXES,SQL_QUERY,IS_DRAGGED,LOADED,COMPANY_ID, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+        todo = ['', req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.LOADED,req.body.COMPANY_ID,req.body.CREATED_BY, new Date()];
 
         errMessage = ' added';
 
@@ -528,66 +528,16 @@ router.get('/getLocationsByID/:ASSET_CONFIG_ID', (req, res) => {
     })
 })
 // get all chart requests
-router.get('/allChartRequest/:IS_DRAGGED', (req, res) => {
+router.get('/allChartRequest/:IS_DRAGGED/:COMPANY_ID', (req, res) => {
 
-    let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE  FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=? `
-    let todo = [req.params.IS_DRAGGED];
+    let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE  FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=? AND widget_request_tbl.COMPANY_ID=?`
+    let todo = [req.params.IS_DRAGGED, req.params.COMPANY_ID];
     let sql2;
     let locations = [];
     db.query(sql, todo, (err, result) => {
         // console.log(rows)
         if (err) throw err;
         else
-            //     console.log(req.params.IS_DRAGGED)
-            // if (req.params.IS_DRAGGED == 1) {
-            //     rows.forEach(async item => {
-            //         item.LOCATION = [];
-            //         // console.log(item)
-            //         sql2 = `SELECT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
-            //         let todo2 = [item.ASSET_CONFIG_ID];
-            //         await db.query(sql2, todo2, (err2, result2) => {
-            //             if (err2)
-            //                 throw err2;
-            //             else
-            //                 console.log(result2);
-            //             // locations = result2;
-            //             item.LOCATION.push(result2);
-
-            //         })
-            //         //write query with await
-            //     });
-            //     db.end();
-            //     // for (var i in rows) {
-            //     //     rows[i].LOCATION=[];
-            //     //     // only dragged
-            //     //     sql2 = `SELECT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
-            //     //     let todo2 = [rows[i].ASSET_CONFIG_ID];
-
-            //     //     db.query(sql2, todo2, (err2, result2) => {
-            //     //         if (err2) throw err2;
-            //     //         else
-            //     //             console.log(result2)
-            //     //         // locations = result2;
-            //     //         rows[i].LOCATION = result2;
-
-            //     //     })
-
-
-            //     // }
-            //     res.send({
-            //         data: rows,
-            //         status: 200,
-
-            //     })
-            //     // db.end();
-            // }
-            // else {
-            //     // those are not dragged from right panel
-            //     res.send({
-            //         data: result,
-            //         status: 200
-            //     })
-            // }
             res.send({
                 data: result,
                 status: 200
@@ -835,6 +785,49 @@ router.post('/getDeviceCurrStatusByDeviceID', (req, res) => {
                 data: result,
                 status: 200
             })
+    })
+})
+
+
+router.post('/getWidgetLayout', (req, res) => {
+    let sql;
+    sql = `SELECT * FROM widget_layout_tbl WHERE PID=?`;
+    let todo = [res.body.PID]
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+            res.send({
+                data: result,
+                status: 200
+            })
+    })
+})
+router.post('/setWidgetLayout', (req, res) => {
+    let sql;
+    let todo;
+    let errMessage;
+ 
+    if (req.body.PID) {
+        // update
+        // console.log('update')
+        sql = 'UPDATE widget_layout_tbl SET HEIGHT=? WHERE PID=?';
+        todo = [req.body.HEIGHT, req.body.PID];
+        errMessage = 'updated'
+    } else {
+       
+
+        sql = `INSERT INTO widget_layout_tbl(PID, HEIGHT,COMPANY_ID) VALUES (?,?,?)`;
+        todo = ['', req.body.HEIGHT,req.body.COMPANY_ID];
+        errMessage = 'added'
+    }
+    db.query(sql, todo, (err, result, fields) => {
+        if (err)
+            throw err;
+        return res.status(400).send({
+            msg: err
+        });
+
+
     })
 })
 

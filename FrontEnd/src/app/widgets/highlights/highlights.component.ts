@@ -130,15 +130,7 @@ export class HighlightsComponent implements  OnInit, OnChanges, DoCheck {
 
     this._widgetData.emit(this.WIDGET_REQUEST)
   }
-  getProp(type: string) {
-    const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
-    if (type == 'W') {
-      return prop.width
-    }
-    if (type == 'H') {
-      return prop.height
-    }
-  }
+  
 
   async editRequest(pid: any) {
     // const data = await this.getRequestDetails(pid, 'json');
