@@ -96,7 +96,7 @@
                 <mat-select (onSelectionChange)="optionSelected($event)" formControlName="ASSET_CONFIG_ID">
 
                     <mat-option *ngFor="let key of options" [value]="key.PID">
-                        {{key.CONFIG_NAME}}
+                        {{key.CONFIG_NAME}} | {{key.NAME}}
                     </mat-option>
 
                 </mat-select>
@@ -114,7 +114,6 @@
 
             </mat-expansion-panel-header>
 
-            <!-- content -->
 
             <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Select Label</mat-label>

@@ -1,29 +1,20 @@
-<!-- <div id="{{widgetIndex}}" [style.width.px] ="getProp('W')" [style.height.px]="getProp('H')" class="resizable"> -->
 <div [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
     [style.height.px]="service.getProp('H',WIDGET_REQUEST)" style="position:absolute;z-index:999">
 
 
-    <div [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item id="{{widgetIndex}}"
-        class="resizable my-card bg11 overflow-hidden">
+    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item id="{{widgetIndex}}"
+        class=" my-card bg11 overflow-hidden">
 
-        <span appWidgetAccessIf class="mapped-close">
-            <mat-icon color="accent" (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled">
-                {{WIDGET_REQUEST.dragDisabled?'layers_clear':'layers'}}
-            </mat-icon>
+        <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
+        </app-header-widget>
 
-            <mat-icon (click)="editRequest(WIDGET_REQUEST)" matTooltip="Edit Widget" color="primary">edit</mat-icon>
+        <app-footer-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
-            <mat-icon (click)="removeRequest(WIDGET_REQUEST)" matTooltip="Remove Widget" color="warn">delete_outline
-            </mat-icon>
-
-
-        </span>
-
-        <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
-            <mat-icon color="accent">save</mat-icon>
-
-        </span>
+        </app-footer-widget>
+        <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
+            <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
+        </ng-container>
         <div class="resizable11" id="map">
 
         </div>
@@ -46,7 +37,7 @@
             </mat-card-header>
         </div>
 
-    </div>
+    </mat-card>
 
 
 

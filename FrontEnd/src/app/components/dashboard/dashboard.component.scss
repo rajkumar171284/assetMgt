@@ -25,7 +25,7 @@ position: relative;
     text-transform: uppercase;
 }
 .listed-charts {
-    margin-bottom: 5px;
+    
     padding: 0;
     position: relative;
 }
@@ -41,7 +41,11 @@ position: relative;
 
 .listed-charts img {
     height: 50px;
-    margin-top: 6px; filter: sepia(100%) hue-rotate(190deg) saturate(500%); 
+    margin-top: 6px; 
+    // filter: sepia(100%) hue-rotate(190deg) saturate(500%); 
+    // filter: grayscale(1);
+    filter: brightness(0) invert(1);
+    opacity: .8;
 }
 
 .Widget-block .listed-charts {
@@ -50,19 +54,24 @@ position: relative;
     // border: 0px solid #fff;
     padding:5px;
     mat-card-subtitle ,mat-card-content{
-        color: #fff !important
+        color: #fff !important;
+        font-size: 12px;
     }
 }
 
 .widget-panel {
     // background-color: dodgerblue;
-    background: linear-gradient(315deg, dodgerblue 0%, #0c0c0c 74%);
+    // background: linear-gradient(315deg, dodgerblue 0%, #0c0c0c 74%);
+    // background:linear-gradient(315deg, #a3c2f7 0%, #fff 74%);
+    background:linear-gradient(315deg, #fff 0%, #a3c2f7 74%);
+
     position: relative;
     
 
     overflow-x: hidden;
     overflow-y: scroll;transition: .5s all;
     padding: 5px;
+    transition: .3s all;
 }
 .footer-container{
   position: absolute;bottom: 0;z-index: 99;
@@ -72,7 +81,7 @@ position: relative;
 }
 .closed{
     cursor: pointer;
-    position: fixed;top:65px;right:20px;z-index: 9999;    background: #f3f3f3;
+    position: fixed;top:65px;right:40px;z-index: 9999;    background: #f3f3f3;
     border-radius: 3px;height: 24px;
 }
 .openWidget{cursor: pointer;
@@ -80,13 +89,14 @@ position: relative;
 }
 
 .widget-panel mat-label {
-    color: #fff
+    // color: #fff
+    text-transform: uppercase;
 }
 
 .listed-charts mat-card-content {
     display: flex;
     justify-content: space-evenly;
-    
+    align-items: center;
 }
 
 .listed-charts mat-card-subtitle {
@@ -330,7 +340,7 @@ position: relative;
     border: 1px solid #DDDDDD;
     color: #333333;
  }
- #resizable,.resizable { width: 50%; height: 350px; padding: 0.5em;
+ #resizable,.resizable-x { width: 50%; height: 350px; padding: 0.5em;
     text-align: center; margin: 0; }
 .cdk-drag{
     // display:flex;

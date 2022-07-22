@@ -1,0 +1,14 @@
+<span appWidgetAccessIf class="mapped-close">
+    <mat-icon color="secondary" matTooltip="Click to Enable/Disable drag"
+        (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled">
+        {{WIDGET_REQUEST.dragDisabled?'layers_clear':'layers'}}
+    </mat-icon>
+
+
+    <mat-icon (click)="editRequest(WIDGET_REQUEST)" matTooltip="Edit Widget" color="secondary">edit</mat-icon>
+
+    <mat-icon (click)="removeRequest(WIDGET_REQUEST)" matTooltip="Remove Widget" color="warn">delete_outline
+    </mat-icon>
+
+
+</span>

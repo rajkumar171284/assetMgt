@@ -1,80 +1,81 @@
-
-<span style="position: absolute;top:5px;left:5px;z-index:99">
+<span *ngIf="WIDGET_REQUEST.LOADED" style="position: absolute;top:5px;left:5px;z-index:99">
     <mat-icon (click)="expandFilter=!expandFilter" color="primary">search</mat-icon>
 
 </span>
 <div [ngClass]="{'show':expandFilter,'hide':!expandFilter}">
-<form [ngClass]="{'dark-theme': isDarkTheme | async}"  class="form-container p-2" [formGroup]="newForm">
+    <form [ngClass]="{'dark-theme': isDarkTheme | async}" class="form-container p-2" [formGroup]="newForm">
 
-    <div class="filter">
-        <mat-form-field *ngIf="!isLOCATIONS" appearance="outline">
-            <mat-label>Select Loction</mat-label>
-            <mat-select placeholder="" formControlName="LOCATION">
-                <mat-option *ngFor="let key of myLOCATIONS" [value]="key.name">
-                    {{key.name}}
-                </mat-option>
+        <div class="filter">
+            <mat-form-field *ngIf="!isLOCATIONS" appearance="outline">
+                <mat-label>Select Loction</mat-label>
+                <mat-select placeholder="" formControlName="LOCATION">
+                    <mat-option *ngFor="let key of myLOCATIONS" [value]="key.name">
+                        {{key.name}}
+                    </mat-option>
 
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field *ngIf="isLOCATIONS" appearance="outline">
-            <mat-label>Select Sensor</mat-label>
-            <mat-select placeholder="" formControlName="SENSOR">
-                <mat-option *ngFor="let key of mySENSORS" [value]="key.name">
-                    {{key.name}}
-                </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field *ngIf="isLOCATIONS" appearance="outline">
+                <mat-label>Select Sensor</mat-label>
+                <mat-select placeholder="" formControlName="SENSOR">
+                    <mat-option *ngFor="let key of mySENSORS" [value]="key.name">
+                        {{key.name}}
+                    </mat-option>
 
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <mat-label>Select Device</mat-label>
-            <mat-select placeholder="" formControlName="DEVICE_ID">
-                <mat-option *ngFor="let key of widgetResponse.totalLocations" [value]="key.MAC_ADDRESS">
-                    {{key.MAC_ADDRESS}}
-                </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Select Device</mat-label>
+                <mat-select placeholder="" formControlName="DEVICE_ID">
+                    <mat-option *ngFor="let key of widgetResponse.totalLocations" [value]="key.MAC_ADDRESS">
+                        {{key.MAC_ADDRESS}}
+                    </mat-option>
 
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <mat-label>Select Time steps or Date range</mat-label>
-            <mat-select  (selectionChange)="resetDatePickerVal($event)" placeholder="" formControlName="filterStep">
-                <mat-option *ngFor="let key of dateFilters" [value]="key">
-                    {{key.key}}
-                </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Select Time steps or Date range</mat-label>
+                <mat-select (selectionChange)="resetDatePickerVal($event)" placeholder="" formControlName="filterStep">
+                    <mat-option *ngFor="let key of dateFilters" [value]="key">
+                        {{key.key}}
+                    </mat-option>
 
-            </mat-select>
+                </mat-select>
 
-            <!-- <mat-date-range-input [rangePicker]="picker">
+                <!-- <mat-date-range-input [rangePicker]="picker">
                 <input matStartDate (dateChange)="addEvent('change', $event)" formControlName="START_DATE" placeholder="">
                 <input matEndDate (dateChange)="addEvent('change', $event)" formControlName="END_DATE" placeholder="">
             </mat-date-range-input>
             <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-date-range-picker #picker></mat-date-range-picker> -->
-        </mat-form-field>
-        
-        <mat-form-field appearance="outline">
-            <!-- <mat-label>Enter date range</mat-label> -->
-            <mat-date-range-input [rangePicker]="picker">
-                <input matStartDate (dateChange)="addEvent('change', $event)" formControlName="START_DATE" placeholder="Start date">
-                <input matEndDate (dateChange)="addEvent('change', $event)" formControlName="END_DATE" placeholder="End date">
-            </mat-date-range-input>
-            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
 
-        </mat-form-field>
+            <mat-form-field appearance="outline">
+                <!-- <mat-label>Enter date range</mat-label> -->
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate (dateChange)="addEvent('change', $event)" formControlName="START_DATE"
+                        placeholder="Start date">
+                    <input matEndDate (dateChange)="addEvent('change', $event)" formControlName="END_DATE"
+                        placeholder="End date">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
 
-        <button color="primary" mat-raised-button (click)="filterSrc()">
-            <mat-icon>search</mat-icon> 
-        </button>
-        <button color="warn" mat-raised-button (click)="expandFilter=false">
-            <mat-icon>close</mat-icon>
-        </button>
+            </mat-form-field>
+
+            <button color="primary" mat-raised-button (click)="filterSrc()">
+                <mat-icon>search</mat-icon>
+            </button>
+            <button color="warn" mat-raised-button (click)="expandFilter=false">
+                <mat-icon>close</mat-icon>
+            </button>
 
 
 
-    </div>
-    <div>
-    </div>
-</form>
+        </div>
+        <div>
+        </div>
+    </form>
 </div>

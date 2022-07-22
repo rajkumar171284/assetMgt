@@ -1,90 +1,55 @@
-<div [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
-    [style.height.px]="service.getProp('H',WIDGET_REQUEST)" style="position:absolute;z-index:999">
+<div id="{{widgetIndex}}" [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)"
+    [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)"
+    style="position:absolute;z-index:999">
 
 
-    <mat-card  [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
-    [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item id="{{widgetIndex}}"
-        class="resizable my-card bg11 overflow-hidden">
+    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+        [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item 
+        class="my-card bg11 overflow-hidden">
 
+        <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
-        <span appWidgetAccessIf class="mapped-close">
-            <mat-icon color="accent" (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled">
-                {{WIDGET_REQUEST.dragDisabled?'layers_clear':'layers'}}
-            </mat-icon>
-            <!-- <mat-icon color="accent" matTooltip="{{WIDGET_REQUEST.dragDisabled?'Drag disabled':'Drag enabled'}}"
-         (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled"> 
-          {{WIDGET_REQUEST.dragDisabled?'layers_clear':'layers'}}</mat-icon> -->
+        </app-header-widget>
 
-            <mat-icon (click)="editRequest(WIDGET_REQUEST)" matTooltip="Edit Widget" color="primary">edit</mat-icon>
+        <app-footer-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
-            <mat-icon (click)="removeRequest(WIDGET_REQUEST)" matTooltip="Remove Widget" color="warn">delete_outline
-            </mat-icon>
+        </app-footer-widget>
 
-
-        </span>
-
-        <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
-            <mat-icon color="accent">save</mat-icon>
-
-        </span>
 
 
         <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
-            <div class="g-flex2">
-                <div>CONFIG NAME:{{WIDGET_REQUEST.CONFIG_NAME}}</div>
-                <div>WIDGET TYPE:{{WIDGET_REQUEST.WIDGET_TYPE}}</div>
-                <div>CHART NAME:{{WIDGET_REQUEST.CHART_NAME|uppercase}}</div>
-                <!-- <div>{{}}</div> -->
-            </div>
-
-
-
+            <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
         </ng-container>
-        <ng-container *ngIf="WIDGET_REQUEST.LOADED">
+        <ng-container >
+            <app-history-filter [reLoad]="WIDGET_REQUEST.LOADED" [xAxisName]="WIDGET_REQUEST.XAXES" (setLoader)="getLoader($event)"
+                (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
 
-      
-        <app-history-filter [xAxisName]="WIDGET_REQUEST.XAXES" (setLoader)="getLoader($event)"
-            (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
 
-       
-
-        
-
-        <!-- <plotly-plot [data]="graph1.data" [layout]="graph1.layout" [useResizeHandler]="true" (hover)="hover($event)"
-    (mouseleave)="mouseLeave($event)"></plotly-plot> -->
-        <!-- <div style="position: absolute;bottom:20px;z-index:999">
-        <mat-card>fdf{{widgetResponse.data && widgetResponse.data.length==0?'No':''}}</mat-card>
-    </div> -->
-        <div *ngIf="errMessage" class="pos-flex">
-            <div class="text-center text-danger text-uppercase">
-                {{errMessage?errMessage:''}}
+            <div *ngIf="errMessage" class="pos-flex">
+                <div class="text-center text-danger text-uppercase">
+                    {{errMessage?errMessage:''}}
+                </div>
             </div>
-        </div>
 
-        <div [appToHide]="isDataFound">
-            <ng-container>
+            <div [appToHide]="isDataFound">
+                
+                <app-common-chart1 (_sendToParent)="getFromChild2($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"
+                    [totalDevice]="widgetResponse.totalDevice" [chartHeight]="chartHeight" [chartWidth]="chartWidth">
 
-            </ng-container>
-            <app-common-chart1 (_sendToParent)="getFromChild2($event)" [WIDGET_REQUEST]="WIDGET_REQUEST" [totalDevice]="widgetResponse.totalDevice"
-                [chartHeight]="chartHeight" [chartWidth]="chartWidth">
+                </app-common-chart1>
 
-            </app-common-chart1>
-           
 
-        </div>
-        <!-- <div *ngIf="filterShow2">
+            </div>
+            <!-- <div *ngIf="filterShow2">
     <app-x-axis (xaxis)="getXaxis($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-x-axis>
 </div> -->
-        <div *ngIf="showGuage">
+            <!-- <ng-container *ngIf="showGuage">
+                <app-guage [name]="widgetResponse.totalDevice"></app-guage>
+            </ng-container> -->
+            <div *ngIf="loading" class="overlay">
+                <mat-spinner></mat-spinner>
+            </div>
 
-            <!-- <app-guage [name]="widgetResponse.totalDevice"></app-guage> -->
-
-
-        </div>
-        <div *ngIf="loading" class="overlay">
-            <mat-spinner></mat-spinner>
-        </div>
-
-    </ng-container>
+        </ng-container>
     </mat-card>
 </div>

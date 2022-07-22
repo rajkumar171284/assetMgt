@@ -96,7 +96,8 @@ export interface _widgetRequest {
     WIDGET_SIZE: string,
     WIDGET_TYPE: string,
     XAXES: string, top: number, left: number,
-    dragDisabled: boolean
+    dragDisabled: boolean,
+    LOADED:any
 }
 export const _assetTypes = ['Security',
     'Activity Trackers',

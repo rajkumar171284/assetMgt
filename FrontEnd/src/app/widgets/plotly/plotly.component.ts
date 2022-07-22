@@ -114,7 +114,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
   plotlyIndex: number = 0;
   singleView: any = [];
   toEditRequest: any;
-  constructor(public service: XAxisService, public dialog: MatDialog, private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
+  constructor(public service: XAxisService, public dialog: MatDialog, private fb: FormBuilder, public dataService: AuthService, private ref: ChangeDetectorRef) {
 
     this.newForm = this.fb.group({
       PLOT_XAXES: [''],
@@ -133,7 +133,10 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
     this.WIDGET_REQUEST.XAXES = data;
   }
   ngDoCheck(): void {
-    this.watchSize();
+    const status = this.dataService.getAccess();
+    if (status) {
+      this.watchSize();
+    }
   }
   watchSize() {
     const id = this.widgetIndex.toString();
@@ -144,45 +147,65 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
         // console.log(ui)
         let height: number = $(ui.size.height)[0];
         let width: number = $(ui.size.width)[0];
-        const params: any = {
-          width: width, height: height
+        let top: number = $(ui.position.top)[0];
+        let left: number = $(ui.position.left)[0];
+        const newSize: any = {
+          width: width, height: height, top: top,
+          left: left
         }
 
         that.chartWidth = width;
         that.chartHeight = height;
         // console.log('chartWidth',that.chartWidth,that.chartHeight)
-        const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE)
-        // 
-        console.log('orgSize', orgSize)
-        orgSize.width = width;
-        orgSize.height = height;
-        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
+        // const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE)
+        // // 
+        // console.log('orgSize', orgSize)
+        // orgSize.width = width;
+        // orgSize.height = height;
+        // const newSize={
+        // width : width,
+        // height : height,
+        // PID:that.WIDGET_REQUEST.PID    
+        // }
+        that.WIDGET_REQUEST.LOADED = false;
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
 
-        // 
-        that.service.changeMessage(orgSize)
+        // sending/emitting data to parent-dashboard.ts for saving into api
+        that._widgetData.emit(that.WIDGET_REQUEST)
+        // that.service.changeWidthHeight(newSize);
       }
     });
 
+
+    $(x).draggable({
+      stop: function (event: Event, ui: any) {
+        console.log(ui)
+        let top: number = $(ui.position.top)[0];
+        let left: number = $(ui.position.left)[0];
+        const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE);
+        const newSize = {
+          width: orgSize.width,
+          height: orgSize.height,
+          top: top, left: left
+        }
+        that.WIDGET_REQUEST.LOADED = false;
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+
+        // sending/emitting data to parent-dashboard.ts for saving into api
+        that._widgetData.emit(that.WIDGET_REQUEST)
+      }
+    })
+
   }
-  // getProp(type: string) {
-  //   const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
-  //   if (type == 'W') {
-  //     return prop.width
-  //   }
-  //   if (type == 'H') {
-  //     return prop.height
-  //   } else if (type == 't') {
-  //     return prop.top ? prop.top : 0
-  //   } else if (type == 'l') {
-  //     return prop.left ? prop.left : 0
-  //   }
-  // }
   updateRequest(message: any) {
     const req = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE);
     req.top = message.top;
     req.left = message.left;
     this.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(req);
+    this.WIDGET_REQUEST.LOADED = false;//not to call api
     // console.log(this.WIDGET_REQUEST)
+
+    this._widgetData.emit(this.WIDGET_REQUEST);
 
   }
   ngOnInit(): void {
@@ -191,6 +214,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
     this.service.currentPosition.subscribe((message: any) => {
       console.log('currentPosition', message)
       if (message.PID == this.WIDGET_REQUEST.PID) {
+
         this.updateRequest(message);
       }
 
@@ -262,8 +286,9 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
     }
     console.log(this.loading, this.errMessage)
   }
-  saveWidget() {
-
+  saveWidget(status: boolean) {
+    // save widget only
+    this.WIDGET_REQUEST.LOADED = status;//
     this._widgetData.emit(this.WIDGET_REQUEST)
   }
   async editRequest(req: any) {
@@ -298,7 +323,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
   }
   getFromChild2(e: any) {
     if (e) {
-      console.log(e, JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE))
+      console.log(e, this.WIDGET_REQUEST)
       // console.
     }
   }

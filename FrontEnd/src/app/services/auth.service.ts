@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 const headers = new HttpHeaders().set('content-type', 'application/json').set('Access-Control-Allow-Origin', 'http://localhost:4200').set("Access-Control-Allow-Methods", "POST,GET,PUT,PATCH,DELETE,OPTIONS");
 
 // let headers = new HttpHeaders()
- 
+
 // headers=headers.append('content-type','application/json')
 // headers=headers.append('Access-Control-Allow-Origin', '*')
 // headers=headers.append('content-type','application/x-www-form-urlencoded')
@@ -17,6 +17,8 @@ const options = {
   providedIn: 'root'
 })
 export class AuthService {
+  dataService: any;
+  elementRef: any;
 
   constructor(private http: HttpClient) { }
 
@@ -30,15 +32,15 @@ export class AuthService {
       return response;
     }))
   }
-  
-  
+
+
   // asset config starts
   addAssetConfig(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/addAssetConfig`, params, options).pipe(map(response => {
       return response;
     }))
   }
-  
+
   getAssetConfig(params: any): Observable<any> {
     return this.http.get(`${environment.url}/asset/getAllAssetsConfig/${params.COMPANY_ID}`, options).pipe(map(response => {
       return response;
@@ -50,7 +52,7 @@ export class AuthService {
     }))
   }
   // device details
-  
+
   saveDeviceHistory(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/addDeviceHistory`, params, options).pipe(map(response => {
       return response;
@@ -72,7 +74,7 @@ export class AuthService {
     }))
   }
   getDeviceHistoryByFilter(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/getDeviceHistory`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/getDeviceHistory`, params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -82,7 +84,7 @@ export class AuthService {
     }))
   }
   getAssetConfigDetailsById(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/AssetConfigDetailsByID`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/asset/AssetConfigDetailsByID`, params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -161,7 +163,7 @@ export class AuthService {
       return response;
     }))
   }
-  
+
   getLocationsByID(params: any): Observable<any> {
     return this.http.get(`${environment.url}/asset/getLocationsByID/${params.ASSET_CONFIG_ID}`, options).pipe(map(response => {
       return response;
@@ -212,7 +214,7 @@ export class AuthService {
     }))
   }
   getAllCompanyTypes(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/users/getAllCompanyByType`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/users/getAllCompanyByType`, params, options).pipe(map(response => {
       return response;
     }))
   }
@@ -221,28 +223,50 @@ export class AuthService {
       return response;
     }))
   }
-  
+
   deleteCompanyByID(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/users/deleteCompany/${params.PID}`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/users/deleteCompany/${params.PID}`, params, options).pipe(map(response => {
       return response;
     }))
   }
   uploadfile(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/users/uploadfile`,params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/users/uploadfile`, params, options).pipe(map(response => {
       return response;
     }))
   }
   // mqtt starts
   getMqtt(params: any): Observable<any> {
-    return this.http.get(`${environment.url}/mqtt/tatapower`,options).pipe(map(response => {
+    return this.http.get(`${environment.url}/mqtt/tatapower`, options).pipe(map(response => {
       return response;
     }))
   }
 
-  settingWidgetLayout(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/asset/setWidgetLayout`,params, options).pipe(map(response => {
+  // 
+  
+  getWidgetlayout(params: any): Observable<any> {
+    console.log(params)
+    return this.http.get(`${environment.url}/asset/getWidgetLayout/${params.COMPANY_ID}`, options).pipe(map(response => {
       return response;
     }))
   }
-  
+  settingWidgetLayout(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/asset/setWidgetLayout`, params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+
+
+  getAccess(): Observable<any> {
+    const session = this.getSessionData();
+    let newLocal: any;
+    if (session && session.ROLE == 'ADMIN' && session.COMPANY_TYPE == 'CORP') {
+      newLocal = true;
+
+    } else {
+      newLocal = false;
+    }
+
+    return newLocal
+  }
+
 }

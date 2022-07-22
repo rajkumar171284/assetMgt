@@ -1,4 +1,4 @@
-import { Component,AfterViewInit, DoCheck, ViewChild, ElementRef, ViewContainerRef, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, DoCheck, ViewChild, ElementRef, ViewContainerRef, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { XAxisService } from '../../services/x-axis.service';
 import { WidgetComponent } from '../../components/widget/widget.component';
@@ -10,7 +10,7 @@ declare let $: any;
   styleUrls: ['./highlights.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HighlightsComponent implements  OnInit, OnChanges, DoCheck {
+export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
   @Input() WIDGET_REQUEST: any;
   @Input() widgetIndex: any;
 
@@ -24,13 +24,13 @@ export class HighlightsComponent implements  OnInit, OnChanges, DoCheck {
   @ViewChild("divBoard") divBoard!: ElementRef;
   chartWidth: number = 0;
   chartHeight: number = 0;
-  widgetDiv:any;
+  widgetDiv: any;
   constructor(public service: XAxisService, private dataService: AuthService) { }
   ngDoCheck(): void {
-    
+
     this.watchSize();
   }
-  
+
   watchSize() {
     const id = this.widgetIndex.toString();
     let that = this;
@@ -53,17 +53,21 @@ export class HighlightsComponent implements  OnInit, OnChanges, DoCheck {
         console.log('orgSize', orgSize)
         orgSize.width = width;
         orgSize.height = height;
-        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
-
+        // that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
+        const newSize = {
+          width: width,
+          height: height,
+          PID: that.WIDGET_REQUEST.PID
+        }
         // 
-        that.service.changeMessage(orgSize)
+        that.service.changeWidthHeight(newSize)
       }
     });
 
   }
   getElement() {
     // if (this.divBoard)
-      return this.divBoard.nativeElement;
+    return this.divBoard.nativeElement;
   }
   ngOnInit(): void {
 
@@ -130,7 +134,7 @@ export class HighlightsComponent implements  OnInit, OnChanges, DoCheck {
 
     this._widgetData.emit(this.WIDGET_REQUEST)
   }
-  
+
 
   async editRequest(pid: any) {
     // const data = await this.getRequestDetails(pid, 'json');

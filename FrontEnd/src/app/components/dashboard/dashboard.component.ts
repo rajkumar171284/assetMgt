@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, HostListener, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, DoCheck, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { AuthService } from '../../services/auth.service';
 import { CdkDragDrop, CdkDragStart, CdkDragMove, CdkDragEnd, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ResizeEvent } from "angular-resizable-element";
-import { forkJoin, from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of, Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../components/tooltip/tooltip.component';
 import { __addAssetDevice, widgetResponse, _widgetRequest } from '../../myclass';
@@ -48,7 +48,7 @@ interface dragOption {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   @ViewChild('widgetIndex') widgetIndex!: any;
   errMessage: any;
   // dragDisabledArr: Observable<dragOption[]> | undefined;
@@ -57,14 +57,13 @@ export class DashboardComponent implements OnInit {
   isWidgetOpen = true;
   dragStatus: number = 0;
   newForm: FormGroup;
-  constructor(private fb: FormBuilder, public service: XAxisService, private _snackBar: MatSnackBar, public dialog: MatDialog, private dataService: AuthService, private ref: ChangeDetectorRef) {
+  constructor(private fb: FormBuilder, public service: XAxisService, private _snackBar: MatSnackBar, public dialog: MatDialog, public dataService: AuthService, private ref: ChangeDetectorRef) {
     this.newForm = this.fb.group({
       PID: [''],
-
       COMPANY_ID: ['', Validators.required]
 
     })
-    this.getAll();
+
   }
   dataSource: chartItem[] = [];
   doneList: chartItem[] = []
@@ -78,10 +77,10 @@ export class DashboardComponent implements OnInit {
   dragDisabled = false;
   hide = false;
   widgetResponse: any = new widgetResponse()
-
+  loader = true;
   dataFromMessages$: Observable<any> | undefined;
 
-  public data: any = {};
+  // public data: any = {};
   @ViewChild('container', { read: ElementRef })
   public readonly containerElement: any;
 
@@ -91,50 +90,41 @@ export class DashboardComponent implements OnInit {
   WIDGET_REQUEST: any;
   WIDGETREQUEST$!: Observable<any>;
   @ViewChild("divBoard") divBoard!: ElementRef;
-  widgetPanelHeight: number = 540;
+  widgetPanelHeight: number = window.innerHeight - 30;
   // test
   state = '';
   position = '';
-
+  widgetDiv: any;
+  subscription1: Subscription | undefined;
   getElement() {
     if (this.widgetIndex)
       return this.widgetIndex.nativeElement;
   }
 
   ngAfterViewInit() {
-    // console.log('widgetIndex')
-    const x = this.getElement();
-    $(x).resizable({
-      stop: function (event: Event, ui: any) {
-        console.log(ui)
-        const height = $(ui.size.height)[0];
-        const width = $(ui.size.width)[0];
-        const params: any = {
-          width: width, height: height
-        }
-        // this.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(params);
-      }
-    });
+   
   }
+  ngDoCheck(): void {
+    
+  }
+  
 
   ngOnInit(): void {
-
-
-    this.data.width = 200;
-    this.data.height = 200;
-    // console.log('dash')
     this.getSession();
-    // this.getMappedChartRequest();
-    $(window).resize(this.setLayoutContainerHeight);
+
+    this.getAll();
+    this.subscription1 = this.service.currWidgetRequest.subscribe(data => {
+      if (data) {
+        console.log('currWidgetRequest', data)
+        this.updateWidget(data);
+
+      }
+    })
   }
-  setLayoutContainerHeight() {
-    // Get top position of layout container, subtract from screen height, subtract a bit for padding
-    var y = $('#layout-container').position().top;
-    var layoutHeight = $(window).height() - y - 10;
-    $('#layout-container').css('height', layoutHeight + 'px');
-  }
+
   async getSession() {
     const session = await this.dataService.getSessionData();
+
     if (session && session.ROLE == 'ADMIN') {
       this.dragDisabled = false;
       this.isWidgetOpen = true;
@@ -145,13 +135,10 @@ export class DashboardComponent implements OnInit {
     //  console.log(this.dragDisabled)
   }
 
-  async getMappedChartRequest() {
-    const session = await this.dataService.getSessionData();
-
-
-    this.dataService.getAllChartRequests({ IS_DRAGGED: 1,COMPANY_ID:this.VALUE.COMPANY_ID }).subscribe(res => {
+  getMappedChartRequest() {
+    const params = { IS_DRAGGED: 1, COMPANY_ID: this.VALUE.COMPANY_ID };
+    this.dataService.getAllChartRequests(params).subscribe(res => {
       if (res) {
-
 
         this.doneList = res.data.map((el: chartItem) => {
           return el;
@@ -167,9 +154,9 @@ export class DashboardComponent implements OnInit {
         })
 
         this.draggedWidget$ = this.doneList.map((item: any) => {
-         
+
           item.dragDisabled = false;
-          item.load=false;
+
           return item;
         });
         this.getAllChartRequest();
@@ -200,7 +187,7 @@ export class DashboardComponent implements OnInit {
 
   async getAllChartRequest() {
     const session = await this.dataService.getSessionData();
-    this.dataService.getAllChartRequests({ IS_DRAGGED: 0 ,COMPANY_ID:this.VALUE.COMPANY_ID }).subscribe(res => {
+    this.dataService.getAllChartRequests({ IS_DRAGGED: 0, COMPANY_ID: this.VALUE.COMPANY_ID }).subscribe(res => {
       this.dataSource = res.data.map((el: chartItem) => {
         return el;
       });
@@ -212,7 +199,8 @@ export class DashboardComponent implements OnInit {
       of(res.data).subscribe(z => {
         this.undraggedWidget$ = z;
       })
-      console.log(this.undraggedWidget$)
+      // console.log(this.undraggedWidget$)
+      this.loader = false;
     })
   }
   onDrop2(event: CdkDragDrop<any>) {
@@ -233,7 +221,7 @@ export class DashboardComponent implements OnInit {
   //   console.log('event',event)
   // }
   dragStarted(event: CdkDragStart) {
-    console.log(event.source)
+    console.log(event)
 
     this.state = 'dragStarted';
   }
@@ -241,51 +229,52 @@ export class DashboardComponent implements OnInit {
   dragEnded(event: CdkDragEnd, List: any) {
     console.log(event)
     const itemRect = event.source.element.nativeElement.getBoundingClientRect();
-    const top = Math.max(
-      0,
-      itemRect.top +
-      event.distance.y -
-      this.divBoard.nativeElement.getBoundingClientRect().top
-    );
-    const left = Math.max(
-      0,
-      itemRect.left +
-      event.distance.x -
-      this.divBoard.nativeElement.getBoundingClientRect().left
-    );
-    console.log('top', top, 'left', left)
+    const top = Math.max(0, itemRect.top + event.distance.y - this.divBoard.nativeElement.getBoundingClientRect().top);
+    const left = Math.max(0, itemRect.left + event.distance.x - this.divBoard.nativeElement.getBoundingClientRect().left);
+    // console.log('top', top, 'left', left)
     const index = event.source.dropContainer.data.findIndex((obj: any) => obj.PID == List.PID);
-    console.log(event.source.dropContainer.data[index])
+    // console.log(event.source.dropContainer.data[index])
     const currData = event.source.dropContainer.data[index];
     const prop = JSON.parse(currData.WIDGET_SIZE)
     prop.top = top;
     prop.left = left;
+    currData.WIDGET_SIZE = JSON.stringify(prop);
     event.source.dropContainer.data[index].WIDGET_SIZE = JSON.stringify(prop);
-
     this.state = 'dragEnded';
-    // update api
-    let windex = this.draggedWidget$.findIndex(a => {
-      return a.PID == currData.PID;
-    })
-    if (windex != -1) {
-      this.draggedWidget$[windex] = currData;
-      this.service.setPosition({
-        'top': top, 'left': left, PID: currData.PID
-      })
-    }
-    console.log('this.draggedWidget$', this.draggedWidget$)
-    if (currData) {
-      currData.LOADED=false;
-      this.updateWidget(currData)
-    }
+    currData.LOADED = false;
+    // this.updateDraggedArr(currData);
+    // this.updateWidget(currData);    // update api
+    // let windex = this.draggedWidget$.findIndex(a => {
+    //   return a.PID == currData.PID;
+    // })
+    // if (windex != -1) {
+    //   currData.LOADED=false;
+    console.log('currData', currData)
+    //   this.draggedWidget$[windex] = currData;
+    // // this.service.setPosition({
+    // //   'top': top, 'left': left, PID: currData.PID
+    // // })
+    // const orgSize = JSON.parse(currData.WIDGET_SIZE)
+
+    // const newSize = {
+    //   width: orgSize.width,
+    //   height: orgSize.height,
+    //   top: top,
+    //   left: left
+    // }
+    // currData.WIDGET_SIZE = JSON.stringify(newSize);
+    // // console.log('this.draggedWidget$', this.draggedWidget$)
+    // if (currData) {
+    //   currData.LOADED = false;
+    //   this.updateWidget(currData)
+    // }
+    // }
 
   }
   dragMoved(event: CdkDragMove, List: any) {
-    console.log(event.source)
+    console.log(event)
     this.position = `> Position X: ${event.pointerPosition.x} - Y: ${event.pointerPosition.y}`;
-    console.log(this.position)
-    // const left = event.distance.x;
-    // const top = event.distance.y;
+    // console.log(this.position)
     // find index
     const itemRect = event.source.element.nativeElement.getBoundingClientRect();
     const top = Math.max(
@@ -300,22 +289,27 @@ export class DashboardComponent implements OnInit {
       event.distance.x -
       this.divBoard.nativeElement.getBoundingClientRect().left
     );
+
+
     console.log('top', top, 'left', left)
-
-
     const index = event.source.dropContainer.data.findIndex((obj: any) => obj.PID == List.PID);
-    console.log(event.source.dropContainer.data[index])
+    // console.log(event.source.dropContainer.data[index])
     const currData = event.source.dropContainer.data[index];
     const prop = JSON.parse(currData.WIDGET_SIZE)
     prop.top = top;
     prop.left = left;
-    event.source.dropContainer.data[index].WIDGET_SIZE = JSON.stringify(prop);
-    this.service.setPosition({
-      'top': top, 'left': left, PID: currData.PID
-    })
+    currData.WIDGET_SIZE = JSON.stringify(prop);
+    // this.service.setPosition({
+    //   'top': top, 'left': left, PID: currData.PID
+    // })
     if (currData) {
-      currData.LOADED=false;
-      this.updateWidget(currData)
+
+      currData.LOADED = false;
+      this.updateDraggedArr(currData);
+      console.log('currData', currData)
+
+      //  update on api
+      // this.updateWidget(currData)
     }
   }
   drop(event: CdkDragDrop<any[]>) {
@@ -386,7 +380,7 @@ export class DashboardComponent implements OnInit {
     }
     this.dragDisabledArr.push({ dragDisabled: false })
     const data = event.item.data;
-    console.log(data)
+    // console.log(data)
 
     if (data) {
       this.changeStatus(data.PID)
@@ -403,14 +397,6 @@ export class DashboardComponent implements OnInit {
     this.dataService.chartRequestChangeStatus(params).subscribe(async res => {
       this.getMappedChartRequest();
 
-    })
-  }
-  updateWidget(params: any) {
-
-    // console.log(data)
-
-    this.dataService.addChartRequest(params).subscribe(res => {
-      this.getMappedChartRequest();
     })
   }
 
@@ -462,29 +448,62 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  async saveWidget(data: any) {
+  saveWidget(data: any) {
     if (data) {
-      const session = await this.dataService.getSessionData();
-      data.COMPANY_ID = session.COMPANY_ID;
-      data.CREATED_BY = session.PID;
+      console.log('update', data)
 
-      data.SQL_QUERY = 'sql';
-      data.LOADED=true;
-      // console.log('save params ', data)
+      // const session = this.dataService.getSessionData();
+      // data.CREATED_BY = session.PID;
+
+      // data.SQL_QUERY = 'sql';
+
+      console.log('save params ', data)
       this.dataService.addChartRequest(data).subscribe(res => {
-
-        this.openSnackBar();
+        let index = this.draggedWidget$.findIndex(object => {
+          return object.PID == data.PID;
+        })
+        if (index != -1) {
+          this.draggedWidget$[index] = data;
+        }
+        // this.openSnackBar();
         // recall only dragged requests
-        this.getMappedChartRequest();
+        // this.getMappedChartRequest();
 
 
       })
     }
   }
+
+  updateWidget(data: any) {
+
+    console.log('upt', data.LOADED)
+
+    this.dataService.addChartRequest(data).subscribe(res => {
+      console.log()
+      this.openSnackBar();
+      this.getMappedChartRequest()
+      // this.updateDraggedArr(data);
+      // let index = this.draggedWidget$.findIndex(object => {
+      //   return object.PID == data.PID;
+      // })
+      // if (index != -1) {
+      //   this.draggedWidget$[index] = data;
+      // }
+    })
+  }
+  updateDraggedArr(data: any) {
+    let index = this.draggedWidget$.findIndex(object => {
+      return object.PID == data.PID;
+    })
+    if (index != -1) {
+      this.draggedWidget$[index] = data;
+    }
+  }
   widgetRemoved(data: any) {
     if (data) {
+      // console.log(data)
       this.openSnackBar();
-      this.ngOnInit();
+
     }
   }
   openSnackBar() {
@@ -519,34 +538,52 @@ export class DashboardComponent implements OnInit {
 
       this.dataService.getAllCompanies().subscribe(res => {
         this.companiesList = res.data;
+        this.loader = false;
         if (res.data.length > 0) {
-          const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
-          console.log(val)
-          this.newForm.patchValue({
-            COMPANY_ID: val[0]?val[0].PID:''
-          })
-
-
+          if (session.ROLE != 'ADMIN') {
+            const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
+            console.log(val)
+            this.newForm.patchValue({
+              COMPANY_ID: val[0] ? val[0].PID : ''
+            })
+            this.getLayoutHeight()
+          }
         }
-        this.getMappedChartRequest();
+
       })
     } else {
       let params = { COMPANY_TYPE: session.COMPANY_TYPE };
       this.dataService.getAllCompanyTypes(params).subscribe(res => {
         this.companiesList = res.data;
-        console.log(res)
+        // console.log(res)
         const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
         this.newForm.patchValue({
-          COMPANY_ID: val[0]?val[0].PID:''
+          COMPANY_ID: val[0] ? val[0].PID : ''
         })
-        this.getMappedChartRequest();
+        this.getLayoutHeight()
+
       })
-     
+
     }
 
   }
+  getRequest() {
+    this.getLayoutHeight()
+  }
+  get VALUE() {
+    return this.newForm.value;
+  }
+  getLayoutHeight() {
+    this.loader = true;
+    // console.log(this.VALUE)
+    this.dataService.getWidgetlayout(this.VALUE).subscribe(res => {
+      console.log(res)
+      this.widgetPanelHeight = res.data && res.data.HEIGHT ? res.data.HEIGHT : 550;
+      this.getMappedChartRequest();
+    });
+  }
 
-  get VALUE(){
-    return this.newForm?.value;
+  ngOnDestroy(): void {
+    this.subscription1?.unsubscribe();
   }
 }

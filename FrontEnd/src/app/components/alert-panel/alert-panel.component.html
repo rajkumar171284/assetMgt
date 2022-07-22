@@ -1,22 +1,20 @@
 <mat-toolbar color="secondary">
 
-    <button mat-raised-button color="primary" (click)="openDialog()" class="demo-button">
+    <button mat-raised-button  (click)="openDialog()" class="btn-theme1">
       Add New
     </button>
   
   </mat-toolbar>
   <mat-tab-group #tabGroup mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
     <mat-tab label="Alerts">
-      <!-- <app-alerts-list ></app-alerts-list> -->
+      <app-alerts-list ></app-alerts-list>
   
     </mat-tab>
    
   
-    <mat-tab appWidgetAccessIf label="Create">
-      <!-- <app-company-list [updateData]="updateComp" [cType]="'CLIENT'" [tabIndex]="tabIndex"
-        (dialogClose)="dialogClose($event)"></app-company-list> -->
-  
-    </mat-tab>
+    <!-- <mat-tab appWidgetAccessIf label="Create">
+      
+    </mat-tab> -->
     
   
   </mat-tab-group>

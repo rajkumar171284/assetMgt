@@ -4,8 +4,8 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class XAxisService {
-  private messageSource = new BehaviorSubject('Foo message');
-  currentMessage = this.messageSource.asObservable();
+  private WidthHeight = new BehaviorSubject('Foo message');
+  currentWidthHeight = this.WidthHeight.asObservable();
 
   private position = new BehaviorSubject('');
   currentPosition = this.position.asObservable();
@@ -14,16 +14,24 @@ export class XAxisService {
   private totalDevice=new BehaviorSubject('');
   currentDevice = this.totalDevice.asObservable();
 
+  private updatedWidgetRequest=new BehaviorSubject('');
+  currWidgetRequest =this.updatedWidgetRequest.asObservable();
+
+
   value = new Subject();
   constructor() { }
+
+  updateWidgetReq(request:any){
+  this.updatedWidgetRequest.next(request);
+  }
   setPosition(message: any) {
     this.position.next(message)
   }
   sendTotalDevice(message: any) {
     this.totalDevice.next(message)
   }
-  changeMessage(message: any) {
-    this.messageSource.next(message)
+  changeWidthHeight(message: any) {
+    this.WidthHeight.next(message)
   }
 
   sendValue(data: any) {

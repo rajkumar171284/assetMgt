@@ -48,6 +48,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   chartName: any;
   @Input('pMap') pMap: any;
   @Input() name: any;
+  @Input() reLoad: any;
   filterBy: any[] = ['KM', 'SPEED'];
   newForm: FormGroup;
   filterXaxes: any[] = ['DEVICE', 'LOCATION'];
@@ -122,9 +123,9 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.WIDGET_REQUEST, this.xAxisName)
+    console.log(this.WIDGET_REQUEST, this.reLoad)
     // 
-    if (this.WIDGET_REQUEST) {
+    if (this.WIDGET_REQUEST && this.reLoad) {
 
       this.widgetResponse = new widgetResponse();
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
@@ -148,6 +149,8 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
       }
 
+    }else{
+      this.setLoader.emit(false);
     }
 
   }
@@ -162,7 +165,6 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
     let state: any = `${this.VALUES.filterStep.state}`;
     let step: any = this.VALUES.filterStep.step;
     let startdate = moment().subtract(step, state).format("YYYY-MM-DD HH:mm:ss").toString();
-    // console.log(startdate);
     return {
       START_DATE: startdate, END_DATE: enddate,
     }

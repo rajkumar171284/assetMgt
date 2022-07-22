@@ -46,22 +46,25 @@ export class CommonChart1Component implements OnInit, OnChanges {
     responsive: true
   };
   ngOnInit(): void {
-    this.behavSubject.currentMessage.subscribe((message: any) => {
+    this.behavSubject.currentWidthHeight.subscribe((message: any) => {
       // console.log(message)
-      this.chartWidth = message.width ? message.width : this.behavSubject.getProp('W', this.WIDGET_REQUEST);
-      this.chartHeight = message.height ? message.height : this.behavSubject.getProp('H', this.WIDGET_REQUEST);
+      if(message.PID==this.WIDGET_REQUEST.PID){
+        this.chartWidth = message.width ;
+        this.chartHeight = message.height ;
+  
+        this._sendToParent.emit({
+          width: this.chartWidth, heigth: this.chartHeight,PID:message.PID
+        })
+      }
+            
+    });
 
-      this._sendToParent.emit({
-        width: this.chartWidth, heigth: this.chartHeight
-      })
+    this.behavSubject.currentDevice.subscribe((message: any) => {
+      // console.log('currentDevice',message)
+      this.result = message;
+      this.loadChart();
 
-      this.behavSubject.currentDevice.subscribe((message: any) => {
-        // console.log('currentDevice',message)
-        this.result = message;
-        this.loadChart();
-
-      });
-    })
+    });
 
   }
 

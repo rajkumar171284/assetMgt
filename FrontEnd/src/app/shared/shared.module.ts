@@ -104,19 +104,22 @@ import { BarChartComponent } from '../widgets/plotly/bar-chart/bar-chart.compone
 import { AdminPanelComponent } from '../components/admin-panel/admin-panel.component';
 import { AlertPanelComponent } from '../components/alert-panel/alert-panel.component';
 import { AddAlertComponent } from '../components/dialogs/add-alert/add-alert.component';
-// import { AlertsListComponent } from '../components/alerts-list/alerts-list.component';
+import { AlertsListComponent } from '../components/alerts-list/alerts-list.component';
+import { MaskWidgetComponent } from '../components/mask-widget/mask-widget.component';
+import { HeaderWidgetComponent } from '../components/header-widget/header-widget.component';
+import { FooterWidgetComponent } from '../components/footer-widget/footer-widget.component';
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
     AddAssetConfigComponent, AssetConnectionsTypeComponent,
     AddSensorSubcategoryComponent, SensorsComponent, AddAlertComponent,
-    AddSensorComponent,
+    AddSensorComponent,AlertsListComponent,
     AddConnectionComponent,
     AddAssetComponent,
     AssetTypeComponent, TooltipComponent, DashboardComponent, WidgetComponent,
     AddMacDetailsComponent,
     PlotlyComponent, CardComponent,
     MacReportsComponent, ReportsComponent, TableComponent,
-    HighlightsComponent, MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent, AdminPanelComponent, AlertPanelComponent
+    HighlightsComponent, MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent, AdminPanelComponent, AlertPanelComponent, MaskWidgetComponent, HeaderWidgetComponent, FooterWidgetComponent
   ],
   imports: [
     CommonModule, PlotlyModule,

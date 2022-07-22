@@ -44,7 +44,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
   chartWidth: number=0;
   chartHeight: number=0;
   toEditRequest: any;
-  constructor(public dialog: MatDialog,public service:XAxisService,private dataService: AuthService, private ref: ChangeDetectorRef) { }
+  constructor(public dialog: MatDialog,public service:XAxisService,public dataService: AuthService, private ref: ChangeDetectorRef) { }
   ngDoCheck(): void {
     this.watchSize();
 
@@ -69,11 +69,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
         console.log('orgSize',orgSize)
         orgSize.width=width;
         orgSize.height=height;
-        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
- 
-        // 
-        that.service.changeMessage(orgSize);
-        that.ref.detectChanges();
+        // that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
+        const newSize={
+          width : width,
+          height : height,
+          PID:that.WIDGET_REQUEST.PID    
+          }
+      
+        that.service.changeWidthHeight(newSize);
+        // that.ref.detectChanges();
       }
     });
     

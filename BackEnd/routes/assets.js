@@ -457,12 +457,12 @@ router.post('/addChartRequest', (req, res) => {
     if (req.body.PID) {
         // update
         sql = 'UPDATE widget_request_tbl SET WIDGET_TYPE=?,WIDGET_IMG=?, ASSET_CONFIG_ID=?,CHART_NAME = ?,WIDGET_DATA=?,WIDGET_SIZE=?,XAXES=?,SQL_QUERY=?,IS_DRAGGED=?,LOADED=?,COMPANY_ID=?,MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED,req.body.LOADED,req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
+        todo = [req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.LOADED, req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = ' updated'
     } else {
         // add new
         sql = `INSERT INTO widget_request_tbl(PID,WIDGET_TYPE,WIDGET_IMG, ASSET_CONFIG_ID,CHART_NAME,WIDGET_DATA,WIDGET_SIZE,XAXES,SQL_QUERY,IS_DRAGGED,LOADED,COMPANY_ID, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-        todo = ['', req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.LOADED,req.body.COMPANY_ID,req.body.CREATED_BY, new Date()];
+        todo = ['', req.body.WIDGET_TYPE, req.body.WIDGET_IMG, req.body.ASSET_CONFIG_ID, req.body.CHART_NAME, req.body.WIDGET_DATA, req.body.WIDGET_SIZE, req.body.XAXES, req.body.SQL_QUERY, req.body.IS_DRAGGED, req.body.LOADED, req.body.COMPANY_ID, req.body.CREATED_BY, new Date()];
 
         errMessage = ' added';
 
@@ -709,8 +709,8 @@ router.post('/getDeviceHistory', async (req, res) => {
 
     } else {
         // get all loc
-     sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
-     todo2 = [req.body.ASSET_CONFIG_ID, req.body.DEVICE_ID, req.body.START_DATE, req.body.END_DATE]
+        sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
+        todo2 = [req.body.ASSET_CONFIG_ID, req.body.DEVICE_ID, req.body.START_DATE, req.body.END_DATE]
     }
     let todo = [req.body.ASSET_CONFIG_ID]
 
@@ -789,15 +789,16 @@ router.post('/getDeviceCurrStatusByDeviceID', (req, res) => {
 })
 
 
-router.post('/getWidgetLayout', (req, res) => {
+router.get('/getWidgetLayout/:COMPANY_ID', (req, res) => {
     let sql;
-    sql = `SELECT * FROM widget_layout_tbl WHERE PID=?`;
-    let todo = [res.body.PID]
+    sql = `SELECT * FROM widget_layout_tbl WHERE COMPANY_ID=?`;
+    // console.log(res.body)
+    let todo = [req.params.COMPANY_ID]
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
         else
             res.send({
-                data: result,
+                data: result[0],
                 status: 200
             })
     })
@@ -806,18 +807,17 @@ router.post('/setWidgetLayout', (req, res) => {
     let sql;
     let todo;
     let errMessage;
- 
+
     if (req.body.PID) {
         // update
-        // console.log('update')
+
         sql = 'UPDATE widget_layout_tbl SET HEIGHT=? WHERE PID=?';
         todo = [req.body.HEIGHT, req.body.PID];
         errMessage = 'updated'
     } else {
-       
 
         sql = `INSERT INTO widget_layout_tbl(PID, HEIGHT,COMPANY_ID) VALUES (?,?,?)`;
-        todo = ['', req.body.HEIGHT,req.body.COMPANY_ID];
+        todo = ['', req.body.HEIGHT, req.body.COMPANY_ID];
         errMessage = 'added'
     }
     db.query(sql, todo, (err, result, fields) => {
