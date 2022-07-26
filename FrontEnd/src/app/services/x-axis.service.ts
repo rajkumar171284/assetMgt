@@ -17,6 +17,10 @@ export class XAxisService {
   private updatedWidgetRequest=new BehaviorSubject('');
   currWidgetRequest =this.updatedWidgetRequest.asObservable();
 
+  private isWidgetRemoved=new BehaviorSubject('');
+  removedWidgetRequest =this.isWidgetRemoved.asObservable();
+
+
 
   value = new Subject();
   constructor() { }
@@ -32,6 +36,10 @@ export class XAxisService {
   }
   changeWidthHeight(message: any) {
     this.WidthHeight.next(message)
+  }
+
+  confirmWidgetRemoval(message: any){
+    this.isWidgetRemoved.next(message)
   }
 
   sendValue(data: any) {

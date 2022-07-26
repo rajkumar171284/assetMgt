@@ -56,8 +56,8 @@ export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: 
 { name: 'Highlights', file: 'highlight-widget', isSelected: false },
 { name: 'TABLE', file: 'table-widget', isSelected: false },
 // { name: 'Utility', file: 'guage-widget', isSelected: false },
-{ name: 'ON/OFF Controls', file: 'onoff-widget', isSelected: false },
-{ name: 'Activity Controls', file: 'activity-widget', isSelected: false },
+// { name: 'ON/OFF Controls', file: 'onoff-widget', isSelected: false },
+// { name: 'Activity Controls', file: 'activity-widget', isSelected: false },
 { name: 'Summary', file: 'summary-widget', isSelected: false },
 { name: 'Reports', file: 'reports-widget', isSelected: false },
 ];

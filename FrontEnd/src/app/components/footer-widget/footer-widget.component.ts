@@ -54,7 +54,7 @@ export class FooterWidgetComponent  {
 
   saveWidget(status:boolean) {
     // save widget only
-    console.log(status)
+    // console.log(status)
     const req= JSON.parse(JSON.stringify(this.WIDGET_REQUEST));
     req.LOADED = status;//
     // since we are sibling-

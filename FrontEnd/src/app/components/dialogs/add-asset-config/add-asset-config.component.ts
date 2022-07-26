@@ -61,8 +61,8 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   deviceType = _deviceType;
 
   conn=['MQTT'];
-  configRouter=['NODEJS','PYTHON','MQTT']
-
+  configRouter=['NODEJS','PYTHON','MQTT'];
+  isChecked!:boolean;
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
     this.newForm = this.fb.group({
@@ -79,7 +79,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       COMPANY_ID: ['', Validators.required],
       METHOD:[],
       HOST:'',
-
+      STATIC_COORDS:['',Validators.required],
       MAC_DETAILS: this.fb.array([])
 
     })
@@ -92,23 +92,32 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       this.newForm.patchValue({
         SENSOR: parseInt(data.SENSOR),
         ASSET_TYPE: parseInt(data.ASSET_TYPE),
-        // CONNECTION_TYPE:JSON.parse(data.CONNECTION_TYPE)
-
+        STATIC_COORDS:data.STATIC_COORDS==1?true:false
       })
+    }else{
+      // add new
+     
     }
 
    
   }
+
   get MAC_DETAILS(): FormArray {
     return this.newForm.get('MAC_DETAILS') as FormArray;
   }
+  changeValue(e:any){
+    
+  }
   updateMAC() {
+    const newLocal = null;
     const item = this.fb.group({
       PID:'',
       MAC_NAME: ['', Validators.required],
       MAC_ADDRESS: ['', Validators.required],
       MAC_STATUS: true,
       LOCATION: ['', Validators.required],
+      LATITUDE:[''],
+      LONGITUDE:''
     })
 
     this.MAC_DETAILS.push(item)
@@ -116,9 +125,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // this.updateMAC();
-    // this.initCall();
-    // this.getAllComp();
+   
   }
   
   initCall() {
@@ -135,7 +142,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
             // if edit MAC the call by config ID
             if (this.typeName) {
               this.dataService.getMACByConfigID(this.typeName).subscribe(res => {
-                console.log(res)
+                // console.log(res)
                 this.getAllComp();
                 if (res && res.data.length > 0) {
                   this.newForm.patchValue({
@@ -145,7 +152,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
                         MAC_NAME: item.MAC_NAME,
                         MAC_ADDRESS: item.MAC_ADDRESS,
                         MAC_STATUS: item.MAC_STATUS?true:false,
-                        LOCATION: item.LOCATION
+                        LOCATION: item.LOCATION,
+                        LATITUDE: item.LATITUDE,
+                        LONGITUDE:item.LONGITUDE
 
                       }
                     })
@@ -154,7 +163,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
               })
             }else{
               // new asset config
-              console.log('sds')
+              // console.log('sds')
               this.getAllComp();
             }
 
@@ -195,7 +204,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       this.Values.CREATED_BY = session.PID;
       this.Values.CONFIG_NAME =this.Values.CONFIG_NAME.toUpperCase();
       this.dataService.addAssetConfig(this.Values).subscribe(res => {
-        console.log(res)
+        // console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
         this.openSnackBar()

@@ -1,9 +1,9 @@
-import { Component, OnInit, DoCheck, AfterViewInit, Output, EventEmitter, OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit,ViewChild, DoCheck, AfterViewInit, Output, EventEmitter, OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { __deviceHistory } from '../../myclass';
-import {XAxisService} from '../../services/x-axis.service';
+import { XAxisService } from '../../services/x-axis.service';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -41,86 +41,98 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
   @Input() widgetIndex: any;
   public height: any;
   public width: any;
-  chartWidth: number=0;
-  chartHeight: number=0;
+  chartWidth: number = 0;
+  chartHeight: number = 0;
   toEditRequest: any;
-  constructor(public dialog: MatDialog,public service:XAxisService,public dataService: AuthService, private ref: ChangeDetectorRef) { }
+  @ViewChild('newmap')newmap!:any;
+  constructor(public dialog: MatDialog, public service: XAxisService, public dataService: AuthService, private ref: ChangeDetectorRef) { }
   ngDoCheck(): void {
-    this.watchSize();
+
+    const status = this.dataService.getAccess();
+    if (status) {
+      this.watchSize();
+    }
 
   }
   watchSize() {
     const id = this.widgetIndex.toString();
     let that = this;
     let x = document.getElementById(id);
+    // console.log(x)
     $(x).resizable({
-      stop: function (event: Event, ui: any) {        
-        let height:number = $(ui.size.height)[0];
-        let width:number = $(ui.size.width)[0];
-        const params: any = {
-          width: width, height: height
+      stop: function (event: Event, ui: any) {
+        // console.log(ui)
+        let height: number = $(ui.size.height)[0];
+        let width: number = $(ui.size.width)[0];
+        let top: number = $(ui.position.top)[0];
+        let left: number = $(ui.position.left)[0];
+        const newSize: any = {
+          width: width, height: height, top: top,
+          left: left
         }
-        
-        that.chartWidth=width;
-        that.chartHeight=height;
-        // console.log('chartWidth',that.chartWidth,that.chartHeight)
-        const orgSize=JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE)
-        // 
-        console.log('orgSize',orgSize)
-        orgSize.width=width;
-        orgSize.height=height;
-        // that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
-        const newSize={
-          width : width,
-          height : height,
-          PID:that.WIDGET_REQUEST.PID    
-          }
-      
-        that.service.changeWidthHeight(newSize);
-        // that.ref.detectChanges();
+
+        that.chartWidth = width;
+        that.chartHeight = height;
+
+        that.WIDGET_REQUEST.LOADED = false;
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+
+        // sending/emitting data to parent-dashboard.ts for saving into api
+        that._widgetData.emit(that.WIDGET_REQUEST)
       }
     });
-    
+    $(x).draggable({
+      stop: function (event: Event, ui: any) {
+        console.log(ui)
+        let top: number = $(ui.position.top)[0];
+        let left: number = $(ui.position.left)[0];
+        const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE);
+        const newSize = {
+          width: orgSize.width,
+          height: orgSize.height,
+          top: top, left: left
+        }
+        that.WIDGET_REQUEST.LOADED = false;
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+
+        // sending/emitting data to parent-dashboard.ts for saving into api
+        that._widgetData.emit(that.WIDGET_REQUEST)
+      }
+    })
+
   }
-  getProp(type: string) {
-    const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
-    if (type == 'W') {
-      return prop.width
-    }
-    if (type == 'H') {
-      return prop.height
-    } else if (type == 't') {
-      return prop.top ? prop.top : 0
-    } else if (type == 'l') {
-      return prop.left ? prop.left : 0
-    }
-  }
+
   ngOnInit(): void {
 
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
-      // console.log('map req:', this.WIDGET_REQUEST)
+      console.log('map req:', this.WIDGET_REQUEST)
+    //  
+      this.getLocationsByConfigID();
 
-      this.getAllDevice();
     }
   }
   ngAfterViewInit(): void {
-    if(this.myMap){
+  this.initMap()
+  }
+  initMap(){
+    if (this.myMap) {
       this.myMap.remove();
     }
     var mapOptions = {
       center: [17.385044, 78.486671],
       zoom: 4
     }
-    this.myMap = new L.map('map', mapOptions);
+    // const =
+    this.myMap = new L.map(this.newmap.nativeElement, mapOptions);
     var layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     this.myMap.addLayer(layer);
-    
+
   }
   getLocationsByConfigID() {
-    this.dataService.getAllLocationsByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
+    this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(res => {
       // console.log('map loc', res)
       if (res && res.data) {
         this.cityLocations = res.data.map((city: any) => {
@@ -128,7 +140,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
           city.LOCATION = city.LOCATION.toUpperCase()
           return city;
         });
-        this.ref.detectChanges();
+        this.getAllDevice();
         // console.log(this.cityLocations)
       }
     })
@@ -157,10 +169,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
   }
   getAllDevice() {
     this.dataService.getMACByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
-      // console.log('map', res)
-      // this.ref.detectChanges();
+
       if (res && res.data) {
-        this.getLocationsByConfigID();
+        // console.log(res.data)
+        // this.getLocationsByConfigID();
 
         this.WIDGET_REQUEST.MAC_COUNT = res.data.length;
         if (res.data.length > 0) {
@@ -184,14 +196,49 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
             this.WIDGET_REQUEST.inactiveCount = inactive.length > 0 ? inactive.length : 0;
 
           }
-          else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS') {
-
+          else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS' && !this.WIDGET_REQUEST.STATIC_COORDS) {
+            // DYNAMIC COORDS MAPPING
             const intervalTime = interval(60000);
             this.setInterval = intervalTime.subscribe(() => {
               this.getCurrDeviceByLabel(res);
             })
-            // this.getCurrDeviceByLabel(res);
+          } else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS' && this.WIDGET_REQUEST.STATIC_COORDS) {
+            // STATIC COORDS 
 
+            this.markerArr = res.data.map((rest: any) => {
+              return {
+                latitude: rest.LATITUDE,
+                longitude: rest.LONGITUDE,
+                ignitionStatus: 'ON',
+                deviceId: rest.MAC_ADDRESS
+              }
+            })
+
+
+            let mIndex = 0;
+            for (let m of this.markerArr) {
+              var deviceIcon = L.icon({
+                iconUrl: 'assets/map-widget.png',
+                shadowUrl: this.markerArr[mIndex].ignitionStatus == 'OFF' ? 'assets/ignition-off.png' : '',
+
+                iconSize: [38, 55], // size of the icon
+                shadowSize: [32, 34], // size of the shadow
+                iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 107],  // the same for the shadow
+                popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+              });
+              let marker = L.marker([this.markerArr[mIndex].latitude, this.markerArr[mIndex].longitude], { icon: deviceIcon })
+                .bindPopup(this.markerArr[mIndex].deviceId).addTo(this.myMap);
+              // set latest lat,lng once initialy
+              if (!this.isCitySelected) {
+                this.myMap.panTo(new L.LatLng(this.markerArr[mIndex].latitude, this.markerArr[mIndex].longitude));
+                this.myMap.setZoom(6);
+
+              }
+              mIndex++;
+
+            }
+            this.ref.detectChanges();
           }
 
         }
@@ -209,7 +256,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     const resultArr = res.data.filter((item: any) => {
       return item.MAC_STATUS === 1;
     })
-    console.log(resultArr)
+    // console.log(resultArr)
     forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response: any) => {
       // console.log(response)
       this.markerArr = response;
@@ -260,9 +307,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
         mIndex++;
 
       }
-      // L.marker([51.5, -0.09], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a green leaf.");
-      // L.marker([51.495, -0.083], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am a red leaf.");
-      // L.marker([51.49, -0.1], { icon: deviceIcon }).addTo(this.myMap).bindPopup("I am an orange leaf.");
+
+      this.ref.detectChanges();
     })
 
 
@@ -270,11 +316,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
 
   ngOnDestroy(): void {
     this.setInterval?.unsubscribe();
-    if(this.myMap) {
+    if (this.myMap) {
       this.myMap.remove();
     }
   }
- 
+
   saveWidget() {
 
     this._widgetData.emit(this.WIDGET_REQUEST)

@@ -1,4 +1,4 @@
-import { Component, OnInit ,Input,OnChanges, SimpleChanges} from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { config } from '../../myclass';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -35,15 +35,15 @@ export interface PeriodicElement {
     ]),
   ],
 })
-export class ConfigComponent implements OnInit,OnChanges {
-  @Input('tabIndex')tabClose:any;
+export class ConfigComponent implements OnInit, OnChanges {
+  @Input('tabIndex') tabClose: any;
   tabIndex = 0;
   configData: config[] = [];
   displayedColumns: string[] = [
-    "COMPANY_NAME" ,
+    "COMPANY_NAME",
     "CONFIG_NAME",
     "Asset_Name",
-     
+
     // "Industrial_Type",
     // "CONN_NAME",
     // "Tracking_Device_Type",
@@ -67,32 +67,36 @@ export class ConfigComponent implements OnInit,OnChanges {
   async getAllAssetConfig() {
     const session = await this.dataService.getSessionData();
     // if admin -inspirisys then show all asset config records by passing company id empty
-   
-    let params:any={}
-    if(session.COMPANY_TYPE=='CORP' && session.ROLE==='ADMIN'){
-      params = { COMPANY_ID:0  };
-    }else if(session.COMPANY_TYPE!='CORP'){
+
+    let params: any = {}
+    if (session.COMPANY_TYPE == 'CORP' && session.ROLE === 'ADMIN') {
+      params = { COMPANY_ID: 0 };
+    } else if (session.COMPANY_TYPE != 'CORP') {
       // client then pass comp id
       params = { COMPANY_ID: session.COMPANY_ID };
 
     }
-    
+
     this.dataService.getAssetConfig(params).subscribe(res => {
-      this.dataSource = res.data.map((element:any)=>{
+      this.dataSource = res.data.map((element: any) => {
         // const name=JSON.parse(element.CONNECTION_TYPE)?JSON.parse(element.CONNECTION_TYPE):''
         // element.CONN_NAME=  name.CONN_NAME;
         return element
 
       });
-      console.log( this.dataSource)
+      console.log(this.dataSource)
     })
   }
 
   editItem(item: any) {
     const dialogRef = this.dialog.open(AddAssetConfigComponent, {
-      width: '800px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      height: '90%',
+      width: '90%',
+      panelClass: 'full-screen-modal',
       data: item,
-      
+
     });
     dialogRef.afterClosed().subscribe(result => {
 
@@ -113,28 +117,28 @@ export class ConfigComponent implements OnInit,OnChanges {
       data: data.msg
     });
   }
- 
-   expandItem(element: any) {
+
+  expandItem(element: any) {
     // console.log(element.stopPropagation())
     if (element) {
       this.dataService.getMACByConfigID(element).subscribe(res => {
         console.log(res)
         if (res && res.data.length > 0) {
-          element.macArray =res.data;
-      
+          element.macArray = res.data;
+
         }
         this.expandedElement = this.expandedElement === element ? null : element
       })
     }
-    
-  }
-  
 
-  addMAC(item:any){
+  }
+
+
+  addMAC(item: any) {
     const dialogRef = this.dialog.open(AddMacDetailsComponent, {
       width: '800px',
       data: item,
-      
+
     });
     dialogRef.afterClosed().subscribe(result => {
 

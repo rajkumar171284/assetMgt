@@ -8,9 +8,7 @@ export class AccessrightsDirective {
 
   constructor(private elementRef: ElementRef,private dataService: AuthService,private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef) { 
-      // const privilegeRole = sessionStorage.getItem(
-      //   session.WIDGETS_RIGHTS
-      // );
+    
   
     }
 

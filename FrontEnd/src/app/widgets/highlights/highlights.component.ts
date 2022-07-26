@@ -3,6 +3,8 @@ import { AuthService } from '../../services/auth.service';
 import { XAxisService } from '../../services/x-axis.service';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ResizedEvent } from 'angular-resize-event';
+
 declare let $: any;
 @Component({
   selector: 'app-highlights',
@@ -10,7 +12,7 @@ declare let $: any;
   styleUrls: ['./highlights.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
+export class HighlightsComponent implements OnInit, OnChanges, DoCheck ,AfterViewInit{
   @Input() WIDGET_REQUEST: any;
   @Input() widgetIndex: any;
 
@@ -21,48 +23,73 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck {
   public height: any;
   public width: any;
   // @ViewChild('Item', { read: ViewContainerRef }) Item: any;
-  @ViewChild("divBoard") divBoard!: ElementRef;
+  @ViewChild("highlights") divBoard!: ElementRef;
   chartWidth: number = 0;
   chartHeight: number = 0;
   widgetDiv: any;
-  constructor(public service: XAxisService, private dataService: AuthService) { }
+  divElement!: any;
+
+  constructor(public service: XAxisService, public dataService: AuthService) { }
   ngDoCheck(): void {
 
-    this.watchSize();
+    const status = this.dataService.getAccess();
+    if (status) {
+      this.watchSize();
+    }
   }
-
+ngAfterViewInit(): void {
+  this.divElement = this.divBoard.nativeElement;
+}
+onResized(event: ResizedEvent) {
+  console.log(event.newRect)
+  // this.width = event.newRect.width;
+  // this.height = event.newRect.height;
+}
   watchSize() {
-    const id = this.widgetIndex.toString();
+    // const id = this.widgetIndex.toString();
     let that = this;
-    let x = document.getElementById(id);
+    let x = that.divElement;
     // console.log(x)
-    $(x).resizable({
+    // $(x).resizable({
+    //   stop: function (event: Event, ui: any) {
+    //     // console.log(ui)
+    //     let height: number = $(ui.size.height)[0];
+    //     let width: number = $(ui.size.width)[0];
+    //     let top: number = $(ui.position.top)[0];
+    //     let left: number = $(ui.position.left)[0];
+    //     const newSize: any = {
+    //       width: width, height: height, top: top,
+    //       left: left
+    //     }
+
+    //     that.chartWidth = width;
+    //     that.chartHeight = height;
+        
+    //     that.WIDGET_REQUEST.LOADED = false;
+    //     that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+
+    //     // sending/emitting data to parent-dashboard.ts for saving into api
+    //     that._widgetData.emit(that.WIDGET_REQUEST)
+    //   }
+    // });
+    $(x).draggable({
       stop: function (event: Event, ui: any) {
         console.log(ui)
-        let height: number = $(ui.size.height)[0];
-        let width: number = $(ui.size.width)[0];
-        const params: any = {
-          width: width, height: height
-        }
-
-        that.chartWidth = width;
-        that.chartHeight = height;
-        // console.log('chartWidth',that.chartWidth,that.chartHeight)
-        const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE)
-        // 
-        console.log('orgSize', orgSize)
-        orgSize.width = width;
-        orgSize.height = height;
-        // that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(orgSize);
+        let top: number = $(ui.position.top)[0];
+        let left: number = $(ui.position.left)[0];
+        const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE);
         const newSize = {
-          width: width,
-          height: height,
-          PID: that.WIDGET_REQUEST.PID
+          width: orgSize.width,
+          height: orgSize.height,
+          top: top, left: left
         }
-        // 
-        that.service.changeWidthHeight(newSize)
+        that.WIDGET_REQUEST.LOADED = false;
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+
+        // sending/emitting data to parent-dashboard.ts for saving into api
+        that._widgetData.emit(that.WIDGET_REQUEST)
       }
-    });
+    })
 
   }
   getElement() {

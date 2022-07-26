@@ -1,4 +1,4 @@
-import { Component, OnInit, Input,ViewChild, OnChanges, AfterViewInit ,SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit,OnDestroy, Input,ViewChild, OnChanges, AfterViewInit ,SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { config } from '../../myclass';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { __deviceHistory } from '../../myclass';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mac-reports',
@@ -16,11 +17,11 @@ import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
   styleUrls: ['./mac-reports.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MacReportsComponent implements OnInit, OnChanges {
+export class MacReportsComponent implements OnInit, OnChanges,OnDestroy {
   @ViewChild(MatSort)
   sort!: MatSort;
   dataSource = new TableVirtualScrollDataSource();
-
+  subs1!:Subscription;
   displayedColumns: string[] = [
     // "PID",
      "DEVICE_ID", "CONFIG_NAME", "VALUE", "STATUS", "LAST_UPDATE_TIME"]
@@ -40,7 +41,7 @@ export class MacReportsComponent implements OnInit, OnChanges {
   getAllMACdata() {
 
   
-    this.dataService.getAllMACstatus().subscribe(res => {
+    this.subs1= this.dataService.getAllMACstatus().subscribe(res => {
       console.log(res)
       
 
@@ -49,6 +50,9 @@ export class MacReportsComponent implements OnInit, OnChanges {
       this.dataSource.sort = this.sort;
       this.ref.detectChanges();
     })
+  }
+  ngOnDestroy(): void {
+      this.subs1.unsubscribe();
   }
 
 }

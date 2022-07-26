@@ -32,7 +32,7 @@ export class AddCompanyComponent implements OnChanges{
       STATUS: ['', Validators.required],
       LOGO: [''],
     })
-
+console.log(data)
     if (!data) {
       // add
       const session = this.dataService.getSessionData();

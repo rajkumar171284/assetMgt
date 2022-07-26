@@ -1,8 +1,8 @@
-<div [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
-    [style.height.px]="service.getProp('H',WIDGET_REQUEST)" style="position:absolute;z-index:999">
+<div id="{{widgetIndex}}" [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+    [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="inner-panel">
 
 
-    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item id="{{widgetIndex}}"
+    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item 
         class=" my-card bg11 overflow-hidden">
 
         <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
@@ -15,7 +15,8 @@
         <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
             <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
         </ng-container>
-        <div class="resizable11" id="map">
+        
+        <div #newmap class="resizable11" id="map">
 
         </div>
 

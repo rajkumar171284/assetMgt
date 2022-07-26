@@ -13,6 +13,7 @@ import * as moment from 'moment';
 import { switchMap } from 'rxjs/operators'
 import { XAxisService } from '../../services/x-axis.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 
 declare let $: any;
 interface Item {
@@ -68,9 +69,14 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   dataSource: chartItem[] = [];
   doneList: chartItem[] = []
   overAllCharts: any = [];
-  undraggedWidget: any[] = ['0'];
+  // undraggedWidget: any[] = ['0'];
   draggedWidget: any[] = ['0'];
   draggedWidget$: _widgetRequest[] = [];
+
+  draggedObervable$!: Observable<any[]>;
+  undraggedObervable$!: Observable<any[]>;
+
+  newOberver$ = new BehaviorSubject('');
   undraggedWidget$: any[] = [];
 
   toEditRequest: any;
@@ -90,24 +96,26 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   WIDGET_REQUEST: any;
   WIDGETREQUEST$!: Observable<any>;
   @ViewChild("divBoard") divBoard!: ElementRef;
+  widgetPanelDetails: any = {};
   widgetPanelHeight: number = window.innerHeight - 30;
   // test
   state = '';
   position = '';
   widgetDiv: any;
   subscription1: Subscription | undefined;
+  subscription2: Subscription | undefined;
   getElement() {
     if (this.widgetIndex)
       return this.widgetIndex.nativeElement;
   }
 
   ngAfterViewInit() {
-   
+
   }
   ngDoCheck(): void {
-    
+
   }
-  
+
 
   ngOnInit(): void {
     this.getSession();
@@ -119,6 +127,16 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
         this.updateWidget(data);
 
       }
+    })
+    // get removal confirmation
+    this.subscription2 = this.service.removedWidgetRequest.subscribe(data => {
+      console.log('removedWidgetRequest', data)
+      if (data) {
+        // reload 
+        this.loader = true;
+        // this.getMappedChartRequest();
+      }
+
     })
   }
 
@@ -155,11 +173,12 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
         this.draggedWidget$ = this.doneList.map((item: any) => {
 
-          item.dragDisabled = false;
+          item.dragDisabled = true;
 
           return item;
         });
-        this.getAllChartRequest();
+        // console.log(this.draggedObervable$)
+        this.loader = false;
       }
 
     })
@@ -175,7 +194,8 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(result => {
       // call all charts      
-      this.getMappedChartRequest();
+      this.getAllChartRequest();
+      
     });
   }
   async editRequest(pid: any) {
@@ -187,20 +207,25 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
   async getAllChartRequest() {
     const session = await this.dataService.getSessionData();
-    this.dataService.getAllChartRequests({ IS_DRAGGED: 0, COMPANY_ID: this.VALUE.COMPANY_ID }).subscribe(res => {
+    const params = { IS_DRAGGED: 0, COMPANY_ID: this.VALUE.COMPANY_ID };
+    this.undraggedObervable$ = this.dataService.getAllChartRequests(params);
+    console.log('undraggedObervable', this.undraggedObervable$)
+    this.dataService.getAllChartRequests(params).subscribe(res => {
       this.dataSource = res.data.map((el: chartItem) => {
         return el;
       });
       this.overAllCharts = this.dataSource.concat(this.doneList);
-      this.undraggedWidget = res.data.map((itm: chartItem) => {
-        return itm.PID.toString();
-
-      })
-      of(res.data).subscribe(z => {
-        this.undraggedWidget$ = z;
+      
+      // of(res.data).subscribe(z => {
+      //   this.undraggedWidget$ = z;
+      // })
+      this.undraggedObervable$.subscribe((z:any) => {
+        // console.log(z)
+        this.undraggedWidget$ = z.data;
       })
       // console.log(this.undraggedWidget$)
-      this.loader = false;
+this.getMappedChartRequest();
+      // 
     })
   }
   onDrop2(event: CdkDragDrop<any>) {
@@ -368,7 +393,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     // prop.left=left;
     // item.WIDGET_SIZE=JSON.stringify(prop)
   }
-  onDrop(event: CdkDragDrop<any[]>) {
+  onDrop(event: CdkDragDrop<any>) {
     // console.log(event)
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -457,7 +482,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
       // data.SQL_QUERY = 'sql';
 
-      console.log('save params ', data)
+      // console.log('save params ', data)
       this.dataService.addChartRequest(data).subscribe(res => {
         let index = this.draggedWidget$.findIndex(object => {
           return object.PID == data.PID;
@@ -476,10 +501,10 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
   updateWidget(data: any) {
 
-    console.log('upt', data.LOADED)
+    // console.log('upt', data.LOADED)
 
     this.dataService.addChartRequest(data).subscribe(res => {
-      console.log()
+
       this.openSnackBar();
       this.getMappedChartRequest()
       // this.updateDraggedArr(data);
@@ -500,9 +525,11 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     }
   }
   widgetRemoved(data: any) {
+    console.log(data)
     if (data) {
       // console.log(data)
       this.openSnackBar();
+      this.getMappedChartRequest();
 
     }
   }
@@ -519,7 +546,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
     const params = {
       HEIGHT: this.widgetPanelHeight,
-      COMPANY_ID: session.COMPANY_ID, PID: ''
+      COMPANY_ID: this.widgetPanelDetails.COMPANY_ID, PID: this.widgetPanelDetails.PID
 
     }
     this.dataService.settingWidgetLayout(params).subscribe(res => res);
@@ -527,14 +554,19 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   minLayout() {
 
     this.widgetPanelHeight = this.widgetPanelHeight - 100;
-    this.dataService.settingWidgetLayout({ HEIGHT: this.widgetPanelHeight }).subscribe(res => res);
+    const params = {
+      HEIGHT: this.widgetPanelHeight,
+      COMPANY_ID: this.widgetPanelDetails.COMPANY_ID, PID: this.widgetPanelDetails.PID
+
+    }
+    this.dataService.settingWidgetLayout(params).subscribe(res => res);
 
   }
   companiesList: any = [];
-  async getAll() {
-    const session = await this.dataService.getSessionData();
+  showEmptyPanel: boolean = false;
+   getAll() {
+    const session = this.dataService.getSessionData();
     if (session && session.COMPANY_TYPE == 'CORP') {
-
 
       this.dataService.getAllCompanies().subscribe(res => {
         this.companiesList = res.data;
@@ -542,7 +574,16 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
         if (res.data.length > 0) {
           if (session.ROLE != 'ADMIN') {
             const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
-            console.log(val)
+            // console.log(val)
+            this.newForm.patchValue({
+              COMPANY_ID: val[0] ? val[0].PID : ''
+            })
+            this.getLayoutHeight()
+          } else {
+            // empty layout
+            // this.showEmptyPanel=true;
+            const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
+            // console.log(val)
             this.newForm.patchValue({
               COMPANY_ID: val[0] ? val[0].PID : ''
             })
@@ -567,9 +608,9 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     }
 
   }
-  getRequest() {
-    this.getLayoutHeight()
-  }
+  // getRequest() {
+  //   this.getLayoutHeight()
+  // }
   get VALUE() {
     return this.newForm.value;
   }
@@ -577,9 +618,10 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     this.loader = true;
     // console.log(this.VALUE)
     this.dataService.getWidgetlayout(this.VALUE).subscribe(res => {
-      console.log(res)
+      // console.log(res)
+      this.widgetPanelDetails = res.data;
       this.widgetPanelHeight = res.data && res.data.HEIGHT ? res.data.HEIGHT : 550;
-      this.getMappedChartRequest();
+      this.getAllChartRequest();
     });
   }
 

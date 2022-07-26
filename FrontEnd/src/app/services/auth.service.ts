@@ -213,6 +213,12 @@ export class AuthService {
       return response;
     }))
   }
+  
+  getCompanyDetails(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/getCompanyByID`, params, options).pipe(map(response => {
+      return response;
+    }))
+  }
   getAllCompanyTypes(params: any): Observable<any> {
     return this.http.post(`${environment.url}/users/getAllCompanyByType`, params, options).pipe(map(response => {
       return response;
@@ -242,9 +248,9 @@ export class AuthService {
   }
 
   // 
-  
+
   getWidgetlayout(params: any): Observable<any> {
-    console.log(params)
+    // console.log(params)
     return this.http.get(`${environment.url}/asset/getWidgetLayout/${params.COMPANY_ID}`, options).pipe(map(response => {
       return response;
     }))
@@ -269,4 +275,18 @@ export class AuthService {
     return newLocal
   }
 
+  public formWidgetSize(ui: any, WIDGET_REQUEST: any) {
+    console.log(ui)
+    let top: number = $(ui.position.top)[0];
+    let left: number = $(ui.position.left)[0];
+    const orgSize = JSON.parse(WIDGET_REQUEST.WIDGET_SIZE);
+    const newSize = {
+      width: orgSize.width,
+      height: orgSize.height,
+      top: top, left: left
+    }
+    // WIDGET_REQUEST.LOADED = false;
+    WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+    return WIDGET_REQUEST;
+  }
 }

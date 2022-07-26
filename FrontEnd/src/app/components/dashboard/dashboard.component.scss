@@ -41,7 +41,7 @@ position: relative;
 
 .listed-charts img {
     height: 50px;
-    margin-top: 6px; 
+   
     // filter: sepia(100%) hue-rotate(190deg) saturate(500%); 
     // filter: grayscale(1);
     filter: brightness(0) invert(1);
@@ -51,11 +51,11 @@ position: relative;
 .Widget-block .listed-charts {
     background:rgba(0, 0, 0, 0.3);
     box-shadow: 0 0px 8px #fff;
-    // border: 0px solid #fff;
+    margin-bottom :5px;
     padding:5px;
     mat-card-subtitle ,mat-card-content{
         color: #fff !important;
-        font-size: 12px;
+        font-size: 11px;    text-shadow: 0 1px 2px #000;
     }
 }
 

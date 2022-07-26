@@ -76,7 +76,8 @@ export class AddMacDetailsComponent implements OnInit {
         MAC_ADDRESS: data.MAC_ADDRESS,
         MAC_STATUS: data.MAC_STATUS ? true : false,
         LOCATION: data.LOCATION,
-        // DEVICE_TYPE:['', Validators.required]
+        LATITUDE:data.LATITUDE,
+        LONGITUDE:data.LONGITUDE,
       })
       this.MAC_DETAILS.push(item);
     
@@ -92,13 +93,14 @@ export class AddMacDetailsComponent implements OnInit {
     return this.newForm.get('MAC_DETAILS') as FormArray;
   }
   updateMAC() {
-    console.log(this.data.PID)
+    // console.log(this.data.PID)
     const item = this.fb.group({
       PID: '',
       MAC_NAME: ['', Validators.required],
       MAC_ADDRESS: ['', Validators.required],
       MAC_STATUS: true,
-      LOCATION: ['', Validators.required]
+      LOCATION: ['', Validators.required],
+      LATITUDE:'',LONGITUDE:''
     })
 
     this.MAC_DETAILS.push(item)

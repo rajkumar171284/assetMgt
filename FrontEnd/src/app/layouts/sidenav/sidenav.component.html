@@ -20,8 +20,11 @@
     </div> -->
     <div class="logo-right logo">
       Hi,{{session && session.LOGIN_NAME?session.LOGIN_NAME:''}}
-      <button (click)="logOut()" mat-button>
-        <mat-icon>logout</mat-icon>
+
+      <button  mat-button>
+        <mat-icon (click)="openDialog()">supervised_user_circle</mat-icon>
+
+        <mat-icon (click)="logOut()">logout</mat-icon>
 
       </button>
       <!-- <img class="" src="assets/inspirisys-logo.png"/> -->

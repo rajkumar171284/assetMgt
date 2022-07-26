@@ -1,18 +1,195 @@
-<div #contenedor class="categories" cdkDropListGroup>
-    <ng-container *ngFor="let item of items; let i = index">
-      <div
-        class="categories-item"
-        cdkDropList
-        cdkDropListOrientation="horizontal"
-        [cdkDropListData]="{ item: item, index: i }"
-        (cdkDropListDropped)="drop($event)"
-      >
-        <div class="inner" cdkDrag>
-          <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-          {{ item }}
-        </div>
-      </div>
-    </ng-container>
+<div class="container-fluid">
+
+  <div *ngIf="loader" class="overlay">
+    <mat-spinner></mat-spinner>
   </div>
-  {{ items | json }}
-  
+  <span *appAccessrights="false" (click)="closePanel();isWidgetOpen=true" class="openWidget">
+    <mat-icon color="primary">open_with</mat-icon>
+
+  </span>
+
+
+
+  <div cdkDropListGroup class="row">
+
+
+
+
+    <div [style.height.px]="widgetPanelHeight" [ngClass]="{'col-md-9':isWidgetOpen,'col-md-12':!isWidgetOpen}"
+      class="widgetDraggedPanel ">
+
+
+
+      <div id="layout-container">
+
+
+
+
+        <!-- now -->
+        <ng-container>
+          <div style="position:relative" #divBoard cdkDropList [cdkDropListData]="draggedWidget$"
+            (cdkDropListDropped)="onDrop($event)">
+
+
+
+            <div (cdkDragStarted)="dragStarted($event)" (cdkDragEnded)="dragEnded($event,List)"
+              (cdkDragMoved)="dragMoved($event,List)" cdkDrag [cdkDragDisabled]="List.dragDisabled||!List.dragDisabled"
+              class="" *ngFor="let List of draggedWidget$;index as idx">
+
+              <div [ngClass]="{'draggedEmpty minWidgetHight':!List}" class=" example-box1  listed-charts">
+
+
+
+                <div style="resize:both" (resized)="onResized($event)"  [id]="List.PID" [style.top.px]="service.getProp('t',List)"
+                  [style.left.px]="service.getProp('l',List)" [style.width.px]="service.getProp('W',List)"
+                  [style.height.px]="service.getProp('H',List)" class="div inner-panel">
+
+                  <div #divBoard 
+                    [style.width.px]="service.getProp('W',List)"
+                    [style.height.px]="service.getProp('H',List)" #Item class=" my-card bg11 overflow-hidden">
+
+
+
+                  </div>
+
+
+                </div>
+
+
+
+
+                <!-- <div *ngIf="List.WIDGET_TYPE=='HIGHLIGHTS'">
+
+                  <app-highlights (_widgetRemoved)="widgetRemoved($event)"  [widgetIndex]="List.PID" (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List">
+                  </app-highlights>
+
+                </div> -->
+                <!-- <div class="" *ngIf="List.WIDGET_TYPE==='TABLE'">
+
+                  <app-table (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List">
+                  </app-table>
+
+                </div> -->
+                <!-- <div *ngIf="List.WIDGET_TYPE==='MAPS'">
+
+
+
+                  <app-map [widgetIndex]="List.PID" (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List"></app-map>
+
+                </div> -->
+                <!-- <ng-container *ngIf="List.WIDGET_TYPE=='CHARTS'">
+
+                  <app-plotly  (_widgetRemoved)="widgetRemoved($event)" [positionTop]="List.top"
+                    [positionLeft]="List.left" (_widgetData)="saveWidget($event)" [widgetIndex]="List.PID"
+                    [WIDGET_REQUEST]="List"></app-plotly>
+
+                
+
+                </ng-container> -->
+                <!-- <div  *ngIf="List.WIDGET_TYPE==='SUMMARY'">
+
+                  <app-card  (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [widgetIndex]="List.PID"
+                  [WIDGET_REQUEST]="List"></app-card>
+                 
+
+                </div> -->
+
+              </div>
+
+            </div>
+
+          </div>
+        </ng-container>
+      </div>
+
+
+    </div>
+
+
+    <div appWidgetAccessIf *ngIf="isWidgetOpen" [style.height.px]="widgetPanelHeight"
+      [ngClass]="{'col-md-3':isWidgetOpen}" class="widget-panel ">
+
+      <div appWidgetAccessIf *ngIf="newForm.valid" class="footer-container">
+        <button matTooltip="Click to Expand layout" (click)="expandLayout()" mat-raised-button class="btn-theme1">
+          <mat-icon>fullscreen</mat-icon>
+
+        </button>
+
+        <button matTooltip="Click to Minimize layout" (click)="minLayout()" mat-raised-button class="m-3 btn-theme2">
+          <mat-icon>fullscreen_exit</mat-icon>
+
+        </button>
+      </div>
+
+      <span *appAccessrights="false" (click)="closePanel();isWidgetOpen=false" class="closed">
+        <mat-icon color="primary">close</mat-icon>
+
+      </span>
+      <div class="sticky-top">
+
+
+        <button matTooltip="Click to Create new widget" class="btn-theme1 mt-1" *appAccessrights="false"
+          mat-raised-button (click)="openDialog()">
+          Create Widget
+        </button>
+
+
+
+        <mat-grid-list class="mt-3" color="primary" cols="2" rowHeight="2:2">
+          <form style="padding:5px" [formGroup]="newForm">
+
+            <mat-grid-list cols="10">
+
+              <mat-form-field appearance="standard">
+                <mat-label style="color:#444" color="dark">SELECT COMPANY</mat-label>
+                <mat-select (selectionChange)="getRequest()" formControlName="COMPANY_ID">
+
+                  <mat-option *ngFor="let key of companiesList" [value]="key.PID">
+                    {{key.COMPANY_NAME}}
+                  </mat-option>
+
+                </mat-select>
+              </mat-form-field>
+
+            </mat-grid-list>
+          </form>
+          <mat-label>Available Widgets( {{undraggedWidget$.length}} )</mat-label>
+
+
+          <div cdkDropList #widgetList="cdkDropList" [cdkDropListData]="undraggedWidget$" class="example-list2"
+            (cdkDropListDropped)="onDrop($event)">
+            <div class="Widget-block" [cdkDragData]="List" *ngFor="let List of undraggedWidget$" cdkDrag>
+
+              <mat-card class="listed-charts undraggedBlock" color="primary">
+
+                <span appWidgetAccessIf class="mapped-close2">
+                  <mat-icon matTooltip="Edit widget" (click)="editRequest(List)" color="primary">edit</mat-icon>
+                  <mat-icon matTooltip="Remove Widget " (click)="removeRequest(List)" color="warn">delete_outline
+                  </mat-icon>
+                </span>
+                <mat-card-subtitle>
+                  {{List.CONFIG_NAME}}-{{List.WIDGET_TYPE}}
+                </mat-card-subtitle>
+
+                <mat-card-content>
+
+                  Created:{{List.CREATED_DATE|date:'dd/MM'}}
+
+                  <mat-card-subtitle>
+                    {{List.CHART_NAME | uppercase}}
+                  </mat-card-subtitle>
+                  <img class="" src="assets/{{List.WIDGET_IMG}}.png" />
+
+
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+
+        </mat-grid-list>
+
+      </div>
+
+    </div>
+  </div>
+</div>

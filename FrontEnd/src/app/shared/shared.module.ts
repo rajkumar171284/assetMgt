@@ -108,6 +108,10 @@ import { AlertsListComponent } from '../components/alerts-list/alerts-list.compo
 import { MaskWidgetComponent } from '../components/mask-widget/mask-widget.component';
 import { HeaderWidgetComponent } from '../components/header-widget/header-widget.component';
 import { FooterWidgetComponent } from '../components/footer-widget/footer-widget.component';
+
+import { AngularResizeEventModule } from 'angular-resize-event';
+import { UploadLogoComponent } from '../components/upload-logo/upload-logo.component';
+
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
     AddAssetConfigComponent, AssetConnectionsTypeComponent,
@@ -119,7 +123,7 @@ import { FooterWidgetComponent } from '../components/footer-widget/footer-widget
     AddMacDetailsComponent,
     PlotlyComponent, CardComponent,
     MacReportsComponent, ReportsComponent, TableComponent,
-    HighlightsComponent, MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent, AdminPanelComponent, AlertPanelComponent, MaskWidgetComponent, HeaderWidgetComponent, FooterWidgetComponent
+    HighlightsComponent, MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent, AdminPanelComponent, AlertPanelComponent, MaskWidgetComponent, HeaderWidgetComponent, FooterWidgetComponent, UploadLogoComponent
   ],
   imports: [
     CommonModule, PlotlyModule,
@@ -128,7 +132,7 @@ import { FooterWidgetComponent } from '../components/footer-widget/footer-widget
     ClipboardModule,
     CdkStepperModule, MatFormFieldModule,
     CdkTableModule,
-    CdkTreeModule,
+    CdkTreeModule,AngularResizeEventModule,
     DragDropModule,
     MatAutocompleteModule,
     MatBadgeModule,

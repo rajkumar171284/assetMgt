@@ -1,4 +1,4 @@
-import { Component, DoCheck, Output, EventEmitter, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component,ElementRef, DoCheck, AfterViewInit, Output, EventEmitter, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { XAxisComponent } from '../../components/x-axis/x-axis.component';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { XAxisService } from '../../services/x-axis.service';
+import { ResizedEvent } from 'angular-resize-event';
 
 declare let $: any;
 const colors = ["(255,165,0)", "(255,105,180)", "(124,252,0)", "(0,128,0)", "(100,149,237)", "(64,224,208)", "(0,255,127)",
@@ -34,10 +35,11 @@ class widgetResponse {
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
+export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,AfterViewInit {
   @ViewChild('xAxis', { static: true }) xAxis!: XAxisComponent;
   @Input() WIDGET_REQUEST: any;
   @Input() widgetIndex: any;
+  @ViewChild("plotly") divBoard!: ElementRef;
 
   errMessage: string = '';
   labelMessage2: any;
@@ -78,7 +80,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
       { x: [1, 2, 3, 4, 5], y: [1, 3, 6, 9, 6], type: 'scatter' },
       { x: [1, 2, 3, 4, 5], y: [1, 2, 4, 5, 6], type: 'scatter' },
     ],
-    layout: { title: 'Some Data to Highlight' }
+    layout: { title: '' }
   };
 
   interactivePlotSubject$: Subject<any> = new BehaviorSubject<any>(this.graph2.data);
@@ -114,6 +116,8 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
   plotlyIndex: number = 0;
   singleView: any = [];
   toEditRequest: any;
+  divElement!: any;
+
   constructor(public service: XAxisService, public dialog: MatDialog, private fb: FormBuilder, public dataService: AuthService, private ref: ChangeDetectorRef) {
 
     this.newForm = this.fb.group({
@@ -132,19 +136,30 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
     // console.log(data)
     this.WIDGET_REQUEST.XAXES = data;
   }
+  onResized(event: ResizedEvent) {
+    console.log(event.newRect)
+    // this.width = event.newRect.width;
+    // this.height = event.newRect.height;
+  }
+  ngAfterViewInit(): void {
+
+    this.divElement = this.divBoard.nativeElement;
+      
+  }
   ngDoCheck(): void {
     const status = this.dataService.getAccess();
+    // console.log(status)
     if (status) {
       this.watchSize();
     }
   }
   watchSize() {
-    const id = this.widgetIndex.toString();
+    // const id = this.widgetIndex.toString();
     let that = this;
-    let x = document.getElementById(id);
+    let x = that.divElement;
     $(x).resizable({
       stop: function (event: Event, ui: any) {
-        // console.log(ui)
+        console.log(ui)
         let height: number = $(ui.size.height)[0];
         let width: number = $(ui.size.width)[0];
         let top: number = $(ui.position.top)[0];
@@ -156,30 +171,20 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
 
         that.chartWidth = width;
         that.chartHeight = height;
-        // console.log('chartWidth',that.chartWidth,that.chartHeight)
-        // const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE)
-        // // 
-        // console.log('orgSize', orgSize)
-        // orgSize.width = width;
-        // orgSize.height = height;
-        // const newSize={
-        // width : width,
-        // height : height,
-        // PID:that.WIDGET_REQUEST.PID    
-        // }
-        that.WIDGET_REQUEST.LOADED = false;
+
+        // that.WIDGET_REQUEST.LOADED = false;
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+        that.service.updateWidgetReq(that.WIDGET_REQUEST);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
-        that._widgetData.emit(that.WIDGET_REQUEST)
-        // that.service.changeWidthHeight(newSize);
+        // that._widgetData.emit(that.WIDGET_REQUEST)
       }
     });
 
 
     $(x).draggable({
       stop: function (event: Event, ui: any) {
-        console.log(ui)
+        // console.log(ui)
         let top: number = $(ui.position.top)[0];
         let left: number = $(ui.position.left)[0];
         const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE);
@@ -188,11 +193,12 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
           height: orgSize.height,
           top: top, left: left
         }
-        that.WIDGET_REQUEST.LOADED = false;
+        // that.WIDGET_REQUEST.LOADED = false;
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+        that.service.updateWidgetReq(that.WIDGET_REQUEST);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
-        that._widgetData.emit(that.WIDGET_REQUEST)
+        // that._widgetData.emit(that.WIDGET_REQUEST)
       }
     })
 
@@ -211,14 +217,14 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
   ngOnInit(): void {
 
 
-    this.service.currentPosition.subscribe((message: any) => {
-      console.log('currentPosition', message)
-      if (message.PID == this.WIDGET_REQUEST.PID) {
+    // this.service.currentPosition.subscribe((message: any) => {
+    //   console.log('currentPosition', message)
+    //   if (message.PID == this.WIDGET_REQUEST.PID) {
 
-        this.updateRequest(message);
-      }
+    //     this.updateRequest(message);
+    //   }
 
-    });
+    // });
     if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
       this.filterShow2 = true;
       this.filterShow1 = false;
@@ -323,7 +329,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck {
   }
   getFromChild2(e: any) {
     if (e) {
-      console.log(e, this.WIDGET_REQUEST)
+      // console.log(e, this.WIDGET_REQUEST)
       // console.
     }
   }

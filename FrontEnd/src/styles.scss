@@ -240,3 +240,6 @@ transition: .3s all;
   color:orange !important;
   text-shadow: 0 1px 1.5px #000 !important;
   }
+  .inner-panel{
+    position:absolute;z-index:999;
+  }

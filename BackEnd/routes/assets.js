@@ -17,14 +17,14 @@ router.post('/addAssetConfig', (req, res) => {
     if (req.body.PID) {
         // update
         // console.log('update')
-        sql = 'UPDATE asset_config_tbl SET CONFIG_NAME=?, ASSET_ID=?, INDUSTRIAL_TYPE=?, INDUSTRIAL_DATA_SOURCE=?, CONNECTION_TYPE=?, TRACKING_DEVICE=?, SENSOR=?, SENSOR_CATEGORY=?, SENSOR_DATA_TYPE=?, MAC_ADDRESS=?, COMPANY_ID = ?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
+        sql = 'UPDATE asset_config_tbl SET CONFIG_NAME=?, ASSET_ID=?, INDUSTRIAL_TYPE=?, INDUSTRIAL_DATA_SOURCE=?, CONNECTION_TYPE=?, TRACKING_DEVICE=?, SENSOR=?, SENSOR_CATEGORY=?, SENSOR_DATA_TYPE=?, MAC_ADDRESS=?,STATIC_COORDS=?, COMPANY_ID = ?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
+        todo = [req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = 'updated'
     } else {
         MAC_DETAILS = req.body.MAC_DETAILS;
 
-        sql = `INSERT INTO asset_config_tbl(PID, CONFIG_NAME, ASSET_ID, INDUSTRIAL_TYPE, INDUSTRIAL_DATA_SOURCE, CONNECTION_TYPE, TRACKING_DEVICE, SENSOR, SENSOR_CATEGORY, SENSOR_DATA_TYPE, MAC_ADDRESS, COMPANY_ID, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,? , ? )`;
-        todo = ['', req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date()];
+        sql = `INSERT INTO asset_config_tbl(PID, CONFIG_NAME, ASSET_ID, INDUSTRIAL_TYPE, INDUSTRIAL_DATA_SOURCE, CONNECTION_TYPE, TRACKING_DEVICE, SENSOR, SENSOR_CATEGORY, SENSOR_DATA_TYPE, MAC_ADDRESS,STATIC_COORDS, COMPANY_ID, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,? , ? )`;
+        todo = ['', req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date()];
         errMessage = 'added'
     }
     db.query(sql, todo, (err, result, fields) => {
@@ -530,7 +530,7 @@ router.get('/getLocationsByID/:ASSET_CONFIG_ID', (req, res) => {
 // get all chart requests
 router.get('/allChartRequest/:IS_DRAGGED/:COMPANY_ID', (req, res) => {
 
-    let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE  FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=? AND widget_request_tbl.COMPANY_ID=?`
+    let sql = `SELECT widget_request_tbl.*,asset_config_tbl.CONFIG_NAME,asset_config_tbl.CONNECTION_TYPE,asset_config_tbl.STATIC_COORDS  FROM widget_request_tbl LEFT JOIN asset_config_tbl ON asset_config_tbl.PID=widget_request_tbl.ASSET_CONFIG_ID WHERE widget_request_tbl.IS_DRAGGED=? AND widget_request_tbl.COMPANY_ID=?`
     let todo = [req.params.IS_DRAGGED, req.params.COMPANY_ID];
     let sql2;
     let locations = [];
@@ -702,7 +702,7 @@ router.post('/getDeviceHistory', async (req, res) => {
     let sql2;
     let data;
     let todo2;
-    console.log(req.body.LOCATION)
+    // console.log(req.body.LOCATION)
     if (req.body.LOCATION) {
         sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND LOCATION=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
         todo2 = [req.body.ASSET_CONFIG_ID, req.body.LOCATION, req.body.DEVICE_ID, req.body.START_DATE, req.body.END_DATE]
@@ -810,6 +810,7 @@ router.post('/setWidgetLayout', (req, res) => {
 
     if (req.body.PID) {
         // update
+        console.log(req.body)
 
         sql = 'UPDATE widget_layout_tbl SET HEIGHT=? WHERE PID=?';
         todo = [req.body.HEIGHT, req.body.PID];
@@ -820,12 +821,13 @@ router.post('/setWidgetLayout', (req, res) => {
         todo = ['', req.body.HEIGHT, req.body.COMPANY_ID];
         errMessage = 'added'
     }
-    db.query(sql, todo, (err, result, fields) => {
-        if (err)
-            throw err;
-        return res.status(400).send({
-            msg: err
-        });
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+            res.send({
+                data: result[0],
+                status: 200
+            })
 
 
     })

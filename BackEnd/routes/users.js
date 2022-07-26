@@ -62,6 +62,19 @@ router.post('/uploadfile', (req, res) => {
         error: error.message
     })
 })
+router.post('/getCompanyByID', (req, res) => {
+    let sql = 'SELECT * FROM company_tbl WHERE PID=?';
+    let todo = [req.body.COMPANY_ID]
+    db.query(sql, todo, (err, result) => {
+
+        if (err) throw err;
+        else
+            res.send({
+                data: result,
+                status: 200
+            })
+    })
+})
 
 router.post('/getAllCompanyByType', (req, res) => {
     let sql = 'SELECT * FROM company_tbl WHERE COMPANY_TYPE=?';

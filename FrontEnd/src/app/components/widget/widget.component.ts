@@ -161,7 +161,7 @@ export class WidgetComponent implements OnInit {
 
   }
   async confirmData() {
-    console.log(this.newForm)
+    // console.log(this.newForm)
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       // this.Values.COMPANY_ID = session.COMPANY_ID;
@@ -175,7 +175,7 @@ export class WidgetComponent implements OnInit {
           width: 330, height: 320, left: 0, top: 0
         }
         this.Values.WIDGET_SIZE = JSON.stringify(params);
-        this.Values.LOADED = false;
+        this.Values.LOADED = true;
       } if (this.chartChoosen) {
         // by default x axis as date wise        
         this.Values.XAXES = this.xAxesOPTION[0].key
@@ -224,10 +224,15 @@ export class WidgetComponent implements OnInit {
   }
   companiesList: any = [];
   getAllComp() {
-    this.dataService.getAllCompanies().subscribe(res => {
-      this.companiesList = res.data;
+    // this.dataService.getAllCompanies().subscribe(res => {
+    //   this.companiesList = res.data;
+      
 
 
+    // })
+    const session =this.dataService.getSessionData();
+    this.newForm.patchValue({
+      COMPANY_ID:session.COMPANY_ID
     })
   }
 }

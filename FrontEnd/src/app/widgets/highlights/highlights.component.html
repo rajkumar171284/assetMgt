@@ -1,10 +1,10 @@
 
-<div [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
-[style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="div-absolute">
+<div #highlights  [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+[style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="inner-panel">
 
-<mat-card #divBoard id="{{widgetIndex}}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="resizable my-card bg11">
+<mat-card style="resize:both" (resized)="onResized($event)" [ngClass]="{'resizable':dataService.getAccess()}"  [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="overflow-hidden my-card bg11">
    
-    <span appWidgetAccessIf  class="mapped-close">
+    <!-- <span appWidgetAccessIf  class="mapped-close">
         <mat-icon color="accent" matTooltip="{{WIDGET_REQUEST.dragDisabled?'Drag disabled':'Drag enabled'}}"
          (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled"> 
           {{WIDGET_REQUEST.dragDisabled?'layers_clear':'layers'}}</mat-icon>
@@ -23,8 +23,23 @@
         <mat-card-header class="text-uppercase">
             HIGHLIGHTS OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}
         </mat-card-header>
-    </div>
+    </div> -->
 
+    <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
+
+    </app-header-widget>
+
+    <app-footer-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
+
+    </app-footer-widget>
+
+
+
+    <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
+        <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
+    </ng-container>
+
+    <ng-container *ngIf="WIDGET_REQUEST.LOADED">
 
 
     <div *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'COUNT'">
@@ -69,6 +84,7 @@
             <!-- <img class="" src="assets/inactive.png" /> -->
         </mat-card-content>
     </div>
+    </ng-container>
 </mat-card>
 
 </div>

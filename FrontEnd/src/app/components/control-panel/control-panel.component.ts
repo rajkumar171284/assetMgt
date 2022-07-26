@@ -84,10 +84,10 @@ export class ControlPanelComponent implements OnInit {
   }
   openDialog() {
     this.updateConn = false;
-    console.log(this.tabIndex, tabLabel.Connections, tabLabel.Sensors)
+    // console.log(this.tabIndex, tabLabel.Connections, tabLabel.Sensors)
     if (this.tabIndex === tabLabel.Connections) {
       let dialogRef = this.dialog.open(AddConnectionComponent, {
-        width: '100px',
+        width: '500px',
         data: null
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -105,7 +105,11 @@ export class ControlPanelComponent implements OnInit {
       });
     } else if (this.tabIndex === tabLabel.Configuration) {
       const dialogRef = this.dialog.open(AddAssetConfigComponent, {
-        // width: '1000px',
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+        height: '90%',
+        width: '90%',
+        panelClass: 'full-screen-modal',
         data: null
       });
       dialogRef.afterClosed().subscribe(result => {

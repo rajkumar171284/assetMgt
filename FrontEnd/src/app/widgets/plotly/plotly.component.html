@@ -1,11 +1,10 @@
-<div id="{{widgetIndex}}" [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)"
-    [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)"
-    style="position:absolute;z-index:999">
+<div  class="inner-panel" #plotly [style.top.px]="service.getProp('t',WIDGET_REQUEST)"
+    [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+    [style.height.px]="service.getProp('H',WIDGET_REQUEST)">
 
 
-    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
-        [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item 
-        class="my-card bg11 overflow-hidden">
+    <mat-card   [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+        [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item class="my-card bg11 overflow-hidden">
 
         <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
@@ -20,9 +19,10 @@
         <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
             <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
         </ng-container>
-        <ng-container >
-            <app-history-filter [reLoad]="WIDGET_REQUEST.LOADED" [xAxisName]="WIDGET_REQUEST.XAXES" (setLoader)="getLoader($event)"
-                (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
+        <ng-container>
+            <app-history-filter [reLoad]="WIDGET_REQUEST.LOADED" [xAxisName]="WIDGET_REQUEST.XAXES"
+                (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">
+            </app-history-filter>
 
 
             <div *ngIf="errMessage" class="pos-flex">
@@ -32,7 +32,7 @@
             </div>
 
             <div [appToHide]="isDataFound">
-                
+
                 <app-common-chart1 (_sendToParent)="getFromChild2($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"
                     [totalDevice]="widgetResponse.totalDevice" [chartHeight]="chartHeight" [chartWidth]="chartWidth">
 

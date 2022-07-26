@@ -139,16 +139,29 @@
                     </mat-form-field>
 
                 </div>
+
+
                 <div class="col-md-4">
                     <mat-icon (click)="unselect($event)">refresh</mat-icon>Reset Protocol
+
+                </div>
+                <div class="col-md-4">
+                    <mat-label>IS STATIC COORDS</mat-label>
+              
+
+                <mat-radio-group (change)="changeValue($event)" formControlName="STATIC_COORDS" aria-label="Select an option">
+                    <mat-radio-button [value]="macActive">Active</mat-radio-button>
+                    <mat-radio-button [value]="macInactive">In Active</mat-radio-button>
+                </mat-radio-group>
+                        
 
                 </div>
             </div>
 
             <mat-grid-list *ngIf="typeName && typeName.PID" cols="10">
-                <button (click)="confirmData()" mat-raised-button color="primary">Update Config</button>
+                <button (click)="confirmData()" mat-raised-button class="m-2 btn-theme1">Update Config</button>
 
-                <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
+                <button mat-raised-button (click)="confirmClose()" class="m-2 btn-theme2">Cancel</button>
 
 
             </mat-grid-list>
@@ -166,27 +179,7 @@
                     </div>
                     <div class="col-md-10 offset-md-1">
                         <ng-container formArrayName="MAC_DETAILS">
-                            <div class="row">
-                                <!-- <div class="col-md-6">
-                                    <mat-form-field>
-                                        <mat-label>API ROUTES</mat-label>
-                                        <mat-select  formControlName="METHOD">
-                
-                                            <mat-option *ngFor="let key of configRouter" [value]="key">
-                                                {{key}}
-                                            </mat-option>
-                
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div> -->
-                                <!-- <div class="col-md-6">
-                                    <mat-form-field>
-                                        <mat-label>HOST NAME</mat-label>
-                                        <input matInput formControlName="HOST" placeholder="eg. 0.0.0.0" type="text"
-                                            class="example-right-align">
-                                    </mat-form-field>
-                                </div> -->
-                            </div>
+                            
 
                             <ng-container *ngFor="let item of MAC_DETAILS.controls; let i = index">
 
@@ -219,6 +212,20 @@
                                         </mat-form-field>
                                     </div>
                                     <div class="col-md-6">
+                                        <mat-form-field>
+                                            <mat-label>LATITUDE</mat-label>
+                                            <input matInput formControlName="LATITUDE" placeholder="" type="text"
+                                                class="example-right-align">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <mat-form-field>
+                                            <mat-label>LONGITUDE</mat-label>
+                                            <input matInput formControlName="LONGITUDE" placeholder="" type="text"
+                                                class="example-right-align">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div>
                                             <mat-label>STATUS</mat-label>
                                         </div>
@@ -233,9 +240,10 @@
                         </ng-container>
                     </div>
                     <mat-grid-list *ngIf="typeName && typeName.PID" cols="10">
-                        <button (click)="updateDeviceDetails()" mat-raised-button color="primary">Update MAC</button>
+                        <button  (click)="updateDeviceDetails()" mat-raised-button class="m-2 btn-theme1">
+                             Update MAC</button>
 
-                        <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
+                        <button mat-raised-button (click)="confirmClose()" class="m-2 btn-theme2">Cancel</button>
 
 
                     </mat-grid-list>
@@ -247,9 +255,9 @@
         </mat-tab>
     </mat-tab-group>
     <mat-grid-list *ngIf="!typeName" cols="10">
-        <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
+        <button (click)="confirmData()" mat-raised-button class="m-2 btn-theme1">Save</button>
 
-        <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
+        <button mat-raised-button (click)="confirmClose()" class="m-2 btn-theme2">Cancel</button>
 
 
     </mat-grid-list>

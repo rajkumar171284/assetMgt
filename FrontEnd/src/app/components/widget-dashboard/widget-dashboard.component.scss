@@ -1,39 +1,445 @@
-.categories {
+@import "./node_modules/angular-resize-element/bundles/style.scss";
+.container-fluid {
+    background: #f5f5f5;    
+}
+.sticky-top{
+}
+.widgetDraggedPanel{
+
+  padding-top:40px ;
+position: relative;    
+}
+.undraggedBlock{
+    width: 100%;
+}
+.init-text{
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    transform: translateY(-50%);
+    justify-content: center;
+    text-align: center;
+    justify-items: end;
+    width: 100%;
+    color: #888;
+    text-transform: uppercase;
+}
+.listed-charts {
+    
+    padding: 0;
+    position: relative;
+}
+.minWidgetHight{
+    height: 500px !important;
+}
+.draggedEmpty{
+
+    border: 1px dotted green;
+}
+
+
+
+.listed-charts img {
+    height: 50px;
+   
+    // filter: sepia(100%) hue-rotate(190deg) saturate(500%); 
+    // filter: grayscale(1);
+    filter: brightness(0) invert(1);
+    opacity: .8;
+}
+
+.Widget-block .listed-charts {
+    background:rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0px 8px #fff;
+    margin-bottom :5px;
+    padding:5px;
+    mat-card-subtitle ,mat-card-content{
+        color: #fff !important;
+        font-size: 11px;    text-shadow: 0 1px 2px #000;
+    }
+}
+
+.widget-panel {
+    // background-color: dodgerblue;
+    // background: linear-gradient(315deg, dodgerblue 0%, #0c0c0c 74%);
+    // background:linear-gradient(315deg, #a3c2f7 0%, #fff 74%);
+    background:linear-gradient(315deg, #fff 0%, #a3c2f7 74%);
+
+    position: relative;
+    
+
+    overflow-x: hidden;
+    overflow-y: scroll;transition: .5s all;
+    padding: 5px;
+    transition: .3s all;
+}
+.footer-container{
+  position: absolute;bottom: 0;z-index: 99;
+  width: 100%;display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;padding: 5px;
+}
+.closed{
+    cursor: pointer;
+    position: fixed;top:65px;right:40px;z-index: 9999;    background: #f3f3f3;
+    border-radius: 3px;height: 24px;
+}
+.openWidget{cursor: pointer;
+    position: absolute;top:5px;right:5px;z-index: 999;
+}
+
+.widget-panel mat-label {
+    // color: #fff
+    text-transform: uppercase;
+}
+
+.listed-charts mat-card-content {
     display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.listed-charts mat-card-subtitle {
+    margin-bottom: 0;
+}
+
+
+
+
+// drag/drop
+
+.example-container {
+    width: 300px;
+    max-width: 100%;
+    margin: 0 25px 25px 0;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.example-list {
+    border: solid 1px #ccc;
+    min-height: 60px;
+    // background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    // display: block;
+}
+
+.example-box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap; /* NEW */
-    width: 100%;
-  }
-  
-  .inner {
-    width: 100%;
-    height: 100%;
-    border: 1px solid blue;
-    text-align: center;
-    line-height: 5rem;
-    background-color: #efefef;
+    box-sizing: border-box;
     cursor: move;
+    background: transparent;
+    font-size: 14px;
+}
+
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+        0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+    border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+
+// resize2
+
+#test{
+    width:200px;
+    height:200px;
+    border:1px solid red;
+}
+.popup {
+    z-index: 9;
+    background-color: #f1f1f1;
+    border: 1px solid #d3d3d3;
+    text-align: center;
+    min-height: 150px;
+    min-width: 300px;
+    max-height: 300px;
+    max-width: 600px;
   }
   
-  .categories-item {
-    flex: 1 0 5rem; /* NEW */
-    margin: 5px; /* NEW */
-    background-color: transparent;
-    height: 5rem;
-    text-align: center;
-    line-height: 5rem;
+  /*Drgable */
+  
+  .popup {
+    position: absolute;
+    /*resize: both; !*enable this to css resize*! */
+    overflow: auto;
+    cursor  :col-resize;
+}
+  
+  .popup-header {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    background-color: #2196f3;
+    color: #fff;
+  }
+  
+  /*Resizeable*/
+  
+  .popup .resizer-right {
+    width: 5px;
+    height: 100%;
+    background: transparent;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: e-resize;
+  }
+  
+  .popup .resizer-bottom {
+    width: 100%;
+    height: 5px;
+    background: transparent;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: n-resize;
+  }
+  
+  .popup .resizer-both {
+    width: 5px;
+    height: 5px;
+    background: transparent;
+    z-index: 10;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: nw-resize;
+  }
+  
+  /*NOSELECT*/
+  
+  .popup * {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+  }
+
+//   new resize 2
+
+.resizer {
+    /* All resizers are positioned absolutely inside the element */
+    position: absolute;
+}
+
+/* Placed at the right side */
+.resizer-r {
+    cursor: col-resize;
+    height: 100%;
+    right: 0;
+    top: 0;
+    width: 5px;
+}
+
+/* Placed at the bottom side */
+.resizer-b {
+    bottom: 0;
+    cursor: row-resize;
+    height: 5px;
+    left: 0;
+    width: 100%;
+}
+
+
+
+
+
+
+
+// 
+.rectangle {
+    position: relative;
+    top: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 150px;
+    background-color: #fd4140;
+    border: solid 1px #121621;
+    color: #121621;
+    margin: auto;
+  }
+
+  mwlResizable {
+    box-sizing: border-box; // required for the enableGhostResize option to work
+  }
+
+  .resize-handle-top,
+  .resize-handle-bottom {
+    position: absolute;
+    height: 5px;
+    cursor: row-resize;
+    width: 100%;
+  }
+
+  .resize-handle-top {
+    top: 0;
+  }
+
+  .resize-handle-bottom {
+    bottom: 0;
+  }
+
+  .resize-handle-left,
+  .resize-handle-right {
+    position: absolute;
+    height: 100%;
+    cursor: col-resize;
+    width: 5px;
+  }
+
+  .resize-handle-left {
+    left: 0;
+  }
+
+  .resize-handle-right {
+    right: 0;
+  }
+
+
+
+//   
+.ui-widget-header {
+    background:#b9cd6d;
+    border: 1px solid #b9cd6d;
+    color: #FFFFFF;
+    font-weight: bold;
+ }
+ .ui-widget-content {
+    background: #cedc98;
+    border: 1px solid #DDDDDD;
+    color: #333333;
+ }
+ #resizable,.resizable-x { width: 50%; height: 350px; padding: 0.5em;
+    text-align: center; margin: 0; }
+.cdk-drag{
+    // display:flex;
+}
+
+.top-list {
+    border: solid 1px #ccc;
+    min-height: 360px;
+    background: lightgray;
+    border-radius: 4px;
+    overflow: hidden;
+    /* display: block; */
     position: relative;
   }
-  .placeholder {
-    flex: 1 0 5rem; /* NEW */
-    margin: 5px; /* NEW */
-    background-color: white;
-    height: 5rem;
-    text-align: center;
-    line-height: 5rem;
-    border: 1px;
+  .example-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 25px 25px 0;
+    display: inline-block;
+    vertical-align: top;
   }
-  .cdk-drag-animating {
+  
+  .top-list {
+    border: solid 1px #ccc;
+    min-height: 360px;
+    background: lightgray;
+    border-radius: 4px;
+    overflow: hidden;
+    /* display: block; */
+    position: relative;
+  }
+  
+  .top-list .example-box {
+    position:absolute;
+  }
+  
+  .bottom-list {
+    border: solid 1px #ccc;
+    min-height: 60px;
+    background: darkgray;
+    border-radius: 4px;
+    overflow: hidden;
+  
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  
+  
+  .example-box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    /* flex-direction: row; */
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    cursor: move;
+    background: white;
+    font-size: 14px;
+    margin:10px;
+  }
+   
+  .cdk-drag-placeholder {
+    opacity: 1;
+    background: red
+  }
+  
+  .cdk-drag-preview {
+    box-sizing: border-box;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+                0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  }
+  
+  .cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
+  
+  .bottom-container.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  .widget-box{
+    overflow: hidden;
+  }
+  .inner-panel{
+    border: 1px solid;
+  }
+  .div {
+    position: absolute;
+    height: 50%;
+    width: 50%;
+    top: 0;
+    left: 0;
+    background-color: red;
+    resize: both;
+    overflow: auto;
+  }
+  
   

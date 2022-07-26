@@ -1,30 +1,62 @@
-<app-history-filter (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-history-filter>
+<div class="inner-panel" #divBoard id="{{widgetIndex}}" [style.top.px]="service.getProp('t',WIDGET_REQUEST)"
+    [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+    [style.height.px]="service.getProp('H',WIDGET_REQUEST)">
+
+    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+        [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item class="my-card bg11 overflow-hidden">
 
 
-<div *ngIf="widgetResponse.totalDevice">
+        <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
-    <div [ngClass]="{'parent':item.units.length>0}" *ngFor="let item of widgetResponse.totalDevice;let i=index">
-        <div *ngIf="item.units.length>0" class="g-flex">
-            <mat-label class="p-header" color="primary">{{item.DEVICE_ID}}</mat-label>
-        </div>
-        <div *ngIf="item.units.length>0" class="g-flex">
+        </app-header-widget>
 
-            <div *ngFor="let sensor of item.units">
-                <mat-card class="tcard">
-                    <div>{{sensor.key}}</div>
+        <app-footer-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
-                    <div>{{sensor.value | number:'2.2'}}</div>
-                </mat-card>
+        </app-footer-widget>
 
+
+
+        <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
+            <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
+        </ng-container>
+        <ng-container>
+            <div *ngIf="errMessage" class="pos-flex">
+                <div class="text-center text-danger text-uppercase">
+                    {{errMessage?errMessage:''}}
+                </div>
+            </div>
+            <!-- <div *ngIf="loading" class="overlay">
+                <mat-spinner></mat-spinner>
+            </div> -->
+            <app-history-filter [reLoad]="WIDGET_REQUEST.LOADED" [xAxisName]="WIDGET_REQUEST.XAXES" (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">
+            </app-history-filter>
+            <div *ngIf="widgetResponse.totalDevice">
+
+                <div [ngClass]="{'parent':item.units && item.units.length>0}"
+                    *ngFor="let item of widgetResponse.totalDevice;let i=index">
+                    <div *ngIf="item.units.length>0" class="g-flex">
+                        <mat-label class="p-header" color="primary">{{item.DEVICE_ID}}</mat-label>
+                    </div>
+                    <div *ngIf="item.units.length>0" class="g-flex">
+
+                        <div *ngFor="let sensor of item.units">
+                            <mat-card class="tcard">
+                                <div>{{sensor.key}}</div>
+
+                                <div>{{sensor.value | number:'2.2'}}</div>
+                            </mat-card>
+
+
+                        </div>
+                    </div>
+                </div>
 
             </div>
-        </div>
-    </div>
+        </ng-container>
 
-</div>
-<div *ngIf="loading" class="overlay"> 
-    <mat-spinner ></mat-spinner>
-</div>
-<div class="text-center text-danger text-uppercase">
-    {{errMessage?errMessage:''}}
+
+
+
+
+    </mat-card>
 </div>
