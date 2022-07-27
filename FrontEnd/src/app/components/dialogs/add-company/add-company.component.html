@@ -6,12 +6,13 @@
 </mat-toolbar>
 <form class="form-container" [formGroup]="newForm">
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-7 pt-3">
             <mat-grid-list cols="1" rowHeight="2:1">
 
                 <mat-form-field>
                     <mat-label>COMPANY NAME</mat-label>
-                    <input formControlName="COMPANY_NAME" matInput placeholder="" type="text" class="example-right-align">
+                    <input formControlName="COMPANY_NAME" matInput placeholder="" type="text"
+                        class="example-right-align">
                 </mat-form-field>
 
             </mat-grid-list>
@@ -20,7 +21,8 @@
 
                 <mat-form-field>
                     <mat-label>ADDRESS LINE1</mat-label>
-                    <input formControlName="COMPANY_ADDRESS_LINE1" matInput placeholder="" type="text" class="example-right-align">
+                    <input formControlName="COMPANY_ADDRESS_LINE1" matInput placeholder="" type="text"
+                        class="example-right-align">
                 </mat-form-field>
 
             </mat-grid-list>
@@ -28,19 +30,21 @@
 
                 <mat-form-field>
                     <mat-label>ADDRESS LINE2</mat-label>
-                    <input formControlName="COMPANY_ADDRESS_LINE2" matInput placeholder="" type="text" class="example-right-align">
+                    <input formControlName="COMPANY_ADDRESS_LINE2" matInput placeholder="" type="text"
+                        class="example-right-align">
                 </mat-form-field>
 
             </mat-grid-list>
-            
+
+
             <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
                 <mat-label>STATUS</mat-label>
                 <mat-radio-group formControlName="STATUS" placeholder="Select an option">
-                    <mat-radio-button class="m-2" color="primary"  [value]="accessYes">YES</mat-radio-button>
-    
-                    <mat-radio-button class="m-2" color="primary"  [value]="accessNo">NO</mat-radio-button>
+                    <mat-radio-button class="m-2" color="primary" [value]="accessYes">YES</mat-radio-button>
+
+                    <mat-radio-button class="m-2" color="primary" [value]="accessNo">NO</mat-radio-button>
                 </mat-radio-group>
-    
+
             </mat-grid-list>
 
             <!-- <mat-grid-list cols="1" rowHeight="2:1">
@@ -59,32 +63,67 @@
             </mat-grid-list> -->
 
         </div>
-    
-        <div class="col-md-5 rights">
-            
+
+        <div class="col-md-5 pt-3 rights">
+            <mat-grid-list cols="1" rowHeight="2:1">
+
+                <mat-form-field>
+                    <mat-label>APPLICATION SOLUTION NAME</mat-label>
+                    <input formControlName="APP_SOLUTION_NAME" matInput placeholder="" type="text"
+                        class="example-right-align">
+                </mat-form-field>
+
+            </mat-grid-list>
             <mat-grid-list class="mt-2" cols="1" rowHeight="1:1">
-    
+
                 <mat-label>UPLOAD LOGO</mat-label>
-        
+
             </mat-grid-list>
             <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
-                <img style="height:100px;width:100px" [src]="bImg | sanitize">
-                <input type="file" class="custom-file-input" id="customFile" name="uploadedImage"
+
+                <div class="container">
+                    <div class="card">
+                        <!-- <h3>Upload Files</h3> -->
+                        <div class="drop_box">
+                            <span *ngIf="bImg" (click)="bImg=null" class="editImg">
+                                <mat-icon>edit</mat-icon>
+
+                            </span>
+                            <ng-container *ngIf="!bImg">
+                                <header>
+                                    <h4>Select File here</h4>
+                                </header>
+                                <p>Files Supported: PNG, JPEG & JPG</p>
+                                <input type="file" (change)="onSelectFile($event)" hidden accept=".png,.jpg,.jpeg"
+                                    id="fileID" style="display:none;">
+                                <button (click)="enableClick()" class="btn">Choose File</button>
+                            </ng-container>
+                            <ng-container *ngIf="bImg">
+                                <img class="logo-upload" [src]="bImg | sanitize">
+                            </ng-container>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- <img class="logo-upload" [src]="bImg | sanitize">
+                <input type="file" class="btn-theme2" id="customFile" name="uploadedImage"
                 (change)="onSelectFile($event)" #UploadFileInput>
-              
-    
+                <button mat-raised-button (click)="uploadLogo()">Upload</button> -->
+
+
             </mat-grid-list>
+
         </div>
-   
-</div>
+
+    </div>
 
 
 
 
     <mat-grid-list cols="10">
-        <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
+        <button (click)="confirmData()" mat-raised-button class="btn-theme1">Save</button>
 
-        <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
+        <button mat-raised-button (click)="confirmClose()" class="btn-theme2">Cancel</button>
 
 
     </mat-grid-list>

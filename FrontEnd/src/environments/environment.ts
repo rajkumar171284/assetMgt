@@ -8,7 +8,7 @@ export const environment = {
   vtsURL: 'http://34.233.90.129:8000/',
   url: 'http://10.1.1.139:8001/api',//public ip
   // url:'https://35.193.11.55:3306/api',
-
+  imgUrl: 'http://10.1.1.139:8001/images/'
 };
 
 /*

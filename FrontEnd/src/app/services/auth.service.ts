@@ -3,15 +3,20 @@ import { environment } from 'src/environments/environment';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs';
-const headers = new HttpHeaders().set('content-type', 'application/json').set('Access-Control-Allow-Origin', 'http://localhost:4200').set("Access-Control-Allow-Methods", "POST,GET,PUT,PATCH,DELETE,OPTIONS");
+const headers = new HttpHeaders().set('content-type', 'application/json').set('Access-Control-Allow-Origin', '*').set("Access-Control-Allow-Methods", "POST,GET,PUT,PATCH,DELETE,OPTIONS");
 
-// let headers = new HttpHeaders()
-
+// let headers2 = new HttpHeaders().set('Access-Control-Allow-Origin', 'http://10.1.1.139:4200/').set("Content-Type", "multipart/form-data")
+let headers2 = new HttpHeaders();
+// .set('Access-Control-Allow-Origin', '*').set('Content-Type', 'multipart/form-data');
 // headers=headers.append('content-type','application/json')
-// headers=headers.append('Access-Control-Allow-Origin', '*')
-// headers=headers.append('content-type','application/x-www-form-urlencoded')
+// headers2=headers2.append('Access-Control-Allow-Origin', '*')
+// headers2=headers2.append('content-type','application/x-www-form-urlencoded')
+// 'Content-Type': 'multipart/form-data',
 const options = {
   headers: headers
+}
+const opt = {
+  headers: headers2
 }
 @Injectable({
   providedIn: 'root'
@@ -27,7 +32,7 @@ export class AuthService {
     const session = JSON.parse(JSON.stringify(sessionStorage.getItem('session')));
     return JSON.parse(session);
   }
-  authLogin(params: any): Observable<any> {
+  authLogin(params: FormData): Observable<any> {
     return this.http.post(`${environment.url}/asset/login`, params, options).pipe(map(response => {
       return response;
     }))
@@ -213,7 +218,7 @@ export class AuthService {
       return response;
     }))
   }
-  
+
   getCompanyDetails(params: any): Observable<any> {
     return this.http.post(`${environment.url}/users/getCompanyByID`, params, options).pipe(map(response => {
       return response;
@@ -236,7 +241,14 @@ export class AuthService {
     }))
   }
   uploadfile(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/users/uploadfile`, params, options).pipe(map(response => {
+    return this.http.post(`${environment.url}/users/uploadfile`, params, opt).pipe(map(response => {
+      return response;
+    }))
+  }
+
+  uploadLogo(params: FormData): Observable<any> {
+    console.log(params)
+    return this.http.post(`${environment.url}/users/addCompanyLogo`, params, opt).pipe(map(response => {
       return response;
     }))
   }

@@ -20,10 +20,15 @@ export class XAxisService {
   private isWidgetRemoved=new BehaviorSubject('');
   removedWidgetRequest =this.isWidgetRemoved.asObservable();
 
-
+  private company =new BehaviorSubject('');
+  currCompany=this.company.asObservable();
 
   value = new Subject();
   constructor() { }
+
+  updateCompany(msg:any){
+    this.company.next(msg)
+  }
 
   updateWidgetReq(request:any){
   this.updatedWidgetRequest.next(request);

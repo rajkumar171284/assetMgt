@@ -1,5 +1,5 @@
 const express = require('express');
-// const mysql = require('mysql');
+
 const createError = require('http-errors');
 const PORT = process.env.PORT | 4202;
 const app = express();
@@ -15,21 +15,23 @@ const fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser')
 var http = require('http');
 const server = http.createServer(app)
+var multer = require('multer');
+const DIR='../public';
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-// app.use(function (req, res, next) {
-//     res.header('Content-Type', 'application/json');
-//     next();
-// });
+
 app.use(fileUpload());
 
 app.use(cors({
     origin: '*'
 }));
+
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
 
 
 app.use('/api', authRouter);
@@ -46,7 +48,7 @@ app.use((err, req, res, next) => {
         message: err.message,
     });
 });
-
+app.use(multer({dest:DIR}).any());
 // app.listen(PORT, () => {
 //     console.log('server on ',PORT)
 // })
