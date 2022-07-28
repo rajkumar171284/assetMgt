@@ -78,17 +78,17 @@
 
                 <mat-label>UPLOAD LOGO</mat-label>
 
+                <span *ngIf="bImg" (click)="bImg=null" class="editImg">
+                    <!-- <mat-icon matTooltip="Edit Widget" color="secondary">edit</mat-icon> -->
+                    Edit logo
+                </span>
             </mat-grid-list>
             <mat-grid-list class="mt-2d" cols="1" rowHeight="2:1">
 
                 <div class="container">
                     <div class="card">
-                        <!-- <h3>Upload Files</h3> -->
                         <div class="drop_box">
-                            <span *ngIf="bImg" (click)="bImg=null" class="editImg">
-                                <mat-icon>edit</mat-icon>
-
-                            </span>
+                           
                             <ng-container *ngIf="!bImg">
                                 <header>
                                     <h4>Select File here</h4>

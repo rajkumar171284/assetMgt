@@ -165,9 +165,9 @@ export class AddMacDetailsComponent implements OnInit {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
-      console.log(this.Values)
+      // console.log(this.Values)
       this.dataService.addMACByConfigID(this.Values).subscribe(res => {
-        console.log(res)
+        // console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
         this.openSnackBar()
@@ -183,9 +183,9 @@ export class AddMacDetailsComponent implements OnInit {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
-      console.log(this.Values)
+      // console.log(this.Values)
       this.dataService.updateDeviceByID(this.Values).subscribe(res => {
-        console.log(res)
+        // console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
         this.openSnackBar()

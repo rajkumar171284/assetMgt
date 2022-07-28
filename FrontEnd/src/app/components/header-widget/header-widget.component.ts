@@ -50,9 +50,12 @@ export class HeaderWidgetComponent {
    
       if(res && res.status==200){
         console.log('header-removed')
-        this.transfer.confirmWidgetRemoval(true);        
+        const data={isRemoved:true,row:item};
+        this.transfer.confirmWidgetRemoval(data);        
       }else{
-        this.transfer.confirmWidgetRemoval(false);
+        const data={isRemoved:true,row:item};
+
+        this.transfer.confirmWidgetRemoval(data);
       }
       
 

@@ -50,31 +50,30 @@ onResized(event: ResizedEvent) {
     let that = this;
     let x = that.divElement;
     // console.log(x)
-    // $(x).resizable({
-    //   stop: function (event: Event, ui: any) {
-    //     // console.log(ui)
-    //     let height: number = $(ui.size.height)[0];
-    //     let width: number = $(ui.size.width)[0];
-    //     let top: number = $(ui.position.top)[0];
-    //     let left: number = $(ui.position.left)[0];
-    //     const newSize: any = {
-    //       width: width, height: height, top: top,
-    //       left: left
-    //     }
+    $(x).resizable({
+      stop: function (event: Event, ui: any) {
+        // console.log(ui)
+        let height: number = $(ui.size.height)[0];
+        let width: number = $(ui.size.width)[0];
+        let top: number = $(ui.position.top)[0];
+        let left: number = $(ui.position.left)[0];
+        const newSize: any = {
+          width: width, height: height, top: top,
+          left: left
+        }
 
-    //     that.chartWidth = width;
-    //     that.chartHeight = height;
+        that.chartWidth = width;
+        that.chartHeight = height;
         
-    //     that.WIDGET_REQUEST.LOADED = false;
-    //     that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
+        that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
 
-    //     // sending/emitting data to parent-dashboard.ts for saving into api
-    //     that._widgetData.emit(that.WIDGET_REQUEST)
-    //   }
-    // });
+        // sending/emitting data to parent-dashboard.ts for saving into api
+        that._widgetData.emit(that.WIDGET_REQUEST)
+      }
+    });
     $(x).draggable({
       stop: function (event: Event, ui: any) {
-        console.log(ui)
+        // console.log(ui)
         let top: number = $(ui.position.top)[0];
         let left: number = $(ui.position.left)[0];
         const orgSize = JSON.parse(that.WIDGET_REQUEST.WIDGET_SIZE);
@@ -83,7 +82,6 @@ onResized(event: ResizedEvent) {
           height: orgSize.height,
           top: top, left: left
         }
-        that.WIDGET_REQUEST.LOADED = false;
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
@@ -141,7 +139,7 @@ onResized(event: ResizedEvent) {
 
           } else if (this.WIDGET_REQUEST.WIDGET_DATA == "STATUS") {
             this.labelMessage = `Active`;
-            this.labelMessage2 = `In-Active`;
+            this.labelMessage2 = `InActive`;
             const active = res.data.filter((a: any) => {
               return a.MAC_STATUS === 1
             })

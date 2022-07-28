@@ -111,14 +111,11 @@ router.post('/updateDeviceByID', (req, res) => {
     let errMessage = 'updated';
 
 
-    sql = "UPDATE mac_tbl SET MAC_NAME=?,MAC_ADDRESS=?, MAC_STATUS=?, LOCATION=?, MODIFY_BY=?, MODIFY_DATE=? WHERE PID=?";
-    todo = [MAC_DETAILS[0].MAC_NAME, MAC_DETAILS[0].MAC_ADDRESS, MAC_DETAILS[0].MAC_STATUS, MAC_DETAILS[0].LOCATION, req.body.CREATED_BY, new Date(), MAC_DETAILS[0].PID];
-    // todo = [MAC_DETAILS.map(item => [item.MAC_NAME, item.MAC_ADDRESS, item.MAC_STATUS, item.LOCATION, req.body.CREATED_BY, new Date(), item.PID])]
-    // console.log(todo)
+    sql = "UPDATE mac_tbl SET MAC_NAME=?,MAC_ADDRESS=?, MAC_STATUS=?, LOCATION=?,LATITUDE=?,LONGITUDE=?, MODIFY_BY=?, MODIFY_DATE=? WHERE PID=?";
+    todo = [MAC_DETAILS[0].MAC_NAME, MAC_DETAILS[0].MAC_ADDRESS, MAC_DETAILS[0].MAC_STATUS, MAC_DETAILS[0].LOCATION,MAC_DETAILS[0].LATITUDE,MAC_DETAILS[0].LONGITUDE, req.body.CREATED_BY, new Date(), MAC_DETAILS[0].PID];
     db.query(sql, todo, (err, result) => {
 
         if (err) {
-            // console.log(result, err)
 
             // throw err;
             return res.status(400).send({

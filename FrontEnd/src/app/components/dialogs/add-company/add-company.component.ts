@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
 import { environment } from 'src/environments/environment';
-import {XAxisService} from '../../../services/x-axis.service';
+import { XAxisService } from '../../../services/x-axis.service';
 @Component({
   selector: 'app-add-company',
   templateUrl: './add-company.component.html',
@@ -23,8 +23,8 @@ export class AddCompanyComponent implements OnChanges {
   public typeName: any;
   accessYes = true;
   accessNo = false;
-  public  imgUrl=environment.imgUrl;
-  constructor(public transfer:XAxisService, private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
+  public imgUrl = environment.imgUrl;
+  constructor(public transfer: XAxisService, private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.newForm = this.fb.group({
       PID: [''],
@@ -46,11 +46,11 @@ export class AddCompanyComponent implements OnChanges {
       })
 
     } else if (data && data.PID) {
-      this.bImg = this.imgUrl+data.LOGO;
+      this.bImg = this.imgUrl + data.LOGO;
       this.typeName = data;
       this.newForm.patchValue(data);
       this.newForm.patchValue({
-        // LOGO:data.LOGO,
+        LOGO: data.LOGO,
         STATUS: data.STATUS ? true : false,
 
       });
@@ -67,14 +67,20 @@ export class AddCompanyComponent implements OnChanges {
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       this.Values.CREATED_BY = session.PID;
-      this.Values.LOGO = this.selectedLogo.name;
+      // this.Values.LOGO = this.selectedLogo && this.selectedLogo.name?this.selectedLogo.name:this.Values.LOGO;
       this.dataService.createCompany(this.Values).subscribe(res => {
         // console.log(res)
 
         if (res && res.status == 200) {
           this.transfer.updateCompany(this.Values);
+          if (this.selectedLogo) {
 
-          this.uploadLogo();
+            this.uploadLogo();
+          } else {
+            this.dialogClose.emit(true);
+            this.confirmClose();
+          }
+
         } else {
           this.dialogClose.emit(true);
           this.confirmClose();
@@ -102,7 +108,7 @@ export class AddCompanyComponent implements OnChanges {
           this.bImg = event.target.result.toString();//working
           // update on form
           this.newForm.patchValue({
-            LOGO: file
+            LOGO: file.name
           })
         }
         reader.readAsDataURL(file); // read file as data url
@@ -147,9 +153,9 @@ export class AddCompanyComponent implements OnChanges {
   //   //   }
   //   // });
   // }
-  enableClick(){
-    const btnid=document.getElementById("fileID");
-    if(btnid){
+  enableClick() {
+    const btnid = document.getElementById("fileID");
+    if (btnid) {
       btnid.click();
     }
   }

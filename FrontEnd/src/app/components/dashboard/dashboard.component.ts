@@ -129,17 +129,41 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
       }
     })
     // get removal confirmation
-    this.subscription2 = this.service.removedWidgetRequest.subscribe(data => {
+    this.subscription2 = this.service.removedWidgetRequest.subscribe((data: any) => {
       console.log('removedWidgetRequest', data)
       if (data) {
         // reload 
         this.loader = true;
-        // this.getMappedChartRequest();
+        if (data.isRemoved && data.row.IS_DRAGGED == 1) {
+          this.splicedraggedWidget(data.row.PID);
+
+          
+        } else if (data.isRemoved && data.row.IS_DRAGGED == 0) {
+          //right panel-not dragged
+          this.spliceUndraggedWidget(data.row.PID);
+          
+        }
+        
       }
 
     })
   }
+  splicedraggedWidget(PID:number){
+    const index = this.draggedWidget$.map(x => x.PID).indexOf(PID)
+    if (index != -1) {
+      this.draggedWidget$.splice(index, 1);
+      this.loader = false;
+    }
+  }
+  spliceUndraggedWidget(PID:number){
+    const index = this.undraggedWidget$.map(x => x.PID).indexOf(PID)
+          // console.log(index)
+          if (index != -1) {
+            this.undraggedWidget$.splice(index, 1);
+            this.loader = false;
 
+          }
+  }
   async getSession() {
     const session = await this.dataService.getSessionData();
 
@@ -195,7 +219,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       // call all charts      
       this.getAllChartRequest();
-      
+
     });
   }
   async editRequest(pid: any) {
@@ -215,16 +239,11 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
         return el;
       });
       this.overAllCharts = this.dataSource.concat(this.doneList);
-      
-      // of(res.data).subscribe(z => {
-      //   this.undraggedWidget$ = z;
-      // })
-      this.undraggedObervable$.subscribe((z:any) => {
-        // console.log(z)
+      this.undraggedObervable$.subscribe((z: any) => {
         this.undraggedWidget$ = z.data;
       })
       // console.log(this.undraggedWidget$)
-this.getMappedChartRequest();
+      this.getMappedChartRequest();
       // 
     })
   }
@@ -266,7 +285,7 @@ this.getMappedChartRequest();
     currData.WIDGET_SIZE = JSON.stringify(prop);
     event.source.dropContainer.data[index].WIDGET_SIZE = JSON.stringify(prop);
     this.state = 'dragEnded';
-    currData.LOADED = false;
+    // currData.LOADED = false;
     // this.updateDraggedArr(currData);
     // this.updateWidget(currData);    // update api
     // let windex = this.draggedWidget$.findIndex(a => {
@@ -329,7 +348,7 @@ this.getMappedChartRequest();
     // })
     if (currData) {
 
-      currData.LOADED = false;
+      // currData.LOADED = false;
       this.updateDraggedArr(currData);
       console.log('currData', currData)
 
@@ -396,31 +415,40 @@ this.getMappedChartRequest();
   onDrop(event: CdkDragDrop<any>) {
     // console.log(event)
     if (event.previousContainer === event.container) {
+      console.log('1')
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex);
+        console.log('2')
+
     }
-    this.dragDisabledArr.push({ dragDisabled: false })
     const data = event.item.data;
-    // console.log(data)
+    console.log(data)
 
     if (data) {
-      this.changeStatus(data.PID)
+      this.changeStatus(data)
     }
 
   }
-  async changeStatus(pid: number) {
-    // const data = await this.getRequestDetails(pid, 'json');
+  async changeStatus(data: any) {
     let params = {
       IS_DRAGGED: 1,
-      PID: pid
+      PID: data.PID
     }
     // console.log(data)
-    this.dataService.chartRequestChangeStatus(params).subscribe(async res => {
-      this.getMappedChartRequest();
+    this.dataService.chartRequestChangeStatus(params).subscribe(res => {
+      if(res && res.status==200){
+        // success
+        // then remove from undragged array
+        data.IS_DRAGGED=1;
+        this.spliceUndraggedWidget(data.PID);
+        // push into dragged 
+        this.draggedWidget$.push(data);
+
+      }
 
     })
   }
@@ -564,7 +592,7 @@ this.getMappedChartRequest();
   }
   companiesList: any = [];
   showEmptyPanel: boolean = false;
-   getAll() {
+  getAll() {
     const session = this.dataService.getSessionData();
     if (session && session.COMPANY_TYPE == 'CORP') {
 

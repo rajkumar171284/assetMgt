@@ -4,27 +4,6 @@
 
 <mat-card style="resize:both" (resized)="onResized($event)" [ngClass]="{'resizable':dataService.getAccess()}"  [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="overflow-hidden my-card bg11">
    
-    <!-- <span appWidgetAccessIf  class="mapped-close">
-        <mat-icon color="accent" matTooltip="{{WIDGET_REQUEST.dragDisabled?'Drag disabled':'Drag enabled'}}"
-         (click)="WIDGET_REQUEST.dragDisabled=!WIDGET_REQUEST.dragDisabled"> 
-          {{WIDGET_REQUEST.dragDisabled?'layers_clear':'layers'}}</mat-icon>
-
-        <mat-icon (click)="editRequest(WIDGET_REQUEST)" matTooltip="Edit Widget" color="primary">edit</mat-icon>
-
-        <mat-icon (click)="removeRequest(WIDGET_REQUEST)" matTooltip="Remove Widget" color="warn">delete_outline</mat-icon>
-
-      </span>
-
-    <span appWidgetAccessIf class="savewidget" (click)="saveWidget()">
-        <mat-icon color="accent">save</mat-icon>
-
-    </span>
-    <div class="my-card-footer">
-        <mat-card-header class="text-uppercase">
-            HIGHLIGHTS OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}
-        </mat-card-header>
-    </div> -->
-
     <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
     </app-header-widget>
@@ -35,9 +14,9 @@
 
 
 
-    <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
+    <!-- <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
         <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
-    </ng-container>
+    </ng-container> -->
 
     <ng-container *ngIf="WIDGET_REQUEST.LOADED">
 
@@ -56,21 +35,37 @@
             <!-- <img class="" src="assets/ip.png" /> -->
         </mat-card-content>
     </div>
-    <div *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
-        <mat-card-header class="text-dark sub-hdr">
-            {{labelMessage}}
-        </mat-card-header>
-        <mat-card-content>
-            <span class="numbs">
-                {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.activeCount:''}}
-            </span>
-            <span class="hrs">{{deviceType}}</span>
+    <div class="card activecard" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
 
-
-            <!-- <img class="" src="assets/active.png" /> -->
-        </mat-card-content>
+        <div class="flexpanel">
+            <div>
+              <span class="numbs">
+                  {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.activeCount:''}}
+              </span>        
+            </div>
+            <div class="sub-hdr">
+                  {{labelMessage}}
+            </div>
+          </div>
+                  
     </div>
-    <div *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
+
+    <div class="card activecard2 mt-2" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
+
+        <div class="flexpanel">
+            <div>
+              <span class="numbs">
+                  {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.inactiveCount:''}}
+              </span>        
+            </div>
+            <div class="sub-hdr">
+                {{labelMessage2?labelMessage2:''}}
+            </div>
+          </div>
+                  
+    </div>
+
+    <!-- <div *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
         <mat-card-header class="text-dark sub-hdr">
             {{labelMessage2?labelMessage2:''}}
         </mat-card-header>
@@ -80,10 +75,8 @@
             </span>
             <span class="hrs">{{deviceType}}</span>
 
-
-            <!-- <img class="" src="assets/inactive.png" /> -->
         </mat-card-content>
-    </div>
+    </div> -->
     </ng-container>
 </mat-card>
 

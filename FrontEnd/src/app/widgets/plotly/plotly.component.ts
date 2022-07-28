@@ -171,8 +171,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
 
         that.chartWidth = width;
         that.chartHeight = height;
-
-        // that.WIDGET_REQUEST.LOADED = false;
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
         that.service.updateWidgetReq(that.WIDGET_REQUEST);
 
@@ -193,7 +191,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
           height: orgSize.height,
           top: top, left: left
         }
-        // that.WIDGET_REQUEST.LOADED = false;
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
         that.service.updateWidgetReq(that.WIDGET_REQUEST);
 
@@ -208,7 +205,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
     req.top = message.top;
     req.left = message.left;
     this.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(req);
-    this.WIDGET_REQUEST.LOADED = false;//not to call api
     // console.log(this.WIDGET_REQUEST)
 
     this._widgetData.emit(this.WIDGET_REQUEST);

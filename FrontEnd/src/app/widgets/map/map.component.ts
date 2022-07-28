@@ -8,9 +8,7 @@ import { WidgetComponent } from '../../components/widget/widget.component';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 declare let $: any;
-
 declare let L: any;
-
 
 @Component({
   selector: 'app-map',
@@ -74,7 +72,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
         that.chartWidth = width;
         that.chartHeight = height;
 
-        that.WIDGET_REQUEST.LOADED = false;
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
@@ -92,7 +89,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
           height: orgSize.height,
           top: top, left: left
         }
-        that.WIDGET_REQUEST.LOADED = false;
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
@@ -171,8 +167,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     this.dataService.getMACByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
 
       if (res && res.data) {
-        // console.log(res.data)
-        // this.getLocationsByConfigID();
 
         this.WIDGET_REQUEST.MAC_COUNT = res.data.length;
         if (res.data.length > 0) {
@@ -204,7 +198,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
             })
           } else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS' && this.WIDGET_REQUEST.STATIC_COORDS) {
             // STATIC COORDS 
-
+ console.log(res.data)
             this.markerArr = res.data.map((rest: any) => {
               return {
                 latitude: rest.LATITUDE,

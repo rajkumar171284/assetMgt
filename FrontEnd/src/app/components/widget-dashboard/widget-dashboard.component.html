@@ -10,8 +10,11 @@
 
 
 
-  <div cdkDropListGroup class="row">
+  <div cdkDropListGroup class="">
 
+    <div class="example-container">
+
+    </div>
 
 
 
@@ -36,7 +39,7 @@
               (cdkDragMoved)="dragMoved($event,List)" cdkDrag [cdkDragDisabled]="List.dragDisabled||!List.dragDisabled"
               class="" *ngFor="let List of draggedWidget$;index as idx">
 
-              <div [ngClass]="{'draggedEmpty minWidgetHight':!List}" class=" example-box1  listed-charts">
+              <div [ngClass]="{'draggedEmpty minWidgetHight':!List}" class=" example-box  listed-charts">
 
 
 

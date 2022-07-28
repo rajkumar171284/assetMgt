@@ -16,9 +16,9 @@
 
 
 
-        <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
+        <!-- <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
             <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
-        </ng-container>
+        </ng-container> -->
         <ng-container>
             <app-history-filter [reLoad]="WIDGET_REQUEST.LOADED" [xAxisName]="WIDGET_REQUEST.XAXES"
                 (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">

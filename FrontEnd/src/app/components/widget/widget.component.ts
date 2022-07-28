@@ -53,7 +53,7 @@ export class WidgetComponent implements OnInit {
     WIDGET_IMG: '',
     SQL_QUERY: [],
     IS_DRAGGED: 0,
-    LOADED: false
+    LOADED: true
   });
 
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
@@ -175,12 +175,12 @@ export class WidgetComponent implements OnInit {
           width: 330, height: 320, left: 0, top: 0
         }
         this.Values.WIDGET_SIZE = JSON.stringify(params);
-        this.Values.LOADED = true;
+        
       } if (this.chartChoosen) {
         // by default x axis as date wise        
         this.Values.XAXES = this.xAxesOPTION[0].key
       }
-
+      this.Values.LOADED = true;
       this.dataService.addChartRequest(this.Values).subscribe(res => {
         // console.log(res)
         this.confirmClose();
