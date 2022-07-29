@@ -17,14 +17,14 @@ router.post('/addAssetConfig', (req, res) => {
     if (req.body.PID) {
         // update
         // console.log('update')
-        sql = 'UPDATE asset_config_tbl SET CONFIG_NAME=?, ASSET_ID=?, INDUSTRIAL_TYPE=?, INDUSTRIAL_DATA_SOURCE=?, CONNECTION_TYPE=?, TRACKING_DEVICE=?, SENSOR=?, SENSOR_CATEGORY=?, SENSOR_DATA_TYPE=?, MAC_ADDRESS=?,STATIC_COORDS=?, COMPANY_ID = ?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
+        sql = 'UPDATE asset_config_tbl SET CONFIG_NAME=?, ASSET_ID=?, INDUSTRIAL_TYPE=?, INDUSTRIAL_DATA_SOURCE=?, CONNECTION_TYPE=?, TRACKING_DEVICE=?, SENSOR=?, SENSOR_CATEGORY=?, SENSOR_DATA_TYPE=?, MAC_ADDRESS=?,STATIC_COORDS=?,PARAMETERS=?, COMPANY_ID = ?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
+        todo = [req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS,req.body.PARAMETERS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = 'updated'
     } else {
         MAC_DETAILS = req.body.MAC_DETAILS;
 
-        sql = `INSERT INTO asset_config_tbl(PID, CONFIG_NAME, ASSET_ID, INDUSTRIAL_TYPE, INDUSTRIAL_DATA_SOURCE, CONNECTION_TYPE, TRACKING_DEVICE, SENSOR, SENSOR_CATEGORY, SENSOR_DATA_TYPE, MAC_ADDRESS,STATIC_COORDS, COMPANY_ID, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,? , ? )`;
-        todo = ['', req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date()];
+        sql = `INSERT INTO asset_config_tbl(PID, CONFIG_NAME, ASSET_ID, INDUSTRIAL_TYPE, INDUSTRIAL_DATA_SOURCE, CONNECTION_TYPE, TRACKING_DEVICE, SENSOR, SENSOR_CATEGORY, SENSOR_DATA_TYPE, MAC_ADDRESS,STATIC_COORDS,PARAMETERS, COMPANY_ID, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,? , ? )`;
+        todo = ['', req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS,req.body.PARAMETERS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date()];
         errMessage = 'added'
     }
     db.query(sql, todo, (err, result, fields) => {
@@ -54,7 +54,7 @@ router.post('/addAssetConfig', (req, res) => {
 
                 db.query(sql2, todo2, (err, result2) => {
                     if (err) {
-                        throw err;
+                        // throw err;
                         return res.status(400).send({
                             msg: err
                         });
@@ -190,7 +190,7 @@ router.get('/getAllAssetsConfig/:COMPANY_ID', (req, res) => {
 
     if (req.params.COMPANY_ID == 0) {
         // no company id passing then all asset config
-        let sql = `SELECT company_tbl.COMPANY_NAME, asset_config_tbl.PID,asset_config_tbl.CONFIG_NAME,asset_config_tbl.ASSET_ID,asset_config_tbl.INDUSTRIAL_TYPE,asset_config_tbl.INDUSTRIAL_DATA_SOURCE,asset_config_tbl.CONNECTION_TYPE,asset_config_tbl.TRACKING_DEVICE,sensor_type_tbl.NAME,asset_config_tbl.SENSOR,asset_config_tbl.SENSOR_DATA_TYPE,asset_config_tbl.MAC_ADDRESS,asset_config_tbl.COMPANY_ID ,sensor_type_tbl.NAME,asset_tbl.NAME,asset_config_tbl.SENSOR  FROM asset_config_tbl LEFT JOIN  sensor_type_tbl ON asset_config_tbl.SENSOR = sensor_type_tbl.PID LEFT JOIN asset_tbl ON asset_config_tbl.ASSET_ID=asset_tbl.PID LEFT JOIN company_tbl ON company_tbl.PID=asset_config_tbl.COMPANY_ID`;
+        let sql = `SELECT company_tbl.COMPANY_NAME,asset_config_tbl.PARAMETERS, asset_config_tbl.PID,asset_config_tbl.CONFIG_NAME,asset_config_tbl.ASSET_ID,asset_config_tbl.INDUSTRIAL_TYPE,asset_config_tbl.INDUSTRIAL_DATA_SOURCE,asset_config_tbl.CONNECTION_TYPE,asset_config_tbl.TRACKING_DEVICE,sensor_type_tbl.NAME,asset_config_tbl.SENSOR,asset_config_tbl.SENSOR_DATA_TYPE,asset_config_tbl.MAC_ADDRESS,asset_config_tbl.COMPANY_ID ,sensor_type_tbl.NAME,asset_tbl.NAME,asset_config_tbl.SENSOR  FROM asset_config_tbl LEFT JOIN  sensor_type_tbl ON asset_config_tbl.SENSOR = sensor_type_tbl.PID LEFT JOIN asset_tbl ON asset_config_tbl.ASSET_ID=asset_tbl.PID LEFT JOIN company_tbl ON company_tbl.PID=asset_config_tbl.COMPANY_ID`;
 
         db.query(sql, (err, result) => {
             if (err) throw err;
@@ -202,7 +202,7 @@ router.get('/getAllAssetsConfig/:COMPANY_ID', (req, res) => {
         })
     } else {
         const COMPANY_ID = req.params.COMPANY_ID;
-        let sql = `SELECT asset_config_tbl.PID,asset_config_tbl.CONFIG_NAME,asset_config_tbl.ASSET_ID,asset_config_tbl.INDUSTRIAL_TYPE,asset_config_tbl.INDUSTRIAL_DATA_SOURCE,asset_config_tbl.CONNECTION_TYPE,asset_config_tbl.TRACKING_DEVICE,asset_config_tbl.SENSOR,asset_config_tbl.SENSOR_CATEGORY,asset_config_tbl.SENSOR_DATA_TYPE,asset_config_tbl.MAC_ADDRESS,asset_config_tbl.COMPANY_ID ,sensor_type_tbl.NAME,asset_tbl.NAME  FROM asset_config_tbl LEFT JOIN  sensor_type_tbl ON asset_config_tbl.SENSOR = sensor_type_tbl.PID LEFT JOIN asset_tbl ON asset_config_tbl.ASSET_ID=asset_tbl.PID WHERE COMPANY_ID=?`;
+        let sql = `SELECT asset_config_tbl.PID,asset_config_tbl.CONFIG_NAME,asset_config_tbl.PARAMETERS,asset_config_tbl.ASSET_ID,asset_config_tbl.INDUSTRIAL_TYPE,asset_config_tbl.INDUSTRIAL_DATA_SOURCE,asset_config_tbl.CONNECTION_TYPE,asset_config_tbl.TRACKING_DEVICE,asset_config_tbl.SENSOR,asset_config_tbl.SENSOR_CATEGORY,asset_config_tbl.SENSOR_DATA_TYPE,asset_config_tbl.MAC_ADDRESS,asset_config_tbl.COMPANY_ID ,sensor_type_tbl.NAME,asset_tbl.NAME  FROM asset_config_tbl LEFT JOIN  sensor_type_tbl ON asset_config_tbl.SENSOR = sensor_type_tbl.PID LEFT JOIN asset_tbl ON asset_config_tbl.ASSET_ID=asset_tbl.PID WHERE COMPANY_ID=?`;
         let todo = [COMPANY_ID]
         db.query(sql, todo, (err, result) => {
             if (err) throw err;

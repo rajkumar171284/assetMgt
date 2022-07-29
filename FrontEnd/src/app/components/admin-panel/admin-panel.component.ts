@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, } from '@angular/material/dialog';
-import { AddAssetConfigComponent } from '../dialogs/add-asset-config/add-asset-config.component';
-import { AddSensorComponent } from '../../components/dialogs/add-sensor/add-sensor.component';
-import { AddConnectionComponent } from '../../components/dialogs/add-connection/add-connection.component';
-import { AddAssetComponent } from '../../components/dialogs/add-asset/add-asset.component';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+// import { AddAssetConfigComponent } from '../dialogs/add-asset-config/add-asset-config.component';
+// import { AddSensorComponent } from '../../components/dialogs/add-sensor/add-sensor.component';
+// import { AddConnectionComponent } from '../../components/dialogs/add-connection/add-connection.component';
+// import { AddAssetComponent } from '../../components/dialogs/add-asset/add-asset.component';
+// import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AddUsersComponent } from '../../components/dialogs/add-users/add-users.component';
 import { AddCompanyComponent } from '../../components/dialogs/add-company/add-company.component';
 import { AuthService } from '../../services/auth.service';

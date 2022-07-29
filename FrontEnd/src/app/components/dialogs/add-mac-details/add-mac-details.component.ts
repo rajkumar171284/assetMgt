@@ -64,10 +64,10 @@ export class AddMacDetailsComponent implements OnInit {
       MAC_DETAILS: this.fb.array([])
 
     })
-    console.log(data)
+    // console.log(data)
     this.data=data;
     if (data && data.MAC_NAME) {
-      console.log(data)
+      // console.log(data)
       // edit
       this.typeName = data;
       const item = this.fb.group({
@@ -121,29 +121,6 @@ export class AddMacDetailsComponent implements OnInit {
           //get all asset types
           this.dataService.getAllAssets({}).subscribe(sens => {
             this.assetTypes = sens.data;
-
-            // if edit MAC the call by config ID
-            // if (this.typeName) {
-            //   this.dataService.getMACByConfigID(this.typeName).subscribe(res => {
-            //     console.log(res)
-            //     if (res && res.data.length > 0) {
-            //       this.newForm.patchValue({
-            //         MAC_DETAILS: res.data.map((item: any) => {
-            //           return {
-            //             PID: item.PID,
-            //             MAC_NAME: item.MAC_NAME,
-            //             MAC_ADDRESS: item.MAC_ADDRESS,
-            //             MAC_STATUS: item.MAC_STATUS ? true : false,
-            //             LOCATION: item.LOCATION
-
-            //           }
-            //         })
-            //       })
-            //     }
-            //   })
-            // }
-
-
 
           })
 

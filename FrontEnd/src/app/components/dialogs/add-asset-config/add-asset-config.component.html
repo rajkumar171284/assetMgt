@@ -8,11 +8,11 @@
 <form class="form-container" [formGroup]="newForm">
 
 
-    <mat-tab-group  [(selectedIndex)]="demo1TabIndex" #tabGroup mat-align-tabs="start" animationDuration="0ms">
+    <mat-tab-group [(selectedIndex)]="demo1TabIndex" #tabGroup mat-align-tabs="start" animationDuration="0ms">
 
         <mat-tab label="Config Details">
             <div class="row mt-2">
-                
+
                 <div class="col-md-4">
                     <mat-grid-list cols="1" rowHeight="2:1">
 
@@ -63,8 +63,8 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-            
-            
+
+
                 <div class="col-md-4">
                     <mat-form-field>
                         <mat-label>INDUSTRIAL DATA SOURCE</mat-label>
@@ -78,9 +78,9 @@
 
                     </mat-form-field>
                 </div>
-                
-               
-           
+
+
+
                 <div class="col-md-4">
                     <mat-form-field>
                         <mat-label>SELECT SENSOR</mat-label>
@@ -128,8 +128,8 @@
                     <mat-form-field>
 
                         <mat-label>SELECT PROTOCOL</mat-label>
-                       
-                        <mat-select  formControlName="CONNECTION_TYPE">
+
+                        <mat-select formControlName="CONNECTION_TYPE">
                             <mat-option *ngFor="let key of assetConn" [value]="key.PID">
                                 {{key.CONN_NAME}}
                             </mat-option>
@@ -145,18 +145,82 @@
                     <mat-icon (click)="unselect($event)">refresh</mat-icon>Reset Protocol
 
                 </div>
-                <div class="col-md-4">
-                    <mat-label>IS STATIC COORDS</mat-label>
-              
+                <div class="col-md-8 mt-2 mb-2 ">
+                    <mat-label  style="margin-right:10px;font-weight:500">Are you gonna set 'STATIC COORDS' - LATITUDE,LONGITUDE for your
+                        devices
+                    </mat-label>
 
-                <mat-radio-group (change)="changeValue($event)" formControlName="STATIC_COORDS" aria-label="Select an option">
-                    <mat-radio-button [value]="macActive">Active</mat-radio-button>
-                    <mat-radio-button [value]="macInactive">In Active</mat-radio-button>
-                </mat-radio-group>
-                        
+                    <div class="mt-2">
+
+                        <mat-radio-group (change)="changeValue($event)" formControlName="STATIC_COORDS"
+                            aria-label="Select an option">
+                            <mat-radio-button style="margin-right:10px;" color="primary" [value]="macActive">YES</mat-radio-button>
+                            <mat-radio-button color="primary" [value]="macInactive">NO</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+
 
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-grid-list rowHeight="2:1" cols="1">
+                        <mat-label color="primary">
+                            ADD PARAMETERS, IF AVAILABLE
+                            <button mat-raised-button class="btn-theme2 ">
+                                <mat-icon color="primary" (click)="addParameters()">note_add</mat-icon>
+                                PARAMS 
+                            </button>
+
+
+                        </mat-label>
+                        </mat-grid-list>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 offset-md-1 mt-2">
+                    <mat-grid-list rowHeight="2:1" cols="1">
+                        
+                        <ng-container formArrayName="PARAMETERS">
+                            <ng-container *ngFor="let item of PARAMETERS_DETAILS.controls; let i = index">
+
+                                <div class="row addr-row" [formGroupName]="i">
+                                    <mat-icon class="removeParam" color="warn" (click)="removeParameters(i)">
+                                        restore_from_trash</mat-icon>
+                                    <div class="col-md-6">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>INPUT NAME</mat-label>
+                                            <input matInput formControlName="INPUT_NAME" placeholder="" type="text"
+                                                class="example-right-align">
+
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div>
+                                            <mat-label>STATUS</mat-label>
+                                        </div>
+
+                                        <mat-radio-group formControlName="INPUT_STATUS" aria-label="Select an option">
+                                            <mat-radio-button color="primary" [value]="macActive">Active
+                                            </mat-radio-button>
+                                            <mat-radio-button color="primary" [value]="macInactive">In Active
+                                            </mat-radio-button>
+                                        </mat-radio-group>
+
+
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+
+                    </mat-grid-list>
+                </div>
+            </div>
+
+
+
 
             <mat-grid-list *ngIf="typeName && typeName.PID" cols="10">
                 <button (click)="confirmData()" mat-raised-button class="m-2 btn-theme1">Update Config</button>
@@ -165,6 +229,7 @@
 
 
             </mat-grid-list>
+
         </mat-tab>
 
         <mat-tab *ngIf="!typeName" label="Device Details">
@@ -179,7 +244,7 @@
                     </div>
                     <div class="col-md-10 offset-md-1">
                         <ng-container formArrayName="MAC_DETAILS">
-                            
+
 
                             <ng-container *ngFor="let item of MAC_DETAILS.controls; let i = index">
 
@@ -189,11 +254,11 @@
                                         <mat-form-field>
                                             <mat-label>NAME</mat-label>
                                             <mat-select formControlName="MAC_NAME">
-                    
+
                                                 <mat-option *ngFor="let key of deviceType" [value]="key">
                                                     {{key}}
                                                 </mat-option>
-                            
+
                                             </mat-select>
                                         </mat-form-field>
                                     </div>
@@ -240,8 +305,8 @@
                         </ng-container>
                     </div>
                     <mat-grid-list *ngIf="typeName && typeName.PID" cols="10">
-                        <button  (click)="updateDeviceDetails()" mat-raised-button class="m-2 btn-theme1">
-                             Update MAC</button>
+                        <button (click)="updateDeviceDetails()" mat-raised-button class="m-2 btn-theme1">
+                            Update MAC</button>
 
                         <button mat-raised-button (click)="confirmClose()" class="m-2 btn-theme2">Cancel</button>
 

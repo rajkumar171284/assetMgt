@@ -1,7 +1,7 @@
 <ng-container>
   <mat-toolbar class="example-header">
   <div class="logodiv">
-    <img *ngIf="companyDetails$ | async" class="" src="{{imgUrl}}"/>
+    <img class=""  [src]="profilePicture"/>
 
   </div>
     <!-- <button mat-button (click)="sidenav.toggle()">
@@ -13,7 +13,7 @@
           
         </div> -->
       <div>
-        {{session && session.COMPANY_NAME?session.COMPANY_NAME:''}}
+        {{companyData && companyData.COMPANY_NAME?companyData.COMPANY_NAME:''}}
       </div>
       <div style="font-size:14px ;">
         {{companyData? companyData.APP_SOLUTION_NAME:'' | uppercase}}

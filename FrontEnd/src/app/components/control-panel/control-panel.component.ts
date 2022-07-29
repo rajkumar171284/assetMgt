@@ -4,9 +4,9 @@ import { AddAssetConfigComponent } from '../dialogs/add-asset-config/add-asset-c
 import { AddSensorComponent } from '../../components/dialogs/add-sensor/add-sensor.component';
 import { AddConnectionComponent } from '../../components/dialogs/add-connection/add-connection.component';
 import { AddAssetComponent } from '../../components/dialogs/add-asset/add-asset.component';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { AddUsersComponent } from '../../components/dialogs/add-users/add-users.component';
-import { AddCompanyComponent } from '../../components/dialogs/add-company/add-company.component';
+// import { MatTabChangeEvent } from '@angular/material/tabs';
+// import { AddUsersComponent } from '../../components/dialogs/add-users/add-users.component';
+// import { AddCompanyComponent } from '../../components/dialogs/add-company/add-company.component';
 import { AuthService } from '../../services/auth.service';
 
 enum tabLabel {
@@ -33,8 +33,7 @@ export class ControlPanelComponent implements OnInit {
   tabIndex: any = 0;
   constructor(public dialog: MatDialog,private dataService: AuthService) { 
     
-    // const tabLabel={...enum1,...enum2};
-    // type tabLabel = typeof tabLabel;
+    
   }
   updateUser = true;
 
@@ -44,32 +43,13 @@ export class ControlPanelComponent implements OnInit {
   updateSensor = false;
   updateComp = 'init';
   companiesList:any=[];
-  // tabLabel:enum1|undefined;
   ngOnInit(): void {
   
-    const session =  this.dataService.getSessionData();
-    if(session){
-      // enum tabLabel{
-      //   'Users' = 0,
-      //   'Connections' = 1,
-      //   'Sensors' = 2,
-      //   'Asset' = 3,
-      //   'Configuration' = 4,
-      //   // 'Clients' = 5
-      // }
-      // type this.tabLabel=typeof tabLabel
-    }
-    // enum enum1 {
-    //   'Users' = 0,
-    //   'Connections' = 1,
-    //   'Sensors' = 2,
-    //   'Asset' = 3,
-    //   'Configuration' = 4,
-    //   // 'Clients' = 5
+    // const session =  this.dataService.getSessionData();
+    // if(session){
+     
     // }
-    // enum enum2 {
-    //   'Clients' = 5
-    // }
+  
   }
   async getAllComp() {
     const session = await this.dataService.getSessionData();

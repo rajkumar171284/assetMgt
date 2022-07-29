@@ -60,9 +60,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   public demo1TabIndex = 0;
   deviceType = _deviceType;
 
-  conn=['MQTT'];
-  configRouter=['NODEJS','PYTHON','MQTT'];
-  isChecked!:boolean;
+  conn = ['MQTT'];
+  configRouter = ['NODEJS', 'PYTHON', 'MQTT'];
+  isChecked!: boolean;
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
     this.newForm = this.fb.group({
@@ -77,47 +77,97 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       SENSOR_CATEGORY: [''],
       SENSOR_DATA_TYPE: ['', Validators.required],
       COMPANY_ID: ['', Validators.required],
-      METHOD:[],
-      HOST:'',
-      STATIC_COORDS:['',Validators.required],
-      MAC_DETAILS: this.fb.array([])
+      METHOD: [],
+      HOST: '',
+      STATIC_COORDS: ['', Validators.required],
+      MAC_DETAILS: this.fb.array([]),
+      PARAMETERS: this.fb.array([])
 
     })
 
     if (data) {
-      console.log(data)
+      // console.log(data)
+      if (data.PARAMETERS) {
+        data.PARAMETERS = JSON.parse(data.PARAMETERS);
+        
+        for (let a of data.PARAMETERS) {
+          const item = this.fb.group({
+            PID: '',
+            INPUT_NAME: [a.INPUT_NAME,Validators.required],
+            INPUT_STATUS: a.INPUT_STATUS
+          })
+          this.PARAMETERS_DETAILS.push(item)
+        }
+      }
       // edit
       this.typeName = data;
       this.newForm.patchValue(data);
       this.newForm.patchValue({
         SENSOR: parseInt(data.SENSOR),
         ASSET_TYPE: parseInt(data.ASSET_TYPE),
-        STATIC_COORDS:data.STATIC_COORDS==1?true:false
+        STATIC_COORDS: data.STATIC_COORDS == 1 ? true : false,
+        // PARAMETERS:this.fb.array([])
+
       })
-    }else{
+      if (data.PARAMETERS) {
+        // const params = JSON.parse(data.PARAMETERS);
+        // this.pushParameters(data);
+        // this.newForm.setControl('PARAMETERS', this.fb.array(params || []));
+
+
+        // this.newForm.patchValue({
+
+        //   PARAMETERS:this.PARAMETERS_DETAILS
+        // })
+      }
+
+    } else {
       // add new
-     
+
     }
 
-   
+
+  }
+  pushParameters(data: any) {
+    const params = JSON.parse(data.PARAMETERS);
+
+    // this.newForm.setControl('PARAMETERS', this.fb.array(params || []));
+
+    for (let a of params) {
+      let item = this.newForm.get('PARAMETERS') as FormGroup;
+
+      item = this.fb.group({
+        PID: '',
+        INPUT_NAME: a.INPUT_NAME,
+        INPUT_STATUS: a.INPUT_STATUS
+      })
+      this.PARAMETERS_DETAILS.push(item)
+    }
+    
+  }
+
+  removeParameters(i:number){
+   this.PARAMETERS_DETAILS.removeAt(i)
+  }
+  get PARAMETERS_DETAILS(): FormArray {
+    return this.newForm.get('PARAMETERS') as FormArray;
   }
 
   get MAC_DETAILS(): FormArray {
     return this.newForm.get('MAC_DETAILS') as FormArray;
   }
-  changeValue(e:any){
-    
+  changeValue(e: any) {
+
   }
   updateMAC() {
-    const newLocal = null;
     const item = this.fb.group({
-      PID:'',
+      PID: '',
       MAC_NAME: ['', Validators.required],
       MAC_ADDRESS: ['', Validators.required],
       MAC_STATUS: true,
       LOCATION: ['', Validators.required],
-      LATITUDE:[''],
-      LONGITUDE:''
+      LATITUDE: [''],
+      LONGITUDE: ''
     })
 
     this.MAC_DETAILS.push(item)
@@ -125,9 +175,9 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-   
+
   }
-  
+
   initCall() {
     this.dataService.getAssetConn({}).subscribe(conn => {
       if (conn) {
@@ -148,20 +198,20 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
                   this.newForm.patchValue({
                     MAC_DETAILS: res.data.map((item: any) => {
                       return {
-                        PID:item.PID,
+                        PID: item.PID,
                         MAC_NAME: item.MAC_NAME,
                         MAC_ADDRESS: item.MAC_ADDRESS,
-                        MAC_STATUS: item.MAC_STATUS?true:false,
+                        MAC_STATUS: item.MAC_STATUS ? true : false,
                         LOCATION: item.LOCATION,
                         LATITUDE: item.LATITUDE,
-                        LONGITUDE:item.LONGITUDE
+                        LONGITUDE: item.LONGITUDE
 
                       }
                     })
                   })
                 }
               })
-            }else{
+            } else {
               // new asset config
               // console.log('sds')
               this.getAllComp();
@@ -182,7 +232,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   }
   getAllComp() {
     // const session = await this.dataService.getSessionData();
-  
+
     this.dataService.getAllCompanies().subscribe(res => {
       this.companiesList = res.data;
     })
@@ -192,17 +242,18 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     // const msg = await this.findInvalidControls();
     // console.log(msg)
 
-    if(this.newForm.get('COMPANY_ID')?.valid && this.newForm.get('CONFIG_NAME')?.valid && this.newForm.get('ASSET_ID')?.valid && this.newForm.get('INDUSTRIAL_TYPE')?.valid && this.newForm.get('INDUSTRIAL_DATA_SOURCE')?.valid && this.newForm.get('CONNECTION_TYPE')?.valid
-    && this.newForm.get('TRACKING_DEVICE')?.valid && this.newForm.get('SENSOR')?.valid && this.newForm.get('SENSOR_CATEGORY')?.valid && this.newForm.get('SENSOR_DATA_TYPE')?.valid){
+    if (this.newForm.get('COMPANY_ID')?.valid && this.newForm.get('CONFIG_NAME')?.valid && this.newForm.get('ASSET_ID')?.valid && this.newForm.get('INDUSTRIAL_TYPE')?.valid && this.newForm.get('INDUSTRIAL_DATA_SOURCE')?.valid && this.newForm.get('CONNECTION_TYPE')?.valid
+      && this.newForm.get('TRACKING_DEVICE')?.valid && this.newForm.get('SENSOR')?.valid && this.newForm.get('SENSOR_CATEGORY')?.valid && this.newForm.get('SENSOR_DATA_TYPE')?.valid) {
       this.demo1TabIndex = 1;
 
     }
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
-      
+
       this.Values.CREATED_BY = session.PID;
-      this.Values.CONFIG_NAME =this.Values.CONFIG_NAME.toUpperCase();
+      this.Values.CONFIG_NAME = this.Values.CONFIG_NAME.toUpperCase();
+      this.Values.PARAMETERS = JSON.stringify(this.Values.PARAMETERS);
       this.dataService.addAssetConfig(this.Values).subscribe(res => {
         // console.log(res)
         this.dialogClose.emit(true);
@@ -256,10 +307,10 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     this.updateMAC()
   }
 
-  updateConfig(){
+  updateConfig() {
 
   }
-  async updateDeviceDetails(){
+  async updateDeviceDetails() {
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
@@ -274,11 +325,21 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     }
 
   }
-  unselect(e:any): void {
+  unselect(e: any): void {
     this.newForm.patchValue({
-      CONNECTION_TYPE:''
+      CONNECTION_TYPE: ''
     })
- }
- 
+  }
+  addParameters() {
+
+    const item = this.fb.group({
+      PID: '',
+      INPUT_NAME: ['', Validators.required],
+      INPUT_STATUS: true,
+    })
+
+    this.PARAMETERS_DETAILS.push(item)
+  }
+
 
 }

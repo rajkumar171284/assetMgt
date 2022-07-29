@@ -79,9 +79,8 @@ export class ConfigComponent implements OnInit, OnChanges {
 
     this.dataService.getAssetConfig(params).subscribe(res => {
       this.dataSource = res.data.map((element: any) => {
-        // const name=JSON.parse(element.CONNECTION_TYPE)?JSON.parse(element.CONNECTION_TYPE):''
-        // element.CONN_NAME=  name.CONN_NAME;
-        return element
+      
+        return element;
 
       });
       console.log(this.dataSource)

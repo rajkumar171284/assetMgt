@@ -127,6 +127,8 @@ export class AddCompanyComponent implements OnChanges {
         // the save comp details
         this.transfer.updateCompany(this.Values);
         // console.log(res)
+        this.dialogClose.emit(true);
+        this.confirmClose();
       }
 
     })
