@@ -33,7 +33,7 @@
 
             <div [appToHide]="isDataFound">
 
-                <app-common-chart1 (_sendToParent)="getFromChild2($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"
+                <app-common-chart1 [isThreshold]="isThreshold" (_sendToParent)="getFromChild2($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"
                     [totalDevice]="widgetResponse.totalDevice" [chartHeight]="chartHeight" [chartWidth]="chartWidth">
 
                 </app-common-chart1>

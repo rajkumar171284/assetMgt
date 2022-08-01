@@ -62,12 +62,12 @@ export class WidgetComponent implements OnInit {
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     private _snackBar: MatSnackBar, @Inject(MAT_DIALOG_DATA) public data: any) {
 
-    // console.log('widget', data)
+    console.log('widget', data)
     if (data && data.PID) {
 
       if (data.CHART_NAME) {
         // if chart choosen then make selected by color
-        this.chartTypes.filter(x => {
+       const arr= this.chartTypes.filter(x => {
           return x.name.toLowerCase() === data.CHART_NAME.toLowerCase();
         }).map(result => {
           result.isSelected = true;
@@ -75,35 +75,37 @@ export class WidgetComponent implements OnInit {
           this.chartChoosen = result.isSelected;
           return result;
         })
+        console.log(arr)
+        this.chartTypes
       }
       // set widget selection also by color
-      this.chartTypes.filter(x => {
-        return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
-      }).map(result => {
-        result.isSelected = true;
-        return result;
-      })
-      this.cardTypes.filter(x => {
-        return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
-      }).map(result => {
-        result.isSelected = true;
-        return result;
-      })
-      this.alertTypes.filter(x => {
-        return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
-      }).map(result => {
-        result.isSelected = true;
-        return result;
-      })
-      // set size by color
-      if (data.WIDGET_SIZE) {
-        const size = this.widgetSize.filter(x => {
-          return x.name.toLowerCase() === data.WIDGET_SIZE.toLowerCase();
-        }).map(result => {
-          result.isSelected = true;
-          return result;
-        })
-      }
+      // this.chartTypes.filter(x => {
+      //   return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
+      // }).map(result => {
+      //   result.isSelected = true;
+      //   return result;
+      // })
+      // this.cardTypes.filter(x => {
+      //   return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
+      // }).map(result => {
+      //   result.isSelected = true;
+      //   return result;
+      // })
+      // this.alertTypes.filter(x => {
+      //   return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
+      // }).map(result => {
+      //   result.isSelected = true;
+      //   return result;
+      // })
+      // // set size by color
+      // if (data.WIDGET_SIZE) {
+      //   const size = this.widgetSize.filter(x => {
+      //     return x.name.toLowerCase() === data.WIDGET_SIZE.toLowerCase();
+      //   }).map(result => {
+      //     result.isSelected = true;
+      //     return result;
+      //   })
+      // }
 
       this.newForm.patchValue(data);
 

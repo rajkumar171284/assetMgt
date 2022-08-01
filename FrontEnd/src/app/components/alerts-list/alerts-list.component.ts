@@ -33,8 +33,8 @@ export class AlertsListComponent implements OnInit {
     const pid = this.Values.ASSET_CONFIG_ID;
     if(pid){
     this.loading=true;
-    console.log(pid)
-    this.getAlertsByAssetConfigID(pid)
+    // console.log(pid)
+    this.getAlertsByAssetConfigID()
     }
   }
   get Values() {
@@ -51,11 +51,14 @@ export class AlertsListComponent implements OnInit {
     }
     this.dataService.getAssetConfig(params).subscribe(res => {
       this.allAssetConfigTypes = res.data;
+      if(this.Values.ASSET_CONFIG_ID){
+        this.getAlertsByAssetConfigID();
+      }
 
 
     });
   }
-  getAlertsByAssetConfigID(PID:number) {
+  getAlertsByAssetConfigID() {
     
     let params = {}
       params = { ASSET_CONFIG_ID: this.Values.ASSET_CONFIG_ID };

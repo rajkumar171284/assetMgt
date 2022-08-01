@@ -29,6 +29,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
   @Input('chartHeight') chartHeight!: number;
   @Input('totalDevice') totalDevice: any[] = [];
   @Input() WIDGET_REQUEST: any;
+  @Input() isThreshold: any;
   @Output() _sendToParent = new EventEmitter();
   result: any = [];
   singleView: any = [];
@@ -48,28 +49,28 @@ export class CommonChart1Component implements OnInit, OnChanges {
   ngOnInit(): void {
     this.behavSubject.currWidgetRequest.subscribe((message: any) => {
       // 
-      if(message.PID==this.WIDGET_REQUEST.PID){
+      if (message.PID == this.WIDGET_REQUEST.PID) {
         console.log(message)
-        this.WIDGET_REQUEST=message;
-        const newSize= JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE);
-        this.chartWidth = newSize.width ;
-        this.chartHeight = newSize.height ;
+        this.WIDGET_REQUEST = message;
+        const newSize = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE);
+        this.chartWidth = newSize.width;
+        this.chartHeight = newSize.height;
         this.loadChart();
 
       }
 
     })
-      this.behavSubject.currentWidthHeight.subscribe((message: any) => {
+    this.behavSubject.currentWidthHeight.subscribe((message: any) => {
       // console.log(message)
-      if(message.PID==this.WIDGET_REQUEST.PID){
-        this.chartWidth = message.width ;
-        this.chartHeight = message.height ;
-  
+      if (message.PID == this.WIDGET_REQUEST.PID) {
+        this.chartWidth = message.width;
+        this.chartHeight = message.height;
+
         this._sendToParent.emit({
-          width: this.chartWidth, heigth: this.chartHeight,PID:message.PID
+          width: this.chartWidth, heigth: this.chartHeight, PID: message.PID
         })
       }
-            
+
     });
 
     this.behavSubject.currentDevice.subscribe((message: any) => {
@@ -89,19 +90,15 @@ export class CommonChart1Component implements OnInit, OnChanges {
     console.log('this.totalDevice', this.totalDevice)
     if (this.totalDevice && this.totalDevice.length > 0) {
       // console.log('this.totalDevice',this.totalDevice)
-      if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line') {
+      if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
+        this.guageChart();
+      }
+      else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'line') {
         this.lineChart();
       }
       else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'pie') {
         this.pieChart(this.totalDevice)
       } else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'bar') {
-        // console.log(this.chartWidth,this.chartHeight,this.WIDGET_REQUEST.CHART_NAME)
-        // default
-        // this.newForm.patchValue({
-        //   PLOT_TYPE: this.filterBy[0],
-        //   PLOT_XAXES: this.filterXaxes[0]
-        // })
-        // console.log(this.newForm.value)
 
 
         this.barChart(this.totalDevice)
@@ -109,7 +106,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
         this.donutPlots()
 
-      }else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'scatter') {
+      } else if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'scatter') {
 
         this.scatterPlots()
 
@@ -118,9 +115,9 @@ export class CommonChart1Component implements OnInit, OnChanges {
   }
   lineChart() {
     if (this.totalDevice && this.totalDevice.length > 0) {
+      let layout: any = {};
 
-      // this.plotlyIndex = 0;
-      console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase(), this.WIDGET_REQUEST.CONFIG_NAME)
+      // console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase(), this.WIDGET_REQUEST.CONFIG_NAME)
       let linedata: any = [];
       let newVALUE: any = [], xArray: any = [];
       let index = 0;
@@ -161,7 +158,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
       }
       // // Define Layout
-      var layout = {
+      layout = {
         yaxis: { autorange: true, title: "" },
         showlegend: true,
         autosize: true,
@@ -174,9 +171,28 @@ export class CommonChart1Component implements OnInit, OnChanges {
           t: 50,
           pad: 4
         },
+
         // paper_bgcolor: '#7f7f7f',
         // plot_bgcolor: '#c7c7c7'
       };
+      if (this.isThreshold) {
+        console.log('this.isThreshold',this.isThreshold)
+        layout.shapes = [
+          {
+            type: 'line',
+            xref: 'paper',
+            x0: 0,
+            y0: 12.0,
+            x1: 1,
+            y1: this.isThreshold.THRESHOLD_AVG,
+            line: {
+              color: 'rgb(255, 0, 0)',
+              width: 4,
+              dash: 'dot'
+            }
+          }
+        ]
+      }
 
 
       // Display using Plotly
@@ -248,8 +264,8 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
     }
 
-    console.log('data', data)
-    console.log('labelArr', labelArr)
+    // console.log('data', data)
+    // console.log('labelArr', labelArr)
     var traceA = {
       type: "pie",
       values: data,
@@ -338,6 +354,24 @@ export class CommonChart1Component implements OnInit, OnChanges {
     }
 
 
+    if (this.isThreshold) {
+      // console.log('this.isThreshold',this.isThreshold)
+      // layout.shapes = [
+      //   {
+      //     type: 'line',
+      //     xref: 'paper',
+      //     x0: 0,
+      //     y0: 12.0,
+      //     x1: 1,
+      //     y1: this.isThreshold.THRESHOLD_AVG,
+      //     line: {
+      //       color: 'rgb(255, 0, 0)',
+      //       width: 4,
+      //       dash: 'dot'
+      //     }
+      //   }
+      // ]
+    }
     this.graph1.data = data;
     this.graph1.layout.width = this.chartWidth;
     this.graph1.layout.height = this.chartHeight;
@@ -439,12 +473,12 @@ export class CommonChart1Component implements OnInit, OnChanges {
     // let data: any = [{ labels: xArray, values: yArray, hole: .4, type: "pie" }];
 
     // Plotly.newPlot("myPlot", data, layout);
-//     xArray = ["Italy", "France", "Spain", "USA", "Argentina"];
-// yArray = [55, 49, 44, 24, 15];
+    //     xArray = ["Italy", "France", "Spain", "USA", "Argentina"];
+    // yArray = [55, 49, 44, 24, 15];
 
-var layout = {title:"World Wide Wine Production"};
+    var layout = { title: "World Wide Wine Production" };
 
-var data:any = [{labels:xArray, values:yArray, hole:.4, type:"pie"}];
+    var data: any = [{ labels: xArray, values: yArray, hole: .4, type: "pie" }];
     this.graph1.data = data;
     this.graph1.layout.width = this.chartWidth;
     this.graph1.layout.height = this.chartHeight;
@@ -452,6 +486,78 @@ var data:any = [{labels:xArray, values:yArray, hole:.4, type:"pie"}];
     this.graph1.responsive = true;
 
     this.graph1.layout.title = this.WIDGET_REQUEST.CONFIG_NAME;
-    console.log('donut')
+    // console.log('donut')
+  }
+
+
+  guageChart() {
+    let myGraph = [];
+    let xArray: any = [];
+    let yArray: any = [];
+    for (let arr of this.totalDevice) {
+      let newObj: any = {};
+      newObj.DEVICE_ID = arr.DEVICE_ID;
+      newObj.units = [];
+      if (arr.history.length > 0) {
+        for (let item of arr.unitsArr) {
+
+
+          xArray.push(item.key)
+          yArray.push(item.totalValue)
+
+          var data = [
+            {
+              domain: { x: [0, 1], y: [0, 1] },
+              value: item.totalValue,
+              title: { text: item.key },
+              type: "indicator",
+              mode: "gauge+number"
+            },
+
+          ];
+          let newItem: any = {}
+          newItem.data = data;
+          newItem.layout = { width: 300, height: 230, margin: { t: 0, b: 10 } };
+          newObj.units.push(newItem)
+        }
+      }
+      myGraph.push(newObj)
+      // console.log(this.myGraph)
+
+    }
+    if (this.isThreshold) {
+      console.log('this.isThreshold',this.isThreshold)
+      // layout.shapes = [
+      //   {
+      //     type: 'line',
+      //     xref: 'paper',
+      //     x0: 0,
+      //     y0: 12.0,
+      //     x1: 1,
+      //     y1: this.isThreshold.THRESHOLD_AVG,
+      //     line: {
+      //       color: 'rgb(255, 0, 0)',
+      //       width: 4,
+      //       dash: 'dot'
+      //     }
+      //   }
+      // ]
+    }
+    this.graph1.data = [
+      {
+        domain: { x: xArray, y: yArray },
+        value: 200,
+        title: { text: 'test' },
+        type: "indicator",
+        mode: "gauge+number"
+      },
+
+    ];
+    this.graph1.layout.width = this.chartWidth;
+    this.graph1.layout.height = this.chartHeight;
+
+    this.graph1.responsive = true;
+
+    this.graph1.layout.title = this.WIDGET_REQUEST.CONFIG_NAME;
   }
 }

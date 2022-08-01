@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewChild, DoCheck, AfterViewInit, Output, EventEmitter, OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, DoCheck, AfterViewInit, Output, EventEmitter, OnDestroy, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { icon, latLng, marker, polyline, tileLayer } from 'leaflet';
 import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
@@ -42,7 +42,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
   chartWidth: number = 0;
   chartHeight: number = 0;
   toEditRequest: any;
-  @ViewChild('newmap')newmap!:any;
+  @ViewChild('newmap') newmap!: any;
   constructor(public dialog: MatDialog, public service: XAxisService, public dataService: AuthService, private ref: ChangeDetectorRef) { }
   ngDoCheck(): void {
 
@@ -105,15 +105,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
       console.log('map req:', this.WIDGET_REQUEST)
-    //  
+      //  
       this.getLocationsByConfigID();
 
     }
   }
   ngAfterViewInit(): void {
-  this.initMap()
+    console.log('map initMap:')
+    this.initMap()
   }
-  initMap(){
+  initMap() {
     if (this.myMap) {
       this.myMap.remove();
     }
@@ -192,13 +193,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
           }
           else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS' && !this.WIDGET_REQUEST.STATIC_COORDS) {
             // DYNAMIC COORDS MAPPING
-            const intervalTime = interval(60000);
+            console.log('DYNAMIC COORDS', this.WIDGET_REQUEST.STATIC_COORDS)
+            const intervalTime = interval(3000);
             this.setInterval = intervalTime.subscribe(() => {
               this.getCurrDeviceByLabel(res);
             })
           } else if (this.WIDGET_REQUEST.WIDGET_TYPE == 'MAPS' && this.WIDGET_REQUEST.STATIC_COORDS) {
             // STATIC COORDS 
- console.log(res.data)
+            //  console.log(res.data)
+            console.log('STATIC COORDS', this.WIDGET_REQUEST.STATIC_COORDS)
+
             this.markerArr = res.data.map((rest: any) => {
               return {
                 latitude: rest.LATITUDE,
@@ -250,14 +254,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     const resultArr = res.data.filter((item: any) => {
       return item.MAC_STATUS === 1;
     })
-    // console.log(resultArr)
+    console.log(resultArr)
     forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response: any) => {
       // console.log(response)
       this.markerArr = response;
       if (response && response.length > 0) {
         this.defaultLat = response[0].latitude;
         this.defaultLng = response[0].longitude;
-        const newArr: __deviceHistory[] = response.map((resp: any) => {
+        const newArr: any[] = response.map((resp: any) => {
           return {
 
             ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID,
@@ -271,9 +275,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
         })
         // 
 
-        forkJoin(newArr.map((result: any) => this.dataService.saveDeviceHistory(result))).subscribe((response: any) => {
+        // forkJoin(newArr.map((result: any) => this.dataService.saveDeviceHistory(result))).subscribe((response: any) => {
 
-        })
+        // })
 
 
       }

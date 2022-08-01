@@ -40,8 +40,8 @@
         </ng-container>
 
         <ng-container matColumnDef="THRESHOLD_AVG">
-            <th mat-header-cell *matHeaderCellDef> THRESHOLD AVG </th>
-            <td mat-cell *matCellDef="let element"> {{element.THRESHOLD_AVG}} </td>
+            <th mat-header-cell *matHeaderCellDef> THRESHOLD ABSOLUTE VALUE </th>
+            <td mat-cell *matCellDef="let element"> {{element.THRESHOLD_AVG?element.THRESHOLD_AVG:'NILL'}} </td>
         </ng-container>
         <ng-container matColumnDef="PARAMETER">
             <th mat-header-cell *matHeaderCellDef> PARAMETER NAME </th>

@@ -105,7 +105,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
   expandFilter: boolean = false;
   @Output() _widgetData = new EventEmitter();
   @Output() _widgetRemoved = new EventEmitter();
-
+  isThreshold:any;
   leftPos: number = 0;
 
 
@@ -247,7 +247,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
       // console.log('size', size, this.WIDGET_REQUEST.CHART_NAME)
       this.chartWidth = size.width;
       this.chartHeight = size.height;
-
+      this.getAlertsByAssetConfigID()
     }
 
   }
@@ -314,7 +314,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
     });
   }
   removeRequest(item: any) {
-    console.log(item)
+    // console.log(item)
     this.dataService.deleteChartRequests(item).subscribe(res => {
       this.ngOnInit();
 
@@ -328,5 +328,17 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
       // console.log(e, this.WIDGET_REQUEST)
       // console.
     }
+  }
+
+  getAlertsByAssetConfigID() {
+    
+    let params = {}
+      params = { ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID };
+    this.dataService.getThresholdAlertByAssetConfigID(params).subscribe(res => {
+      this.isThreshold = res.data && res.data[0]?res.data[0]:null;
+      console.log('this.isThreshold',this.isThreshold)
+      this.loading = false;
+
+    });
   }
 }

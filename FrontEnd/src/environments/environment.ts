@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   // url:'http://127.0.0.1:4202/api',
-  vtsURL: 'http://34.233.90.129:8000/',
+  // vtsURL: 'http://34.233.90.129:8000/',
+  vtsURL:'http://127.0.0.1:8000/',//local server running on my backend folder
   url: 'http://10.1.1.139:8001/api',//public ip
   // url:'https://35.193.11.55:3306/api',
   imgUrl: 'http://10.1.1.139:8001/images/',

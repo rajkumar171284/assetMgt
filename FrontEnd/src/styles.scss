@@ -135,8 +135,8 @@ th.mat-header-cell {
   }
   .my-card-footer{
     position: absolute;
-    width: 100%;z-index: 2;bottom:0;left:0;right:0;
-    height: 35px;overflow: hidden;background: rgba(0,0,0,0.8);
+    width: 100%;z-index: 9999;bottom:0;left:0;right:0;
+    height: 35px;overflow: hidden;background: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;

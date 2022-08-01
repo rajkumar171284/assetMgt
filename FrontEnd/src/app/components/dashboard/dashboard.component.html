@@ -73,6 +73,13 @@
                   <app-map [widgetIndex]="List.PID" (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List"></app-map>
 
                 </div>
+                <div *ngIf="List.WIDGET_TYPE==='RECENT'">
+
+
+
+                  <app-recent-activity (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List"></app-recent-activity>
+
+                </div>
                 <ng-container *ngIf="List.WIDGET_TYPE=='CHARTS'">
 
                   <app-plotly  (_widgetRemoved)="widgetRemoved($event)" [positionTop]="List.top"

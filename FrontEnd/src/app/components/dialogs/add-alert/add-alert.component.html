@@ -5,19 +5,19 @@
     <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
         {{typeName && typeName.PID?'Edit Alert':'Add New Alert'}}
     </mat-grid-list>
-    
+
 </mat-toolbar>
 <form class="form-container" [formGroup]="newForm">
-    <mat-grid-list class="thresh"  cols="2" rowHeight="2:1">
+    <mat-grid-list class="thresh" cols="2" rowHeight="2:1">
 
         <mat-form-field>
             <mat-label>ALERT NAME</mat-label>
             <input formControlName="ALERT_NAME" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
+        </mat-form-field>
 
-           <mat-form-field>
+        <mat-form-field>
             <mat-label>SELECT ASSET CONFIG</mat-label>
-           
+
             <mat-select (selectionChange)="getPARAMETERS()" formControlName="ASSET_CONFIG_ID">
 
                 <mat-option *ngFor="let key of assetTypes" [value]="key.PID">
@@ -28,7 +28,7 @@
         </mat-form-field>
         <mat-form-field>
             <mat-label>SELECT PARAMETER</mat-label>
-           
+
             <mat-select formControlName="PARAMETER">
 
                 <mat-option *ngFor="let key of parameterTypes" [value]="key.INPUT_NAME">
@@ -40,25 +40,57 @@
 
     </mat-grid-list>
 
-    
+
     <mat-grid-list class="thresh" cols="3" rowHeight="2:1">
+
+        <!-- <mat-form-field> -->
+            <!-- <mat-label>THRESHOLD RANGE</mat-label>
+            <mat-radio-group formControlName="THRESHOLD_RANGE" aria-label="Select an option">
+                <mat-radio-button style="margin-right:10px;" color="primary" [value]="macActive">YES</mat-radio-button>
+                <mat-radio-button color="primary" [value]="macInactive">NO</mat-radio-button>
+            </mat-radio-group> -->
+        <!-- </mat-form-field> -->
+
+
+    </mat-grid-list>
+
+    <mat-grid-list class="thresh" cols="3" rowHeight="2:1">
+        <!-- <mat-form-field> -->
+        <mat-label style="margin-right:10px;font-weight:500">THRESHOLD RANGE</mat-label>
+       <div class="m-2">
+        <mat-radio-group formControlName="THRESHOLD_RANGE" aria-label="Select an option">
+            <mat-radio-button (change)="setThreshold(macActive)" style="margin-right:10px;" color="primary" [value]="macActive">YES</mat-radio-button>
+            <mat-radio-button (change)="setThreshold(macInactive)" color="primary" [value]="macInactive">NO</mat-radio-button>
+        </mat-radio-group>
+       </div>
+        <!-- </mat-form-field> -->
+        <ng-container *ngIf="THRESHOLD_RANGE1">
+            <mat-form-field>
+                <mat-label>MIN</mat-label>
+                <input formControlName="THRESHOLD_MIN" matInput placeholder="" type="text" class="example-right-align">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>MAX</mat-label>
+                <input formControlName="THRESHOLD_MAX" matInput placeholder="" type="text" class="example-right-align">
+            </mat-form-field>
+        </ng-container>
+        <ng-container *ngIf="!THRESHOLD_RANGE1">
+            <mat-form-field>
+                <mat-label>ABSOLUTE VALUE</mat-label>
+                <input formControlName="THRESHOLD_AVG" matInput placeholder="" type="text" class="example-right-align">
+            </mat-form-field>
+        </ng-container>
+
         <mat-form-field>
-            <mat-label>THRESHOLD MIN</mat-label>
-            <input formControlName="THRESHOLD_MIN" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
-        <mat-form-field>
-            <mat-label>THRESHOLD MAX</mat-label>
-            <input formControlName="THRESHOLD_MAX" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
-           <mat-form-field>
-            <mat-label>THRESHOLD AVG</mat-label>
-            <input formControlName="THRESHOLD_AVG" matInput placeholder="" type="text" class="example-right-align">
-           </mat-form-field>
+            <mat-label>COLOR</mat-label>
+            <input formControlName="COLOR" matInput placeholder="" type="color" class="example-right-align">
+        </mat-form-field>
+
     </mat-grid-list>
     <mat-grid-list cols="1" rowHeight="2:1">
         <mat-form-field>
             <mat-label>SELECT ALERT</mat-label>
-           
+
             <mat-select formControlName="ALERT_TYPE">
 
                 <mat-option *ngFor="let key of alertTypes" [value]="key">
@@ -67,14 +99,14 @@
 
             </mat-select>
         </mat-form-field>
-       
+
     </mat-grid-list>
     <mat-grid-list cols="10">
         <button (click)="confirmData()" mat-raised-button color="primary">Save</button>
 
-        <button mat-raised-button (click)="confirmClose()"  color="warn">Cancel</button>
+        <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
 
 
-        </mat-grid-list>
+    </mat-grid-list>
 
 </form>

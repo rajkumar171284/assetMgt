@@ -60,31 +60,32 @@ export class AddAlertComponent implements OnInit {
   macActive = true;
   macInactive = false;
   loading = true;
+  THRESHOLD_RANGE1: boolean = true;
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
     this.newForm = this.fb.group({
       PID: [''],
       ALERT_NAME: ['', Validators.required],
-      ASSET_CONFIG_ID: ['', Validators.required],
-      THRESHOLD_MIN: ['', Validators.required],
-      THRESHOLD_MAX: ['', Validators.required],
-      THRESHOLD_AVG: ['', Validators.required],
+      ASSET_CONFIG_ID: [''],
+      THRESHOLD_MIN: [''],
+      THRESHOLD_MAX: [''],
+      THRESHOLD_AVG: [''],
       PARAMETER: ['', Validators.required],
-      ALERT_TYPE: ['', Validators.required]
+      ALERT_TYPE: ['', Validators.required],
+      THRESHOLD_RANGE: [true],
+      COLOR: [''],
 
     })
-    // console.log(data)
-    // this.getAllAssets();
+   
     this.data = data;
     if (data) {
-      // console.log(data)
       // edit
-      // this.typeName = data;
+      this.typeName = data;
       this.newForm.patchValue(data)
 
     } else {
       // add
-      
+
 
     }
   }
@@ -96,6 +97,7 @@ export class AddAlertComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
 
     // this.initCall()
+    
   }
   initCall() {
 
@@ -137,21 +139,50 @@ export class AddAlertComponent implements OnInit {
 
   }
   ngOnInit(): void {
+    
+    // this.setValidate();
     this.initCall();
+  }
+
+  setValidate(){
+    const value= this.newForm.get('THRESHOLD_RANGE')?.value;
+      console.log(value)
+      if (value) {
+        this.newForm.get('THRESHOLD_MIN')?.setValidators(Validators.required);
+        this.newForm.get('THRESHOLD_MAX')?.setValidators(Validators.required);
+        this.newForm.get('THRESHOLD_AVG')?.clearValidators();
+
+        // this.newForm.patchValue({
+
+        //   THRESHOLD_MIN: ['', Validators.required],
+        //   THRESHOLD_MAX: ['', Validators.required],
+        //   THRESHOLD_AVG: [''],
+        // })
+      } else {
+        // absolute value
+        this.newForm.get('THRESHOLD_MIN')?.clearValidators();
+        this.newForm.get('THRESHOLD_MAX')?.clearValidators();
+        this.newForm.get('THRESHOLD_AVG')?.setValidators(Validators.required);
+        // this.newForm.patchValue({
+        //   THRESHOLD_MIN: [''],
+        //   THRESHOLD_MAX: [''],
+        //   THRESHOLD_AVG: ['', Validators.required],
+        // })
+      }
   }
 
   async confirmData() {
 
     // const msg = await this.findInvalidControls();
-    // console.log(msg)
-
+    console.log(this.THRESHOLD_RANGE1)
+    console.log(this.Values)
     if (this.newForm.valid) {
       this.loading = true;
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
 
-      // console.log(this.Values)
+      console.log(this.Values)
       this.dataService.addThresholdAlert(this.Values).subscribe(res => {
         // console.log(res)
         this.dialogClose.emit(true);
@@ -222,7 +253,44 @@ export class AddAlertComponent implements OnInit {
   // addMAC(e: Event) {
   //   e.stopPropagation()
   // }
+  setThreshold(active: boolean) {
+    this.THRESHOLD_RANGE1 = active;
+    // if (!active) {
 
+    this.newForm.patchValue({
+      THRESHOLD_MIN: null, THRESHOLD_MAX: null, THRESHOLD_AVG: null
+    })
+
+    // }
+    // this.newForm.get('THRESHOLD_RANGE')?.valueChanges.subscribe(value => {
+    //   console.log(value)
+    //   if (value) {
+    //     this.newForm.get('THRESHOLD_MIN')?.setValidators(Validators.required);
+    //     this.newForm.get('THRESHOLD_MAX')?.setValidators(Validators.required);
+    //     this.newForm.get('THRESHOLD_AVG')?.clearValidators();
+
+    //     // this.newForm.patchValue({
+
+    //     //   THRESHOLD_MIN: ['', Validators.required],
+    //     //   THRESHOLD_MAX: ['', Validators.required],
+    //     //   THRESHOLD_AVG: [''],
+    //     // })
+    //   } else {
+    //     // absolute value
+    //     this.newForm.get('THRESHOLD_MIN')?.clearValidators();
+    //     this.newForm.get('THRESHOLD_MAX')?.clearValidators();
+    //     this.newForm.get('THRESHOLD_AVG')?.setValidators(Validators.required);
+    //     // this.newForm.patchValue({
+    //     //   THRESHOLD_MIN: [''],
+    //     //   THRESHOLD_MAX: [''],
+    //     //   THRESHOLD_AVG: ['', Validators.required],
+    //     // })
+    //   }
+    // })
+
+    console.log(this.newForm)
+
+  }
 
 
 }

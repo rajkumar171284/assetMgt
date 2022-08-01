@@ -74,16 +74,17 @@ export const _cardTYPE = [
 { name: 'Highlights', file: 'highlight-widget', isSelected: false },
 { name: 'TABLE', file: 'table-widget', isSelected: false },
 { name: 'Summary', file: 'summary-widget', isSelected: false },
-{ name: 'Reports', file: 'reports-widget', isSelected: false },
+{ name: 'Recent', file: 'recent', isSelected: false },
+{ name: 'Progress', file: 'progress', isSelected: false },
 ];
 export const _alertTYPE = [
     
     { name: 'Threshold alert', file: 'threshold', isSelected: false },
-    { name: 'No data alert', file: 'onoff-widget', isSelected: false },
+    { name: 'No data alert', file: 'no-data', isSelected: false },
     { name: 'Load excess', file: 'weight', isSelected: false },
-    { name: 'Reactive excess', file: 'guage-widget', isSelected: false },
-    { name: 'ON/OFF', file: 'onoff-widget', isSelected: false },
-    { name: 'Activity Controls', file: 'activity-widget', isSelected: false },
+    // { name: 'Reactive excess', file: 'guage-widget', isSelected: false },
+    { name: 'ON/OFF', file: 'switch', isSelected: false },
+    // { name: 'Activity Controls', file: 'activity-widget', isSelected: false },
     ];
 export class widgetResponse {
     totalLocations: [] | undefined;

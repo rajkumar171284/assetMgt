@@ -23,7 +23,6 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
-    "@angular/service-worker": "^14.1.0",
     "@asymmetrik/ngx-leaflet": "^13.0.2",
     "@coreui/angular": "^4.0.2",
     "@schematics/angular": "^14.1.0",
