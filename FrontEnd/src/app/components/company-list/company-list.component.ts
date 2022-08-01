@@ -21,9 +21,9 @@ export class CompanyListComponent implements OnChanges {
   constructor(private dataService: AuthService, public dialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
+    // console.log(changes)
     if(this.tabIndex==5||this.updateData){
-    console.log('getAllCompanyTypes',this.cType,this.tabIndex)
+    // console.log('getAllCompanyTypes',this.cType,this.tabIndex)
       
     this.getAll();
     }

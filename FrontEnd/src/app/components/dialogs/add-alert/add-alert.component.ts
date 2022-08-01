@@ -4,7 +4,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TooltipComponent } from '../../../components/tooltip/tooltip.component';
-import { _deviceType } from '../../../myclass';
+import { _deviceType, _alertType } from '../../../myclass';
 
 @Component({
   selector: 'app-add-alert',
@@ -12,7 +12,7 @@ import { _deviceType } from '../../../myclass';
   styleUrls: ['./add-alert.component.scss']
 })
 export class AddAlertComponent implements OnInit {
-
+  alertTypes = _alertType;
   @Input() tabIndex: any;
   industryType = ['Healthcare',
     'Manufacturing',
@@ -55,89 +55,89 @@ export class AddAlertComponent implements OnInit {
   assetSensors: any = [];
   assetSubSensors: any = [];
   assetTypes: any = [];
+  parameterTypes: any = [];
   public typeName: any;
   macActive = true;
   macInactive = false;
+  loading = true;
   constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar) {
     this.newForm = this.fb.group({
       PID: [''],
-      ALERT_NAME:['',Validators.required],
-      ASSET_CONFIG_ID:['',Validators.required],
-      THRESHOLD_MIN:['',Validators.required],
-      THRESHOLD_MAX:['',Validators.required],
-      THRESHOLD_AVG:['',Validators.required],
-      // MAC_DETAILS: this.fb.array([])
+      ALERT_NAME: ['', Validators.required],
+      ASSET_CONFIG_ID: ['', Validators.required],
+      THRESHOLD_MIN: ['', Validators.required],
+      THRESHOLD_MAX: ['', Validators.required],
+      THRESHOLD_AVG: ['', Validators.required],
+      PARAMETER: ['', Validators.required],
+      ALERT_TYPE: ['', Validators.required]
 
     })
-    console.log(data)
-    this.getAllAssets();
-    this.data=data;
-    if (data && data.MAC_NAME) {
-      console.log(data)
+    // console.log(data)
+    // this.getAllAssets();
+    this.data = data;
+    if (data) {
+      // console.log(data)
       // edit
-      this.typeName = data;
-      
-    
+      // this.typeName = data;
+      this.newForm.patchValue(data)
+
     } else {
       // add
-      this.newForm.patchValue({
-        PID: data && data.PID?data.PID:'',
-      })
-    
+      
+
     }
   }
   get MAC_DETAILS(): FormArray {
     return this.newForm.get('MAC_DETAILS') as FormArray;
   }
-  
+
 
   ngOnChanges(changes: SimpleChanges): void {
 
-    this.initCall()
+    // this.initCall()
   }
   initCall() {
+
     this.dataService.getAssetConn({}).subscribe(conn => {
       if (conn) {
         this.assetConn = conn.data;
         // get all sensors
         this.dataService.getAllSensors({}).subscribe(sens => {
           this.assetSensors = sens.data;
-          //get all asset types
-          this.dataService.getAllAssets({}).subscribe(sens => {
-            this.assetTypes = sens.data;
-
-            // if edit MAC the call by config ID
-            // if (this.typeName) {
-            //   this.dataService.getMACByConfigID(this.typeName).subscribe(res => {
-            //     console.log(res)
-            //     if (res && res.data.length > 0) {
-            //       this.newForm.patchValue({
-            //         MAC_DETAILS: res.data.map((item: any) => {
-            //           return {
-            //             PID: item.PID,
-            //             MAC_NAME: item.MAC_NAME,
-            //             MAC_ADDRESS: item.MAC_ADDRESS,
-            //             MAC_STATUS: item.MAC_STATUS ? true : false,
-            //             LOCATION: item.LOCATION
-
-            //           }
-            //         })
-            //       })
-            //     }
-            //   })
-            // }
-
-
-
-          })
-
-
+          //get all asset config types
+          this.getAllAssetConfigs()
         })
       }
     })
   }
+  getAllAssetConfigs() {
+    const session = this.dataService.getSessionData();
+    let params = {}
+    if (session.COMPANY_TYPE == 'CORP') {
+      // get all
+      params = { COMPANY_ID: 0 };
+    } else {
+      params = { COMPANY_ID: session.COMPANY_ID };
+    }
+    this.dataService.getAssetConfig(params).subscribe(res => {
+      this.assetTypes = res.data;
+      this.loading = false;
+
+    })
+  }
+  getPARAMETERS() {
+    const pid = this.Values.ASSET_CONFIG_ID;
+    // console.log(pid)
+    this.parameterTypes = [];
+    let index = this.assetTypes.map((a: any) => a.PID).indexOf(pid);
+    if (index != -1 && this.assetTypes[index].PARAMETERS) {
+      this.parameterTypes = JSON.parse(this.assetTypes[index].PARAMETERS);
+    }
+
+  }
   ngOnInit(): void {
+    this.initCall();
   }
 
   async confirmData() {
@@ -146,15 +146,18 @@ export class AddAlertComponent implements OnInit {
     // console.log(msg)
 
     if (this.newForm.valid) {
+      this.loading = true;
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
-      console.log(this.Values)
-      this.dataService.addMACByConfigID(this.Values).subscribe(res => {
-        console.log(res)
+
+      // console.log(this.Values)
+      this.dataService.addThresholdAlert(this.Values).subscribe(res => {
+        // console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
         this.openSnackBar()
+        this.loading = false;
       })
     }
   }
@@ -167,9 +170,9 @@ export class AddAlertComponent implements OnInit {
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
-      console.log(this.Values)
+      // console.log(this.Values)
       this.dataService.updateDeviceByID(this.Values).subscribe(res => {
-        console.log(res)
+        // console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
         this.openSnackBar()
@@ -201,7 +204,7 @@ export class AddAlertComponent implements OnInit {
 
   }
   onSENSORChange(event: any) {
-    console.log(event)
+    // console.log(event)
     const value = this.newForm.get('SENSOR')?.value;
     let params = { SENSOR_TYPE_ID: value };
     this.dataService.getSubSensorCatg(params).subscribe(res => {
@@ -216,23 +219,10 @@ export class AddAlertComponent implements OnInit {
       duration: this.durationInSeconds * 1000,
     });
   }
-  addMAC(e: Event) {
-    e.stopPropagation()
-  }
+  // addMAC(e: Event) {
+  //   e.stopPropagation()
+  // }
 
-   getAllAssets() {
-    const session =  this.dataService.getSessionData();
-    let params = {}
-    if (session.COMPANY_TYPE == 'CORP') {
-      // get all
-      params = { COMPANY_ID: 0 };
-    } else {
-      params = { COMPANY_ID: session.COMPANY_ID };
-    }
 
-    this.dataService.getAssetConfig(params).subscribe(res => {
-      this.assetTypes = res.data;
-    })
-  }
 
 }

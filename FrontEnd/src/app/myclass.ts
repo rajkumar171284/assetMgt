@@ -51,15 +51,15 @@ export const _widgetSIZE = [{ name: 'Full width', file: 'col-md-12', isSelected:
 { name: 'Sm width', file: 'col-md-5', isSelected: false },
 { name: 'Min width', file: 'col-md-4', isSelected: false },
 ];
-export const _widgetTYPE = [{ name: 'CHARTS', file: 'chart-widget', isSelected: false },
+export const _mapTypes = [
 { name: 'MAPS', file: 'map-widget', isSelected: false },
-{ name: 'Highlights', file: 'highlight-widget', isSelected: false },
-{ name: 'TABLE', file: 'table-widget', isSelected: false },
+// { name: 'Highlights', file: 'highlight-widget', isSelected: false },
+// { name: 'TABLE', file: 'table-widget', isSelected: false },
 // { name: 'Utility', file: 'guage-widget', isSelected: false },
 // { name: 'ON/OFF Controls', file: 'onoff-widget', isSelected: false },
 // { name: 'Activity Controls', file: 'activity-widget', isSelected: false },
-{ name: 'Summary', file: 'summary-widget', isSelected: false },
-{ name: 'Reports', file: 'reports-widget', isSelected: false },
+// { name: 'Summary', file: 'summary-widget', isSelected: false },
+// { name: 'Reports', file: 'reports-widget', isSelected: false },
 ];
 
 export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false },
@@ -69,6 +69,22 @@ export const _chartTYPE = [{ name: 'Bar', file: 'bar-chart', isSelected: false }
 { name: 'scatter', file: 'scatter-chart', isSelected: false },
 { name: 'gauge', file: 'guage-widget', isSelected: false },
 ];
+
+export const _cardTYPE = [
+{ name: 'Highlights', file: 'highlight-widget', isSelected: false },
+{ name: 'TABLE', file: 'table-widget', isSelected: false },
+{ name: 'Summary', file: 'summary-widget', isSelected: false },
+{ name: 'Reports', file: 'reports-widget', isSelected: false },
+];
+export const _alertTYPE = [
+    
+    { name: 'Threshold alert', file: 'threshold', isSelected: false },
+    { name: 'No data alert', file: 'onoff-widget', isSelected: false },
+    { name: 'Load excess', file: 'weight', isSelected: false },
+    { name: 'Reactive excess', file: 'guage-widget', isSelected: false },
+    { name: 'ON/OFF', file: 'onoff-widget', isSelected: false },
+    { name: 'Activity Controls', file: 'activity-widget', isSelected: false },
+    ];
 export class widgetResponse {
     totalLocations: [] | undefined;
     locations: [] | undefined;
@@ -106,6 +122,8 @@ export const _assetTypes = ['Security',
     'Motion Detection'
 ];
 export const _deviceType = ["IMEI", "MAC ADDRESS", "DEVICE ID"];
+export const _alertType = ["SMS", "EMAIL", "PUSH NOTIFICATION"];
+
 export interface __deviceHistory {
     PID: number;
     ASSET_CONFIG_ID: number;

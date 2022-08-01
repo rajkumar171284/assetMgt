@@ -146,10 +146,11 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
         }
 
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
-        that.service.updateWidgetReq(that.WIDGET_REQUEST);
+        // that.service.updateWidgetReq(that.WIDGET_REQUEST);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
-        // that._widgetData.emit(that.WIDGET_REQUEST)
+        that._widgetData.emit(that.WIDGET_REQUEST)
+        
       }
     });
 
@@ -166,10 +167,10 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
           top: top, left: left
         }
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
-        that.service.updateWidgetReq(that.WIDGET_REQUEST);
+        // that.service.updateWidgetReq(that.WIDGET_REQUEST);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
-        // that._widgetData.emit(that.WIDGET_REQUEST)
+        that._widgetData.emit(that.WIDGET_REQUEST)
       }
     })
 

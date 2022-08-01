@@ -111,6 +111,8 @@ import { FooterWidgetComponent } from '../components/footer-widget/footer-widget
 
 import { AngularResizeEventModule } from 'angular-resize-event';
 import { UploadLogoComponent } from '../components/upload-logo/upload-logo.component';
+import { PushNotificationModule } from 'ng-push-notification';
+
 
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
@@ -172,7 +174,8 @@ import { UploadLogoComponent } from '../components/upload-logo/upload-logo.compo
     OverlayModule,
     PortalModule,
     ScrollingModule, HttpClientModule,
-    LeafletModule, AngularResizeElementModule, ResizableModule, TableVirtualScrollModule
-  ]
+    LeafletModule, AngularResizeElementModule, ResizableModule, TableVirtualScrollModule,
+    PushNotificationModule.forRoot()
+  ],
 })
 export class SharedModule { }

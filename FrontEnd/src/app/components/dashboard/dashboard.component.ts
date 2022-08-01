@@ -14,6 +14,8 @@ import { switchMap } from 'rxjs/operators'
 import { XAxisService } from '../../services/x-axis.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { PushNotificationService } from 'ng-push-notification';
+// import {SwPush} from '@angular/service-worker';
 
 declare let $: any;
 interface Item {
@@ -47,7 +49,8 @@ interface dragOption {
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  // providers:[PushNotificationService]
 })
 export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   @ViewChild('widgetIndex') widgetIndex!: any;
@@ -58,7 +61,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   isWidgetOpen = true;
   dragStatus: number = 0;
   newForm: FormGroup;
-  constructor(private fb: FormBuilder, public service: XAxisService, private _snackBar: MatSnackBar, public dialog: MatDialog, public dataService: AuthService, private ref: ChangeDetectorRef) {
+  constructor(private pushNotification: PushNotificationService,private fb: FormBuilder, public service: XAxisService, private _snackBar: MatSnackBar, public dialog: MatDialog, public dataService: AuthService, private ref: ChangeDetectorRef) {
     this.newForm = this.fb.group({
       PID: [''],
       COMPANY_ID: ['', Validators.required]
@@ -118,6 +121,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
 
   ngOnInit(): void {
+    // this.showPush();
     this.getSession();
 
     this.getAll();
@@ -652,7 +656,20 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
       this.getAllChartRequest();
     });
   }
+  showPush() {
+    this.pushNotification.show(
+      'Show me that message!',
+      {/* any settings, e.g. icon */},
+      6000, // close delay.
+    );
+    // Or simply this:
+    this.pushNotification.show('And that too!');
+  }
 
+  async showAnotherPush() {
+    const notification = await this.pushNotification.show('Returns promise with Notification object.');
+    setTimeout(() => notification.close(), 1000);
+  }
   ngOnDestroy(): void {
     this.subscription1?.unsubscribe();
   }

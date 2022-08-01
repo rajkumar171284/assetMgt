@@ -73,6 +73,8 @@ export class AuthService {
       return response;
     }))
   }
+  
+  
   addMACByConfigID(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/addMACByConfigID`, params, options).pipe(map(response => {
       return response;
@@ -273,7 +275,18 @@ export class AuthService {
     }))
   }
 
+  addThresholdAlert(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/asset/addThreshold`, params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  getThresholdAlertByAssetConfigID(params: any): Observable<any> {
+    return this.http.get(`${environment.url}/asset/getAllThresholdAlerts/${params.ASSET_CONFIG_ID}`, options).pipe(map(response => {
+      return response;
+    }))
+  }
 
+  
   getAccess(): Observable<any> {
     const session = this.getSessionData();
     let newLocal: any;

@@ -6,8 +6,6 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// // 
-
 
 router.post('/addAssetConfig', (req, res) => {
     let sql;
@@ -15,16 +13,15 @@ router.post('/addAssetConfig', (req, res) => {
     let errMessage;
     let MAC_DETAILS = []
     if (req.body.PID) {
-        // update
-        // console.log('update')
+
         sql = 'UPDATE asset_config_tbl SET CONFIG_NAME=?, ASSET_ID=?, INDUSTRIAL_TYPE=?, INDUSTRIAL_DATA_SOURCE=?, CONNECTION_TYPE=?, TRACKING_DEVICE=?, SENSOR=?, SENSOR_CATEGORY=?, SENSOR_DATA_TYPE=?, MAC_ADDRESS=?,STATIC_COORDS=?,PARAMETERS=?, COMPANY_ID = ?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS,req.body.PARAMETERS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
+        todo = [req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS, req.body.STATIC_COORDS, req.body.PARAMETERS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = 'updated'
     } else {
         MAC_DETAILS = req.body.MAC_DETAILS;
 
         sql = `INSERT INTO asset_config_tbl(PID, CONFIG_NAME, ASSET_ID, INDUSTRIAL_TYPE, INDUSTRIAL_DATA_SOURCE, CONNECTION_TYPE, TRACKING_DEVICE, SENSOR, SENSOR_CATEGORY, SENSOR_DATA_TYPE, MAC_ADDRESS,STATIC_COORDS,PARAMETERS, COMPANY_ID, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,? , ? )`;
-        todo = ['', req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS,req.body.STATIC_COORDS,req.body.PARAMETERS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date()];
+        todo = ['', req.body.CONFIG_NAME, req.body.ASSET_ID, req.body.INDUSTRIAL_TYPE, req.body.INDUSTRIAL_DATA_SOURCE, req.body.CONNECTION_TYPE, req.body.TRACKING_DEVICE, req.body.SENSOR, req.body.SENSOR_CATEGORY, req.body.SENSOR_DATA_TYPE, req.body.MAC_ADDRESS, req.body.STATIC_COORDS, req.body.PARAMETERS, req.body.COMPANY_ID, req.body.CREATED_BY, new Date()];
         errMessage = 'added'
     }
     db.query(sql, todo, (err, result, fields) => {
@@ -74,6 +71,58 @@ router.post('/addAssetConfig', (req, res) => {
     })
 })
 
+// threshold alert
+
+router.post('/addThreshold', (req, res) => {
+    let sql;
+    let todo;
+    let errMessage;
+    if (req.body.PID) {
+        //'update')
+        sql = 'UPDATE threshold_tbl SET ALERT_NAME = ?,ASSET_CONFIG_ID = ?, THRESHOLD_MIN =?,THRESHOLD_MAX=?,THRESHOLD_AVG=?,PARAMETER=?,ALERT_TYPE=?,MODIFY_DATE=? WHERE PID=?';
+        todo = [req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE, new Date(), req.body.PID];
+        errMessage = 'Record updated,successfully'
+    } else {
+        // add new
+        sql = `INSERT INTO threshold_tbl(PID, ALERT_NAME,ASSET_CONFIG_ID,THRESHOLD_MIN,THRESHOLD_MAX, THRESHOLD_AVG, PARAMETER,ALERT_TYPE,CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?)`;
+        todo = ['', req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE, new Date()];
+        errMessage = 'Record added,successfully';
+
+    }
+
+    db.query(sql, todo, (err, result) => {
+        // console.log(result)
+        if (err) {
+            throw err;
+            return res.status(400).send({
+                msg: err
+            });
+        }
+        else {
+            res.send({
+                data: result,
+                status: 200,
+                msg: errMessage
+            })
+
+        }
+    })
+})
+
+router.get('/getAllThresholdAlerts/:ASSET_CONFIG_ID', (req, res) => {
+    let sql;
+    sql = `SELECT * FROM threshold_tbl WHERE ASSET_CONFIG_ID=?`
+
+    let todo = [req.params.ASSET_CONFIG_ID]
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+            res.send({
+                data: result,
+                status: 200,
+            })
+    })
+})
 // mac add
 router.post('/addMACByConfigID', (req, res) => {
     let sql;
@@ -87,7 +136,7 @@ router.post('/addMACByConfigID', (req, res) => {
     db.query(sql, todo, (err, result) => {
 
         if (err) {
-            throw err;
+            // throw err;
             return res.status(400).send({
                 msg: err
             });
@@ -112,7 +161,7 @@ router.post('/updateDeviceByID', (req, res) => {
 
 
     sql = "UPDATE mac_tbl SET MAC_NAME=?,MAC_ADDRESS=?, MAC_STATUS=?, LOCATION=?,LATITUDE=?,LONGITUDE=?, MODIFY_BY=?, MODIFY_DATE=? WHERE PID=?";
-    todo = [MAC_DETAILS[0].MAC_NAME, MAC_DETAILS[0].MAC_ADDRESS, MAC_DETAILS[0].MAC_STATUS, MAC_DETAILS[0].LOCATION,MAC_DETAILS[0].LATITUDE,MAC_DETAILS[0].LONGITUDE, req.body.CREATED_BY, new Date(), MAC_DETAILS[0].PID];
+    todo = [MAC_DETAILS[0].MAC_NAME, MAC_DETAILS[0].MAC_ADDRESS, MAC_DETAILS[0].MAC_STATUS, MAC_DETAILS[0].LOCATION, MAC_DETAILS[0].LATITUDE, MAC_DETAILS[0].LONGITUDE, req.body.CREATED_BY, new Date(), MAC_DETAILS[0].PID];
     db.query(sql, todo, (err, result) => {
 
         if (err) {

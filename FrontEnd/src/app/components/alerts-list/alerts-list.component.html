@@ -1,1 +1,98 @@
-<p>alerts-list works!</p>
+<div *ngIf="loading" class="overlay">
+    <mat-spinner></mat-spinner>
+</div>
+<mat-card>
+    <form [formGroup]="newForm">
+
+    <mat-form-field>
+        <mat-label>SELECT ASSET CONFIG</mat-label>
+       
+        <mat-select (selectionChange)="getAssetID()" formControlName="ASSET_CONFIG_ID">
+
+            <mat-option *ngFor="let key of allAssetConfigTypes" [value]="key.PID">
+                {{key.CONFIG_NAME}} | {{key.NAME}}
+            </mat-option>
+
+        </mat-select>
+    </mat-form-field>
+    </form>
+
+
+    <table mat-table [dataSource]="dataSource" class="demo-table">
+
+        <ng-container matColumnDef="PID">
+            <th mat-header-cell *matHeaderCellDef> PID </th>
+            <td mat-cell *matCellDef="let element"> {{element.PID}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ALERT_NAME">
+            <th mat-header-cell *matHeaderCellDef> ALERT NAME </th>
+            <td mat-cell *matCellDef="let element"> {{element.ALERT_NAME}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="THRESHOLD_MIN">
+            <th mat-header-cell *matHeaderCellDef> THRESHOLD MIN </th>
+            <td mat-cell *matCellDef="let element"> {{element.THRESHOLD_MIN}} </td>
+        </ng-container>
+        <ng-container matColumnDef="THRESHOLD_MAX">
+            <th mat-header-cell *matHeaderCellDef> THRESHOLD MAX </th>
+            <td mat-cell *matCellDef="let element"> {{element.THRESHOLD_MAX}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="THRESHOLD_AVG">
+            <th mat-header-cell *matHeaderCellDef> THRESHOLD AVG </th>
+            <td mat-cell *matCellDef="let element"> {{element.THRESHOLD_AVG}} </td>
+        </ng-container>
+        <ng-container matColumnDef="PARAMETER">
+            <th mat-header-cell *matHeaderCellDef> PARAMETER NAME </th>
+            <td mat-cell *matCellDef="let element"> {{element.PARAMETER}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="ALERT_TYPE">
+            <th mat-header-cell *matHeaderCellDef> ALERT TYPE</th>
+            <td mat-cell *matCellDef="let element"> {{element.ALERT_TYPE}} </td>
+        </ng-container>
+
+        <!-- <ng-container matColumnDef="THRESHOLD_MAX">
+            <th mat-header-cell *matHeaderCellDef> STATUS </th>
+            <td mat-cell *matCellDef="let element">
+                <mat-icon matTooltip="{{element.STATUS?'Active':'In-active'}}"  color="accent">
+                    {{element.STATUS?'check_box':'check_box_outline_blank'}}
+                </mat-icon>
+            </td>
+        </ng-container> -->
+        <ng-container matColumnDef="CREATED_DATE">
+            <th mat-header-cell *matHeaderCellDef> CREATED DATE </th>
+            <td mat-cell *matCellDef="let element"> {{element.CREATED_DATE | date:'short'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> </th>
+            <td mat-cell *matCellDef="let element">
+                <div style="display: flex;">
+                    <button matTooltip="Edit record" (click)="editItem(element)" mat-flat-button>
+                        <mat-icon color="primary">edit</mat-icon>
+
+                    </button>
+                    <button matTooltip="Remove record" (click)="removeItem(element)" mat-flat-button>
+                        <mat-icon color="warn">delete_outline</mat-icon>
+                    </button>
+                  
+                </div>
+
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr *ngIf="dataSource.length==0">
+
+            <td mat-cell *matCellDef> No Data </td>
+
+        </tr>
+    </table>
+    <mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
+    </mat-paginator>
+
+
+</mat-card>

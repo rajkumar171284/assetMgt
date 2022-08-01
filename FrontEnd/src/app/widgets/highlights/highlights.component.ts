@@ -114,13 +114,13 @@ onResized(event: ResizedEvent) {
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log('highlights:', this.WIDGET_REQUEST)
-    this.getWidgetdetails();
+    // this.getWidgetdetails();
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
       // console.log('highlights:', this.WIDGET_REQUEST)
 
       this.getAllMACAddress();
-      this.getWidgetdetails();
+      // this.getWidgetdetails();
 
     }
   }

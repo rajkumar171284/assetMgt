@@ -1,3 +1,6 @@
+<div *ngIf="loading" class="overlay">
+    <mat-spinner></mat-spinner>
+</div>
 <mat-toolbar color="primary">
     <mat-grid-list class="title-center" cols="1" rowHeight="1:1">
         {{typeName && typeName.PID?'Edit Alert':'Add New Alert'}}
@@ -5,28 +8,38 @@
     
 </mat-toolbar>
 <form class="form-container" [formGroup]="newForm">
-    <mat-grid-list cols="1" rowHeight="2:1">
+    <mat-grid-list class="thresh"  cols="2" rowHeight="2:1">
 
         <mat-form-field>
             <mat-label>ALERT NAME</mat-label>
             <input formControlName="ALERT_NAME" matInput placeholder="" type="text" class="example-right-align">
            </mat-form-field>
 
-    </mat-grid-list>
-    <mat-grid-list cols="1" rowHeight="2:1">
-
-        <mat-form-field>
-            <mat-label>ASSET CONFIG</mat-label>
+           <mat-form-field>
+            <mat-label>SELECT ASSET CONFIG</mat-label>
            
-            <mat-select formControlName="ASSET_CONFIG_ID">
+            <mat-select (selectionChange)="getPARAMETERS()" formControlName="ASSET_CONFIG_ID">
 
                 <mat-option *ngFor="let key of assetTypes" [value]="key.PID">
-                    {{key.CONFIG_NAME}}
+                    {{key.CONFIG_NAME}} | {{key.NAME}}
                 </mat-option>
 
             </mat-select>
         </mat-form-field>
+        <mat-form-field>
+            <mat-label>SELECT PARAMETER</mat-label>
+           
+            <mat-select formControlName="PARAMETER">
+
+                <mat-option *ngFor="let key of parameterTypes" [value]="key.INPUT_NAME">
+                    {{key.INPUT_NAME}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
+
     </mat-grid-list>
+
     
     <mat-grid-list class="thresh" cols="3" rowHeight="2:1">
         <mat-form-field>
@@ -43,7 +56,17 @@
            </mat-form-field>
     </mat-grid-list>
     <mat-grid-list cols="1" rowHeight="2:1">
+        <mat-form-field>
+            <mat-label>SELECT ALERT</mat-label>
+           
+            <mat-select formControlName="ALERT_TYPE">
 
+                <mat-option *ngFor="let key of alertTypes" [value]="key">
+                    {{key}}
+                </mat-option>
+
+            </mat-select>
+        </mat-form-field>
        
     </mat-grid-list>
     <mat-grid-list cols="10">

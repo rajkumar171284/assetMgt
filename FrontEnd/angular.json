@@ -33,7 +33,7 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss",
-              "./node_modules/angular-resize-element/bundles/style.scss"          
+              "./node_modules/angular-resize-element/bundles/style.scss"
             ],
             "scripts": []
           },
@@ -108,13 +108,25 @@
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss",
-              "./node_modules/angular-resize-element/bundles/style.scss"   
+              "./node_modules/angular-resize-element/bundles/style.scss"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
-  "defaultProject": "asset-mgt"
+  "defaultProject": "asset-mgt",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

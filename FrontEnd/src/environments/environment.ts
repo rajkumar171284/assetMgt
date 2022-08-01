@@ -8,7 +8,11 @@ export const environment = {
   vtsURL: 'http://34.233.90.129:8000/',
   url: 'http://10.1.1.139:8001/api',//public ip
   // url:'https://35.193.11.55:3306/api',
-  imgUrl: 'http://10.1.1.139:8001/images/'
+  imgUrl: 'http://10.1.1.139:8001/images/',
+  webPush: {
+    publicKey: "BO9IGbPqSLPNEIfCvg1qm66OBPjBtAXsjN1YHpdr86HhbDaf8yidQfdEeOR-S7dAFXT2zqk_nGikWU8IeZL_jqs",
+    privateKey: "DxkfEpc9Rg1NGZaRDkSFGnHWjgBox1pYFMaeQXjesBQ"
+  }
 };
 
 /*

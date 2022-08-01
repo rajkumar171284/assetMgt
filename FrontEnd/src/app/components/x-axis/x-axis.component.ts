@@ -1,4 +1,4 @@
-import { _widgetTYPE, _chartTYPE, _widgetSIZE, _xAxes } from '../../myclass';
+import {  _chartTYPE, _widgetSIZE, _xAxes } from '../../myclass';
 import { Component, EventEmitter, OnInit, Input,ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';

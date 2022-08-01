@@ -9,6 +9,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SharedModule } from './shared/shared.module';
 import { AuthService } from './services/auth.service';
+import {environment} from '../environments/environment';
+// import { ServiceWorkerModule } from '@angular/service-worker';
+import { PushNotificationModule } from 'ng-push-notification';
 
 @NgModule({
   declarations: [
@@ -19,7 +22,12 @@ import { AuthService } from './services/auth.service';
   imports: [
     BrowserModule,
     AppRoutingModule, FormsModule, ReactiveFormsModule,
-    BrowserAnimationsModule, SharedModule
+    BrowserAnimationsModule, SharedModule,
+    PushNotificationModule.forRoot(),
+    // ServiceWorkerModule.register('ngsw-worker.js', {
+    //   enabled: environment.production,
+    //   registrationStrategy: 'registerWhenStable:30000'
+    // }),
   ],
 
   providers: [AuthService, ],
