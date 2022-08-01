@@ -12,11 +12,11 @@
     overflow-y: scroll;
   }
   .example-container {
-
     height: 240px;
-  
     max-width: 100%;
+    overflow: hidden;
   
-    overflow: auto;
-  
+  }
+  .example-container:hover{
+    overflow: auto !important;
   }

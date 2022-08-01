@@ -1,4 +1,4 @@
-<div #table [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)"
+<div #table2 [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)"
   [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)"
   class="inner-panel">
 
@@ -37,17 +37,18 @@
               <span class="my-badge defaultBadge">
                 {{element.totalValue | number:'1.2-2'}}
               </span>
+              
+              <mat-progress-bar mode="determinate" [value]="element.totalValue"></mat-progress-bar>
+
             </div>
 
-            <div>
-              <span class="my-cell-icon">
-                <img src="assets/recent-graph.png">
-              </span>
-            </div>
+            
           </div>
         
         </div>
       </cdk-virtual-scroll-viewport>
+
+
 
       <!-- <div class="table-card example-container ">
 
@@ -60,7 +61,6 @@
             <td mat-cell *matCellDef="let element"> {{element.key}} </td>
           </ng-container>
 
-
           <ng-container matColumnDef="totalValue">
             <th mat-header-cell [hidden]="true" *matHeaderCellDef> </th>
             <td mat-cell *matCellDef="let element">
@@ -68,15 +68,8 @@
               <span class="my-badge defaultBadge">
                 {{element.totalValue | number:'1.2-2'}}
               </span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="icon">
-            <th mat-header-cell [hidden]="true" *matHeaderCellDef> </th>
-            <td mat-cell *matCellDef="let element">
+              <mat-progress-bar mode="determinate" [value]="element.totalValue"></mat-progress-bar>
 
-              <span class="my-cell-icon">
-                <img src="assets/recent-graph.png">
-              </span>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -113,7 +113,7 @@ import { AngularResizeEventModule } from 'angular-resize-event';
 import { UploadLogoComponent } from '../components/upload-logo/upload-logo.component';
 import { PushNotificationModule } from 'ng-push-notification';
 import { RecentActivityComponent } from '../widgets/recent-activity/recent-activity.component';
-
+import {ProgressiveActivityComponent} from '../widgets/progressive-activity/progressive-activity.component';
 @NgModule({
   declarations: [SidenavComponent, ConfigComponent, ControlPanelComponent,
     AddAssetConfigComponent, AssetConnectionsTypeComponent,
@@ -126,7 +126,7 @@ import { RecentActivityComponent } from '../widgets/recent-activity/recent-activ
     PlotlyComponent, CardComponent,
     MacReportsComponent, ReportsComponent, TableComponent,
     HighlightsComponent, MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent, AdminPanelComponent, AlertPanelComponent, MaskWidgetComponent, HeaderWidgetComponent, FooterWidgetComponent, UploadLogoComponent,
-    RecentActivityComponent
+    RecentActivityComponent,ProgressiveActivityComponent
   ],
   imports: [
     CommonModule, PlotlyModule,

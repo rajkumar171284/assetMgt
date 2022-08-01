@@ -67,17 +67,15 @@
 
                 </div>
                 <div *ngIf="List.WIDGET_TYPE==='MAPS'">
-
-
-
                   <app-map [widgetIndex]="List.PID" (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List"></app-map>
 
                 </div>
                 <div *ngIf="List.WIDGET_TYPE==='RECENT'">
-
-
-
                   <app-recent-activity (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List"></app-recent-activity>
+
+                </div>
+                <div *ngIf="List.WIDGET_TYPE==='PROGRESS'">
+                  <app-progressive-activity (_widgetRemoved)="widgetRemoved($event)"  (_widgetData)="saveWidget($event)" [WIDGET_REQUEST]="List"></app-progressive-activity>
 
                 </div>
                 <ng-container *ngIf="List.WIDGET_TYPE=='CHARTS'">
