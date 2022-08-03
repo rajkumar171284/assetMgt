@@ -9,7 +9,7 @@ import { XAxisService } from '../../../services/x-axis.service';
   templateUrl: './add-company.component.html',
   styleUrls: ['./add-company.component.scss']
 })
-export class AddCompanyComponent implements OnChanges {
+export class AddCompanyComponent implements OnChanges, OnInit {
   roleData = [
     'LEVEL1',
     'ADMIN']
@@ -20,7 +20,7 @@ export class AddCompanyComponent implements OnChanges {
   @ViewChild('UploadFileInput', { static: false }) uploadFileInput: ElementRef | undefined;
   bImg: any;
   newForm: FormGroup;
-  public typeName: any;
+  public typeName: any = {};
   accessYes = true;
   accessNo = false;
   public imgUrl = environment.imgUrl;
@@ -55,7 +55,11 @@ export class AddCompanyComponent implements OnChanges {
 
       });
 
+
     }
+  }
+  ngOnInit(): void {
+    console.log('typeName', this.typeName.isProfileChange ? this.typeName.isProfileChange : '')
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -72,7 +76,13 @@ export class AddCompanyComponent implements OnChanges {
         // console.log(res)
 
         if (res && res.status == 200) {
-          this.transfer.updateCompany(this.Values);
+          if (this.typeName.isProfileChange) {
+            console.log('typeName', this.typeName.isProfileChange ? this.typeName.isProfileChange : '')
+
+            // if profile update happend only
+            this.transfer.updateCompany(this.Values);
+          }
+
           if (this.selectedLogo) {
 
             this.uploadLogo();
@@ -125,7 +135,9 @@ export class AddCompanyComponent implements OnChanges {
 
       if (res && res.status == 200) {
         // the save comp details
+        if (this.typeName.isProfileChange) {
         this.transfer.updateCompany(this.Values);
+        }
         // console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();

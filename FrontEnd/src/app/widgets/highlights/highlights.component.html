@@ -2,7 +2,7 @@
 <div #highlights  [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
 [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="inner-panel">
 
-<mat-card style="resize:both" (resized)="onResized($event)" [ngClass]="{'resizable':dataService.getAccess()}"  [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="overflow-hidden my-card bg11">
+<mat-card [ngClass]="{'resizable':dataService.getAccess()}"  [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="overflow-hidden my-card bg11">
     <div class="my-card-footer theme2">
         <mat-card-header class="text-uppercase">
           HIGHLIGHTS OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}

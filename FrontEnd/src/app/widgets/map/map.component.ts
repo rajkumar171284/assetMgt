@@ -254,7 +254,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, DoCheck, 
     const resultArr = res.data.filter((item: any) => {
       return item.MAC_STATUS === 1;
     })
-    console.log(resultArr)
+    // console.log(resultArr)
     forkJoin(resultArr.map((result: any) => this.dataService.getLiveLocationByCity(result))).subscribe((response: any) => {
       // console.log(response)
       this.markerArr = response;

@@ -84,7 +84,13 @@
     height: 60px !important;
     background-color: #fff;
     padding: 10px;
-    text-align: center;
+    text-align: center;    display: flex;
+  }
+  .logo-right span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;    width: 100px;
+    display: inline-block;
   }
   .mat-nav-list a{
       color:#fff;

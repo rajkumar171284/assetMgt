@@ -93,7 +93,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       filterStep: ['']
     })
     this.newForm.patchValue({
-      filterStep: this.dateFilters[9]
+      filterStep: this.dateFilters[8]
     })
 
   }
@@ -123,7 +123,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.WIDGET_REQUEST, this.reLoad)
+    // console.log(this.WIDGET_REQUEST, this.reLoad)
     // 
     if (this.WIDGET_REQUEST && this.reLoad) {
 
@@ -202,9 +202,9 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
     // }
     this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
-      console.log('result',result)
+      // console.log('result',result)
       if (result && result.data.length > 0) {
-        console.log('result found',this.WIDGET_REQUEST.PID)
+        // console.log('result found',this.WIDGET_REQUEST.PID)
         this.widgetResponse.data = result.data;
         this.widgetResponse.protocol = result.protocol;
         this.widgetResponse.totalDevice = result.totalDevice;

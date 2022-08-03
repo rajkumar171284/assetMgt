@@ -12,7 +12,7 @@
     </mat-tab>
    
   
-    <mat-tab appWidgetAccessIf label="Clients">
+    <mat-tab *appAccessrights="true" label="Clients">
       <app-company-list [updateData]="updateComp" [cType]="'CLIENT'" [tabIndex]="tabIndex"
         (dialogClose)="dialogClose($event)"></app-company-list>
   

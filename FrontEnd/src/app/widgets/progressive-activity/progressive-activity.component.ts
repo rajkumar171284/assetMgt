@@ -84,7 +84,7 @@ export class ProgressiveActivityComponent implements OnInit, OnChanges {
 
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.WIDGET_REQUEST)
+    // console.log(this.WIDGET_REQUEST)
     this.getAllMACdata();
   }
   saveWidget() {
@@ -94,7 +94,7 @@ export class ProgressiveActivityComponent implements OnInit, OnChanges {
   getAllMACdata() {
 
     this.dataService.getMACByConfigID({ PID: this.WIDGET_REQUEST.ASSET_CONFIG_ID }).subscribe(res => {
-      console.log(res)
+      // console.log(res)
 
       this.dataSource = res.data.map((res: any) => res);
       // this.ref.detectChanges();
@@ -108,15 +108,7 @@ export class ProgressiveActivityComponent implements OnInit, OnChanges {
     })
   }
 
-  getProp(type: string) {
-    const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
-    if (type == 'W') {
-      return prop.width
-    }
-    if (type == 'H') {
-      return prop.height
-    }
-  }
+  
 
   getLoader(data: boolean) {
     this.loading = data;

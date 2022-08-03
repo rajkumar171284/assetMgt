@@ -38,7 +38,7 @@ export class WidgetAccessDirective implements OnInit {
   ngOnInit(): void {
     // console.log('appWidgetAccess')
     const session = this.dataService.getSessionData();
-    if(session && session.ROLE=='ADMIN' && session.COMPANY_TYPE=='CORP'){
+    if(session && session.ROLE=='ADMIN' && (session.COMPANY_TYPE=='CORP'||session.COMPANY_TYPE!='CORP')){
       // console.log('session.ROLE',session.ROLE)
       this.elementRef.nativeElement.style.display='block';
       // this.viewContainer.createEmbeddedView(this.templateRef);

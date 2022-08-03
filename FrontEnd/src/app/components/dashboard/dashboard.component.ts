@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   isWidgetOpen = true;
   dragStatus: number = 0;
   newForm: FormGroup;
-  constructor(private pushNotification: PushNotificationService,private fb: FormBuilder, public service: XAxisService, private _snackBar: MatSnackBar, public dialog: MatDialog, public dataService: AuthService, private ref: ChangeDetectorRef) {
+  constructor(private pushNotification: PushNotificationService, private fb: FormBuilder, public service: XAxisService, private _snackBar: MatSnackBar, public dialog: MatDialog, public dataService: AuthService, private ref: ChangeDetectorRef) {
     this.newForm = this.fb.group({
       PID: [''],
       COMPANY_ID: ['', Validators.required]
@@ -141,32 +141,32 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
         if (data.isRemoved && data.row.IS_DRAGGED == 1) {
           this.splicedraggedWidget(data.row.PID);
 
-          
+
         } else if (data.isRemoved && data.row.IS_DRAGGED == 0) {
           //right panel-not dragged
           this.spliceUndraggedWidget(data.row.PID);
-          
+
         }
-        
+
       }
 
     })
   }
-  splicedraggedWidget(PID:number){
+  splicedraggedWidget(PID: number) {
     const index = this.draggedWidget$.map(x => x.PID).indexOf(PID)
     if (index != -1) {
       this.draggedWidget$.splice(index, 1);
       this.loader = false;
     }
   }
-  spliceUndraggedWidget(PID:number){
+  spliceUndraggedWidget(PID: number) {
     const index = this.undraggedWidget$.map(x => x.PID).indexOf(PID)
-          // console.log(index)
-          if (index != -1) {
-            this.undraggedWidget$.splice(index, 1);
-            this.loader = false;
+    // console.log(index)
+    if (index != -1) {
+      this.undraggedWidget$.splice(index, 1);
+      this.loader = false;
 
-          }
+    }
   }
   async getSession() {
     const session = await this.dataService.getSessionData();
@@ -182,7 +182,9 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   getMappedChartRequest() {
-    const params = { IS_DRAGGED: 1, COMPANY_ID: this.VALUE.COMPANY_ID };
+    const session =  this.dataService.getSessionData();
+
+    const params = { IS_DRAGGED: 1, COMPANY_ID: session.COMPANY_ID };
     this.dataService.getAllChartRequests(params).subscribe(res => {
       if (res) {
 
@@ -221,9 +223,10 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
       data: this.toEditRequest ? this.toEditRequest : null
     });
     dialogRef.afterClosed().subscribe(result => {
-      // call all charts      
-      this.getAllChartRequest();
-
+      // call all charts  
+      if (this.toEditRequest) {
+        this.getAllChartRequest();
+      }
     });
   }
   async editRequest(pid: any) {
@@ -235,9 +238,9 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
   async getAllChartRequest() {
     const session = await this.dataService.getSessionData();
-    const params = { IS_DRAGGED: 0, COMPANY_ID: this.VALUE.COMPANY_ID };
+    const params = { IS_DRAGGED: 0, COMPANY_ID: session.COMPANY_ID };
     this.undraggedObervable$ = this.dataService.getAllChartRequests(params);
-    console.log('undraggedObervable', this.undraggedObervable$)
+    // console.log('undraggedObervable', this.undraggedObervable$)
     this.dataService.getAllChartRequests(params).subscribe(res => {
       this.dataSource = res.data.map((el: chartItem) => {
         return el;
@@ -426,7 +429,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
         event.container.data,
         event.previousIndex,
         event.currentIndex);
-        console.log('2')
+      console.log('2')
 
     }
     const data = event.item.data;
@@ -444,10 +447,10 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     }
     // console.log(data)
     this.dataService.chartRequestChangeStatus(params).subscribe(res => {
-      if(res && res.status==200){
+      if (res && res.status == 200) {
         // success
         // then remove from undragged array
-        data.IS_DRAGGED=1;
+        data.IS_DRAGGED = 1;
         this.spliceUndraggedWidget(data.PID);
         // push into dragged 
         this.draggedWidget$.push(data);
@@ -659,7 +662,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   showPush() {
     this.pushNotification.show(
       'Show me that message!',
-      {/* any settings, e.g. icon */},
+      {/* any settings, e.g. icon */ },
       6000, // close delay.
     );
     // Or simply this:

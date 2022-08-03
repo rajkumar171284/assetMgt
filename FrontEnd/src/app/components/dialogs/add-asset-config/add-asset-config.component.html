@@ -93,24 +93,7 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <!-- <div class="col-md-4">
-                    <mat-form-field *ngIf="assetSubSensors.length==0">
-                        <mat-label>SENSOR CATEGORY</mat-label>
-                        <input matInput formControlName="SENSOR_CATEGORY" placeholder="(optional)" type="text"
-                            class="example-right-align">
 
-                    </mat-form-field>
-                    <mat-form-field *ngIf="assetSubSensors.length>0">
-                        <mat-label>SENSOR CATEGORY</mat-label>
-                        <mat-select placeholder="(optional)" formControlName="SENSOR_CATEGORY">
-
-                            <mat-option *ngFor="let key of assetSubSensors" [value]="key.CATEGORY_NAME">
-                                {{key.CATEGORY_NAME}}
-                            </mat-option>
-
-                        </mat-select>
-                    </mat-form-field>
-                </div> -->
                 <div class="col-md-4">
                     <mat-form-field>
                         <mat-label>SENSOR DATA TYPE</mat-label>
@@ -146,7 +129,8 @@
 
                 </div>
                 <div class="col-md-8 mt-2 mb-2 ">
-                    <mat-label  style="margin-right:10px;font-weight:500">Are you gonna set 'STATIC COORDS' - LATITUDE,LONGITUDE for your
+                    <mat-label style="margin-right:10px;font-weight:500">Are you gonna set STATIC COORDS -
+                        LATITUDE,LONGITUDE for your
                         devices
                     </mat-label>
 
@@ -154,7 +138,8 @@
 
                         <mat-radio-group (change)="changeValue($event)" formControlName="STATIC_COORDS"
                             aria-label="Select an option">
-                            <mat-radio-button style="margin-right:10px;" color="primary" [value]="macActive">YES</mat-radio-button>
+                            <mat-radio-button style="margin-right:10px;" color="primary" [value]="macActive">YES
+                            </mat-radio-button>
                             <mat-radio-button color="primary" [value]="macInactive">NO</mat-radio-button>
                         </mat-radio-group>
                     </div>
@@ -162,62 +147,7 @@
 
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <mat-grid-list rowHeight="2:1" cols="1">
-                        <mat-label color="primary">
-                            ADD PARAMETERS, IF AVAILABLE
-                            <button mat-raised-button class="btn-theme2 ">
-                                <mat-icon color="primary" (click)="addParameters()">note_add</mat-icon>
-                                PARAMS 
-                            </button>
 
-
-                        </mat-label>
-                        </mat-grid-list>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 offset-md-1 mt-2">
-                    <mat-grid-list rowHeight="2:1" cols="1">
-                        
-                        <ng-container formArrayName="PARAMETERS">
-                            <ng-container *ngFor="let item of PARAMETERS_DETAILS.controls; let i = index">
-
-                                <div class="row addr-row" [formGroupName]="i">
-                                    <mat-icon class="removeParam" color="warn" (click)="removeParameters(i)">
-                                        restore_from_trash</mat-icon>
-                                    <div class="col-md-6">
-                                        <mat-form-field appearance="outline">
-                                            <mat-label>INPUT NAME</mat-label>
-                                            <input matInput formControlName="INPUT_NAME" placeholder="" type="text"
-                                                class="example-right-align">
-
-                                        </mat-form-field>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div>
-                                            <mat-label>STATUS</mat-label>
-                                        </div>
-
-                                        <mat-radio-group formControlName="INPUT_STATUS" aria-label="Select an option">
-                                            <mat-radio-button color="primary" [value]="macActive">Active
-                                            </mat-radio-button>
-                                            <mat-radio-button color="primary" [value]="macInactive">In Active
-                                            </mat-radio-button>
-                                        </mat-radio-group>
-
-
-                                    </div>
-                                </div>
-                            </ng-container>
-                        </ng-container>
-
-                    </mat-grid-list>
-                </div>
-            </div>
 
 
 
@@ -231,6 +161,7 @@
             </mat-grid-list>
 
         </mat-tab>
+
 
         <mat-tab *ngIf="!typeName" label="Device Details">
             <mat-grid-list cols="1" rowHeight="2:1">
@@ -317,6 +248,96 @@
 
             </mat-grid-list>
 
+        </mat-tab>
+
+        <mat-tab label="Parameter Details">
+            <mat-grid-list cols="1" rowHeight="2:1">
+
+                <div class="row">
+                    <div class="col-md-12  mt-2">
+                        <mat-grid-list rowHeight="2:1" cols="1">
+                            <!-- <mat-label color="primary">
+                                ADD PARAMETERS, IF AVAILABLE
+                                
+    
+    
+                            </mat-label> -->
+                            <button (click)="addParameters()" mat-raised-button class="btn-theme2 ">
+                                <mat-icon color="primary">note_add</mat-icon>
+                                PARAMS
+                            </button>
+                        </mat-grid-list>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-11 offset-md-1 mt-2">
+                        <mat-grid-list rowHeight="2:1" cols="1">
+
+                            <ng-container formArrayName="PARAMETERS">
+                                <ng-container *ngFor="let item of PARAMETERS_DETAILS.controls; let i = index">
+
+
+                                    <div class="row addr-row" [formGroupName]="i">
+                                        <mat-icon class="removeParam" color="warn" (click)="removeParameters(i)">
+                                            restore_from_trash</mat-icon>
+                                        <div class="col-md-2">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>KEY NAME</mat-label>
+                                                <input matInput formControlName="INPUT_NAME" placeholder="" type="text"
+                                                    class="example-right-align">
+
+                                            </mat-form-field>
+
+
+                                        </div>
+                                        <div class="col-md-2">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>ZONE</mat-label>
+                                                <input matInput formControlName="ZONE" placeholder="" type="text"
+                                                    class="example-right-align">
+
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>UNIT</mat-label>
+                                                <input matInput formControlName="UNIT" placeholder="" type="text"
+                                                    class="example-right-align">
+
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div>
+                                                <mat-label>STATUS</mat-label>
+                                            </div>
+
+                                            <mat-radio-group formControlName="INPUT_STATUS"
+                                                aria-label="Select an option">
+                                                <mat-radio-button color="primary" [value]="macActive">Active
+                                                </mat-radio-button>
+                                                <mat-radio-button color="primary" [value]="macInactive">In Active
+                                                </mat-radio-button>
+                                            </mat-radio-group>
+
+
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+
+                        </mat-grid-list>
+                    </div>
+                </div>
+
+            </mat-grid-list>
+            <mat-grid-list *ngIf="typeName && typeName.PID" cols="10">
+                <button (click)="confirmData()" mat-raised-button class="m-2 btn-theme1">Update Config</button>
+
+                <button mat-raised-button (click)="confirmClose()" class="m-2 btn-theme2">Cancel</button>
+
+
+            </mat-grid-list>
         </mat-tab>
     </mat-tab-group>
     <mat-grid-list *ngIf="!typeName" cols="10">

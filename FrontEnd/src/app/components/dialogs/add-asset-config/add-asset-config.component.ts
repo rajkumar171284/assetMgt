@@ -94,7 +94,8 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
           const item = this.fb.group({
             PID: '',
             INPUT_NAME: [a.INPUT_NAME,Validators.required],
-            INPUT_STATUS: a.INPUT_STATUS
+            ZONE:a.ZONE,UNIT:a.UNIT,
+            INPUT_STATUS: a.INPUT_STATUS,
           })
           this.PARAMETERS_DETAILS.push(item)
         }
@@ -105,46 +106,32 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       this.newForm.patchValue({
         SENSOR: parseInt(data.SENSOR),
         ASSET_TYPE: parseInt(data.ASSET_TYPE),
-        STATIC_COORDS: data.STATIC_COORDS == 1 ? true : false,
-        // PARAMETERS:this.fb.array([])
+        STATIC_COORDS: data.STATIC_COORDS == 1 ? true : false,      
 
       })
-      if (data.PARAMETERS) {
-        // const params = JSON.parse(data.PARAMETERS);
-        // this.pushParameters(data);
-        // this.newForm.setControl('PARAMETERS', this.fb.array(params || []));
-
-
-        // this.newForm.patchValue({
-
-        //   PARAMETERS:this.PARAMETERS_DETAILS
-        // })
-      }
-
+     
     } else {
-      // add new
+      // add new- logic if any
 
     }
 
 
   }
-  pushParameters(data: any) {
-    const params = JSON.parse(data.PARAMETERS);
+  // pushParameters(data: any) {
+  //   const params = JSON.parse(data.PARAMETERS);
 
-    // this.newForm.setControl('PARAMETERS', this.fb.array(params || []));
+  //   for (let a of params) {
+  //     let item = this.newForm.get('PARAMETERS') as FormGroup;
 
-    for (let a of params) {
-      let item = this.newForm.get('PARAMETERS') as FormGroup;
-
-      item = this.fb.group({
-        PID: '',
-        INPUT_NAME: a.INPUT_NAME,
-        INPUT_STATUS: a.INPUT_STATUS
-      })
-      this.PARAMETERS_DETAILS.push(item)
-    }
+  //     item = this.fb.group({
+  //       PID: '',
+  //       INPUT_NAME: a.INPUT_NAME,
+  //       INPUT_STATUS: a.INPUT_STATUS
+  //     })
+  //     this.PARAMETERS_DETAILS.push(item)
+  //   }
     
-  }
+  // }
 
   removeParameters(i:number){
    this.PARAMETERS_DETAILS.removeAt(i)
@@ -335,10 +322,12 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     const item = this.fb.group({
       PID: '',
       INPUT_NAME: ['', Validators.required],
+      UNIT:'',ZONE:'',
       INPUT_STATUS: true,
     })
 
     this.PARAMETERS_DETAILS.push(item)
+    // console.log(this.PARAMETERS_DETAILS)
   }
 
 

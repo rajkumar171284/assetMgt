@@ -41,8 +41,8 @@ export class SidenavComponent implements OnInit {
     });
 
   }
-  profilePicture : any;
-  
+  profilePicture: any;
+
   ngOnInit(): void {
     this.isDarkTheme = this.themeService.isDarkTheme;
     const session = JSON.parse(JSON.stringify(sessionStorage.getItem('session')));
@@ -87,13 +87,16 @@ export class SidenavComponent implements OnInit {
   }
 
   openDialog() {
+    if (this.companyData) {
+      this.companyData.isProfileChange = true;
+    }
     const dialogRef = this.dialog.open(AddCompanyComponent, {
       width: '800px',
       data: this.companyData ? this.companyData : null
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('afterClosed')
+      // console.log('afterClosed')
 
 
     });
