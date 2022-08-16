@@ -1,7 +1,7 @@
 const express = require('express');
 
 const createError = require('http-errors');
-const PORT = process.env.PORT | 4202;
+const PORT = process.env.PORT | 4203;
 const app = express();
 const cors = require('cors');
 const authRouter = require('./routes/auth.js');
@@ -49,6 +49,7 @@ app.use((err, req, res, next) => {
     });
 });
 app.use(multer({dest:DIR}).any());
+
 // app.listen(PORT, () => {
 //     console.log('server on ',PORT)
 // })

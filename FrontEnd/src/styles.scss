@@ -4,6 +4,11 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 @import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 @import './theme.scss';
+.mat-card{
+  // box-shadow: 0 1px 3px #000 !important;
+  box-shadow: 0 3px 10px #864efc !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+}
 .btn-theme1{
 background-color: orange;    color: #444 !important;
 }
@@ -11,7 +16,7 @@ background-color: orange;    color: #444 !important;
   background-color: #f3f3f3;
 }
 .mat-toolbar.mat-primary {
-  background: #6f98db !important;
+  background: #984bd7 !important;
   color: white;
 }
 .mat-toolbar {
@@ -141,9 +146,9 @@ th.mat-header-cell {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: #444;
     background: rgb(2, 0, 36) !important;
-    background: linear-gradient(90deg, rgba(0, 212, 255, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%) !important;
+    background: linear-gradient(90deg, #b6cbfb 0%, #b6cbfb 100%) !important;
 
 }
 .my-card-footer2{

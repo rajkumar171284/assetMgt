@@ -193,7 +193,7 @@ export class AuthService {
     }))
   }
   getAllMACstatus(): Observable<any> {
-    return this.http.get(`${environment.url}/asset/getAllMACstatus`, options).pipe(map(response => {
+    return this.http.get(`${environment.url}/asset/getAllMACstatus`, options).pipe(map((response:any) => {      
       return response;
     }))
   }
@@ -212,6 +212,11 @@ export class AuthService {
   }
   createUser(params: any): Observable<any> {
     return this.http.post(`${environment.url}/users/addUser`, params, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  deleteUserByID(params: any): Observable<any> {
+    return this.http.post(`${environment.url}/users/deleteUserByID/${params.PID}`, options).pipe(map(response => {
       return response;
     }))
   }

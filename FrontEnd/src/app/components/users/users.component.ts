@@ -59,7 +59,7 @@ export class UsersComponent implements OnChanges {
     });
   }
   removeItem(item: any) {
-    this.dataService.deleteConn(item).subscribe(res => {
+    this.dataService.deleteUserByID(item).subscribe(res => {
       this.getAllUsers();
     });
 

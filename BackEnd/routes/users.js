@@ -136,7 +136,7 @@ router.post('/uploadfile', uploadNew.single('logo'), function (req, res) {
         error: error.message
     })
 })
-// const uploadNew2 = multer({ dest: DIR });
+
 router.post('/addCompanyLogo', function (req, res) {
 
 
@@ -211,7 +211,20 @@ router.post('/deleteCompany/:PID', (req, res) => {
             })
     })
 })
+router.post('/deleteUserByID/:PID', (req, res) => {
+    const PID = req.params.PID;
 
+    let sql = `DELETE FROM user_tbl WHERE PID=${PID}`;
+    db.query(sql, (err, result) => {
+        if (err) throw err;
+        else
+            res.send({
+                data: result,
+                status: 200,
+                msg: 'Record deleted.'
+            })
+    })
+})
 router.post('/getAllUsersByCompanyID', (req, res) => {
     const id = req.body.COMPANY_ID;
     let sql = `SELECT * FROM user_tbl WHERE COMPANY_ID=${id}`;

@@ -174,7 +174,7 @@ export class WidgetComponent implements OnInit {
       isChartSelected:false
     })
 
-    console.log(this.Values)
+    // console.log(this.Values)
     this.chartChoosen = false;
   }
   selectChart(a: any) {
@@ -234,10 +234,10 @@ export class WidgetComponent implements OnInit {
     // this.newForm.patchValue({
     //   isChartSelected: this.chartChoosen
     // })
-    console.log(this.Values)
+    // console.log(this.Values)
   }
   async confirmData() {
-    console.log(this.newForm)
+    // console.log(this.newForm)
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       // this.Values.COMPANY_ID = session.COMPANY_ID;
@@ -285,23 +285,18 @@ export class WidgetComponent implements OnInit {
 
   get chartStatus() {
     const status = this.newForm.controls['isChartSelected'];
-    console.log(status)
+    // console.log(status)
     return status;
   }
   optionSelected(event: any) {
 
-    console.log('this.Values.ASSET_CONFIG_ID', this.Values.ASSET_CONFIG_ID)
+    // console.log('this.Values.ASSET_CONFIG_ID', this.Values.ASSET_CONFIG_ID)
 
 
   }
   companiesList: any = [];
   getAllComp() {
-    // this.dataService.getAllCompanies().subscribe(res => {
-    //   this.companiesList = res.data;
-
-
-
-    // })
+   
     const session = this.dataService.getSessionData();
     this.newForm.patchValue({
       COMPANY_ID: session.COMPANY_ID

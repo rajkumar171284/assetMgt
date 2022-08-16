@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
 enum tabLabel {
  
   'Connections' = 0,
-  'Sensors' = 0,
+  'Sensors' = 1,
   'Asset' = 2,
  
   'Configuration' = 3,

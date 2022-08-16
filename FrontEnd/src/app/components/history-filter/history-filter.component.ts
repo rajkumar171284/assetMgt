@@ -70,7 +70,6 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   filterShow1: boolean = false;
   filterShow2: boolean = false;
   todayStartDate = date.setDate(date.getDate() - 1);
-  // todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
   deviceList: _device[] = [];
   showGuage = false;
@@ -234,9 +233,14 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
               resp.newVALUE = newVALUE;
             } catch (err) {
               const newVALUE = JSON.stringify(VALUE);
+              const parsed=JSON.parse(newVALUE);
+              console.log(parsed)
+              let newJSON:any={};
+              newJSON=parsed;
+              newJSON.LAST_UPDATE_TIME='';
 
-              JSON.parse(newVALUE).LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
-              resp.newVALUE = newVALUE;
+              newJSON.LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
+              resp.newVALUE = newJSON;
             }
             return resp.newVALUE;
           })

@@ -127,14 +127,14 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     this.getAll();
     this.subscription1 = this.service.currWidgetRequest.subscribe(data => {
       if (data) {
-        console.log('currWidgetRequest', data)
+        // console.log('currWidgetRequest', data)
         this.updateWidget(data);
 
       }
     })
     // get removal confirmation
     this.subscription2 = this.service.removedWidgetRequest.subscribe((data: any) => {
-      console.log('removedWidgetRequest', data)
+      // console.log('removedWidgetRequest', data)
       if (data) {
         // reload 
         this.loader = true;
@@ -224,9 +224,8 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(result => {
       // call all charts  
-      if (this.toEditRequest) {
         this.getAllChartRequest();
-      }
+      
     });
   }
   async editRequest(pid: any) {

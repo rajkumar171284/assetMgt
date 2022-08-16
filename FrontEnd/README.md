@@ -8,6 +8,25 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 or
 "mserve": "set NODE_OPTIONS=--max_old_space_size=8192 & ng serve --host 10.1.1.139 --open"
 
+
+# START XAMPP SERVER 
+1, Apache & Mysql to start
+
+username :"root"
+password:""
+
+# Run the nodejs server
+ cd .\BackEnd\  & npm start 
+
+# Run the application 
+ cd .\FrontEnd\
+ 1,assetMgt\FrontEnd> npm run mserve - this cmd will run --host 10.1.1.139 --open",
+
+ 2,if you want to run locally then remove --host 10.1.1.139
+Open the link http://10.1.1.139:4200/login or localhost:4200/login
+
+
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
@@ -27,3 +46,5 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+

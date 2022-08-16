@@ -49,7 +49,7 @@ position: relative;
 }
 
 .Widget-block .listed-charts {
-    background:rgba(0, 0, 0, 0.3);
+    background:rgba(0, 0, 0, 0.3) !important;
     box-shadow: 0 0px 8px #fff;
     margin-bottom :5px;
     padding:5px;
@@ -61,9 +61,11 @@ position: relative;
 
 .widget-panel {
     // background-color: dodgerblue;
-    // background: linear-gradient(315deg, dodgerblue 0%, #0c0c0c 74%);
+    // 
     // background:linear-gradient(315deg, #a3c2f7 0%, #fff 74%);
-    background:linear-gradient(315deg, #fff 0%, #a3c2f7 74%);
+    // background:linear-gradient(315deg, #fff 0%, #a3c2f7 74%);
+
+    background:linear-gradient(315deg, #fff 0%, #dac9fe 74%);
 
     position: relative;
     

@@ -22,6 +22,12 @@
         (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">
       </app-history-filter>
 
+      <div *ngIf="errMessage" class="pos-flex">
+        <div class="text-center text-danger text-uppercase">
+            {{errMessage?errMessage:''}}
+        </div>
+    </div>
+
 
       <div class="my-card-footer theme2">
         <mat-card-header class="text-uppercase">
@@ -48,40 +54,6 @@
         </div>
       </cdk-virtual-scroll-viewport>
 
-
-
-      <!-- <div class="table-card example-container ">
-
-
-        <table mat-table [dataSource]="widgetResponse.totalDevice" class="demo-table">
-
-
-          <ng-container matColumnDef="key">
-            <th mat-header-cell [hidden]="true" *matHeaderCellDef> </th>
-            <td mat-cell *matCellDef="let element"> {{element.key}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="totalValue">
-            <th mat-header-cell [hidden]="true" *matHeaderCellDef> </th>
-            <td mat-cell *matCellDef="let element">
-
-              <span class="my-badge defaultBadge">
-                {{element.totalValue | number:'1.2-2'}}
-              </span>
-              <mat-progress-bar mode="determinate" [value]="element.totalValue"></mat-progress-bar>
-
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          <tr *ngIf="dataSource.length==0">
-
-            <td mat-cell *matCellDef> No Data </td>
-
-          </tr>
-        </table>
-
-      </div> -->
     </div>
   </mat-card>
 
