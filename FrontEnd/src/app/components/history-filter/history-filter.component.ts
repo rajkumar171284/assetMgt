@@ -1,7 +1,7 @@
-import { Component, ViewChild,ElementRef,EventEmitter, OnInit, Input, OnDestroy, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
+import { Component, ViewChild, ElementRef, EventEmitter, OnInit, Input, OnDestroy, DoCheck, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Output } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
-import { Subject, BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription, Observable, of, from, switchMap } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { __addAssetDevice, _dateFilters } from '../../myclass';
@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { XAxisService } from '../../services/x-axis.service';
 import { ThemeService } from '../../services/theme.service';
 
+import { delay, tap, map, filter, mergeMap, startWith } from "rxjs/operators";
 var date = new Date()
 interface _device {
   DEVICE_ID: any
@@ -76,7 +77,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   isLOCATIONS = false;
   myLOCATIONS: any = [];
   mySENSORS: any = [];
-  expandFilter:boolean = false;
+  expandFilter: boolean = false;
 
   xAxisData$!: Observable<any>;
   constructor(public xaxisService: XAxisService, private fb: FormBuilder, private dataService: AuthService, private ref: ChangeDetectorRef) {
@@ -148,7 +149,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
       }
 
-    }else{
+    } else {
       this.setLoader.emit(false);
     }
 
@@ -191,7 +192,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;
     // console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
     this.getDeviceLog();
-    this.expandFilter=false;
+    this.expandFilter = false;
   }
 
   getDeviceLog() {
@@ -204,109 +205,37 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       // console.log('result',result)
       if (result && result.data.length > 0) {
         // console.log('result found',this.WIDGET_REQUEST.PID)
-        this.widgetResponse.data = result.data;
-        this.widgetResponse.protocol = result.protocol;
-        this.widgetResponse.totalDevice = result.totalDevice;
-
-
-        const protocol = result.protocol;
-        // console.log('MQTT',protocol)
-
-        if (protocol && protocol[0].CONN_NAME == 'MQTT') {
-          // written api for tat power data
-          this.getMQTTdata()
-        }
-
-
-        for (let device of this.widgetResponse.totalDevice) {
-          device.history = [];
-          device.unitsArr = [];
-          device.history = this.widgetResponse.data.filter((obj: any) => {
-            return obj.DEVICE_ID == device.DEVICE_ID;
-          }).map((resp: any) => {
-            let VALUE = resp.VALUE;
-            resp.newVALUE = '';
-            try {
-              const newVALUE = JSON.parse(VALUE);
-              // update date 
-              newVALUE.LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
-              resp.newVALUE = newVALUE;
-            } catch (err) {
-              const newVALUE = JSON.stringify(VALUE);
-              const parsed=JSON.parse(newVALUE);
-              console.log(parsed)
-              let newJSON:any={};
-              newJSON=parsed;
-              newJSON.LAST_UPDATE_TIME='';
-
-              newJSON.LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
-              resp.newVALUE = newJSON;
-            }
-            return resp.newVALUE;
-          })
-          // setup unique object
-          let index = this.widgetResponse.data.findIndex((obj: any) => {
-            return obj.DEVICE_ID == device.DEVICE_ID;
-          })
-          if (index != -1) {
-
-            let VALUE = this.widgetResponse.data[index].VALUE;
-            try {
-              VALUE = JSON.parse(VALUE);
-              device.VALUE = VALUE;
-
-            } catch (err) {
-              VALUE = JSON.stringify(VALUE);
-              device.VALUE = VALUE;
-
-            }
-            for (let a of Object.keys(VALUE)) {
-              // dynamic key wise getting value 
-              let key: any = a;
-              if (key != 'location' && key != 'date' && key != 'sensorId') {
-                var object: any = {};
-                object.key = key;
-                object.totalValue = 0;
-                object.data = [];
-                device.unitsArr.push(object);
-
-              }
-            }
+        of(result).pipe(map(a=>a)).subscribe(resdata=>{
+          this.widgetResponse.data = resdata.data;
+          this.widgetResponse.protocol = resdata.protocol;
+          this.widgetResponse.totalDevice = result.totalDevice;
+          const protocol = result.protocol;
+          if (protocol && protocol[0].CONN_NAME == 'MQTT') {
+            // written api for tat power data
+            this.getMQTTdata()
           }
-
-          // get total units value
-          for (let unit of device.unitsArr) {
-            device.history.forEach((Item: any) => {
-              let vIndex = 0;
-              for (let v of Object.keys(Item)) {
-
-                if (v === unit.key) {
-                  unit.totalValue = unit.totalValue + Object.values(Item)[vIndex];
-                  unit.data.push(Object.values(Item)[vIndex]);
-                }
-                vIndex++;
-              }
-            })
-          }
+  
+          // get formatt edhistory 
+          this.formattedHistory();
+        })
+        
+        
+        // 
 
 
-
-        }
-        this.sendToParent.emit(this.widgetResponse);
-        this.ref.detectChanges();
-        // console.log(this.widgetResponse)
+       
 
       } else {
-        console.log('result not found',this.WIDGET_REQUEST.PID)
+        // console.log('result not found',this.WIDGET_REQUEST.PID)
         this.errMessage = 'No Data found..';
         // no record found then 
         this.sendToParent.emit(false);
         this.ref.detectChanges();
       }
       this.getFilterArr();
-      
+
       // this.setLoader.emit(false);
-      this.expandFilter=false;
+      this.expandFilter = false;
       this.ref.detectChanges();
     })
 
@@ -315,6 +244,87 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
 
 
+ 
+
+  formattedHistory() {
+    for (let device of this.widgetResponse.totalDevice) {
+      device.history = [];
+      device.unitsArr = [];
+      device.history = this.widgetResponse.data.filter((obj: any) => {
+        return obj.DEVICE_ID == device.DEVICE_ID;
+      }).map((resp: any) => {
+        let VALUE = resp.VALUE;
+        resp.newVALUE = '';
+        try {
+          const newVALUE = JSON.parse(VALUE);
+          // update date 
+          newVALUE.LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
+          resp.newVALUE = newVALUE;
+        } catch (err) {
+          const newVALUE = JSON.stringify(VALUE);
+          const parsed = JSON.parse(newVALUE);
+          console.log(parsed)
+          let newJSON: any = {};
+          newJSON = parsed;
+          newJSON.LAST_UPDATE_TIME = '';
+
+          newJSON.LAST_UPDATE_TIME = resp.LAST_UPDATE_TIME;
+          resp.newVALUE = newJSON;
+        }
+        return resp.newVALUE;
+      })
+      // setup unique object
+      let index = this.widgetResponse.data.findIndex((obj: any) => {
+        return obj.DEVICE_ID == device.DEVICE_ID;
+      })
+      if (index != -1) {
+
+        let VALUE = this.widgetResponse.data[index].VALUE;
+        try {
+          VALUE = JSON.parse(VALUE);
+          device.VALUE = VALUE;
+
+        } catch (err) {
+          VALUE = JSON.stringify(VALUE);
+          device.VALUE = VALUE;
+
+        }
+        for (let a of Object.keys(VALUE)) {
+          // dynamic key wise getting value 
+          let key: any = a;
+          if (key != 'location' && key != 'date' && key != 'sensorId') {
+            var object: any = {};
+            object.key = key;
+            object.totalValue = 0;
+            object.data = [];
+            device.unitsArr.push(object);
+
+          }
+        }
+      }
+
+      // get total units value
+      for (let unit of device.unitsArr) {
+        device.history.forEach((Item: any) => {
+          let vIndex = 0;
+          for (let v of Object.keys(Item)) {
+
+            if (v === unit.key) {
+              unit.totalValue = unit.totalValue + Object.values(Item)[vIndex];
+              unit.data.push(Object.values(Item)[vIndex]);
+            }
+            vIndex++;
+          }
+        })
+      }
+
+
+
+    }
+
+    this.sendToParent.emit(this.widgetResponse);
+    this.ref.detectChanges();
+  }
 
 
 
@@ -333,9 +343,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
           this.newDevice.STATUS = true;
           this.newDevice.VALUE = JSON.stringify(value);
           this.newDevice.LOCATION = res.location;
-          this.newDevice.LAST_UPDATE_TIME = res.date;
-
-          // console.log(this.newDevice)
+          this.newDevice.LAST_UPDATE_TIME = res.date;          
 
           this.dataService.saveDeviceHistory(this.newDevice).subscribe(resp => {
             // console.log(resp)
@@ -366,35 +374,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   }
 
   getFilterArr() {
-    // get xAxis ;
-    // const xAxis = this.WIDGET_REQUEST.XAXES;
-    // if (xAxis == 'LOCATION') {
-    //   // console.log(xAxis)
-    //   this.isLOCATIONS = true;
-    //   // hide loc from filter & get xaxes as LOCATIONS
-    //   // get sensors
-    //   this.mySENSORS = []
-    //   if (this.widgetResponse.totalDevice) {
-    //     this.widgetResponse.totalDevice.forEach((item: any) => {
-    //       item.unitsArr.forEach((result: any) => {
-    //         if (result.key)
-    //           this.mySENSORS.push({ name: result.key })
 
-    //       })
-    //     })
-    //   }
-
-    //   console.log(this.mySENSORS)
-    // } else {
-    //   this.isLOCATIONS = false;
-
-    //   this.myLOCATIONS = this.widgetResponse.totalLocations.map((z: any) => {
-    //     return {
-    //       name: z.LOCATION
-    //     }
-    //   });
-    //   console.log(this.isLOCATIONS)
-    // }
 
     this.isLOCATIONS = false;
 
@@ -413,9 +393,9 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
     })
     // this.hideFilterStep=true;
   }
-  resetDatePickerVal(event: any){
+  resetDatePickerVal(event: any) {
     this.newForm.patchValue({
-      START_DATE: null,END_DATE:null
+      START_DATE: null, END_DATE: null
     })
     // this.hideFilterStep=false;
   }

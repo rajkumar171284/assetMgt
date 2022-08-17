@@ -16,9 +16,8 @@
     flex: 1 1 auto;
   }
   .isSelected{
-      // background: #2e9a13!important;
       border:2px dotted #09ea69!important;
-      
+      background: #b5f8d2 !important;
   }
   .isSelected>mat-card-subtitle{
     color:green !important;

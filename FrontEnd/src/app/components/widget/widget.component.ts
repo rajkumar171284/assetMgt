@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AddAssetComponent } from '../../components/dialogs/add-asset/add-asset.component';
@@ -7,7 +7,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -24,11 +24,14 @@ export interface Fruit {
   styleUrls: ['./widget.component.scss'],
   providers: [AuthService]
 })
-export class WidgetComponent implements OnInit {
+export class WidgetComponent implements OnInit, AfterViewInit {
   widgetSize = _widgetSIZE;
 
   // widgetType = _widgetTYPE;
   chartTypes = _chartTYPE;
+  chartTypes$!: Observable<any[]>;
+  cardTypes$!: Observable<any[]>;
+  mapTypes$!: Observable<any[]>;
   cardTypes = _cardTYPE;
   alertTypes = _alertTYPE;
   mapTypes = _mapTypes;
@@ -59,25 +62,14 @@ export class WidgetComponent implements OnInit {
     LOADED: true
   });
   tabIndex: any = 0;
-  constructor(private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
+  constructor(private cdr: ChangeDetectorRef, private dataService: AuthService, private fb: FormBuilder, public dialog: MatDialog,
     private _snackBar: MatSnackBar, @Inject(MAT_DIALOG_DATA) public data: any) {
 
     console.log('widget', data)
     if (data && data.PID) {
 
-      if (data.CHART_NAME) {
-        // if chart choosen then make selected by color
-       const arr= this.chartTypes.filter(x => {
-          return x.name.toLowerCase() === data.CHART_NAME.toLowerCase();
-        }).map(result => {
-          result.isSelected = true;
-          this.newForm.patchValue({ isChartSelected: result.isSelected })
-          this.chartChoosen = result.isSelected;
-          return result;
-        })
-        console.log(arr)
-        this.chartTypes
-      }
+      this.data = data;
+
       // set widget selection also by color
       // this.chartTypes.filter(x => {
       //   return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
@@ -117,18 +109,75 @@ export class WidgetComponent implements OnInit {
     }
     this.getAllComp();
   }
-
+  ngAfterViewInit(): void {
+    this.reformAllWidgetTypes();
+  }
   ngOnInit(): void {
+    this.chartTypes$ = of(this.chartTypes);
+    this.cardTypes$ = of(this.cardTypes);
+    this.mapTypes$=of(this.mapTypes);
+
+    this.reformAllWidgetTypes();
     this.getAllAssets();
+  }
+
+  reformAllWidgetTypes() {
+    this.widgetState = true;
+    if (this.data) {
+
+      if (this.data.CHART_NAME) {
+        // if chart choosen then make selected by color
+        const index = _chartTYPE.findIndex(x => {
+          return x.name.toLowerCase() === this.data.CHART_NAME.toLowerCase();
+        });
+        if (index != -1) {
+          // found
+          this.chartTypes[index].isSelected = true;
+          this.newForm.patchValue({ isChartSelected: true })
+          this.chartChoosen = true;
+          this.tabIndex = 1;
+          this.cdr.detectChanges();
+        }
+
+      } else {
+        // card widget might selected earlier
+        // find out the match one
+        const index = _cardTYPE.findIndex(x => {
+          return x.name.toLowerCase() === this.data.WIDGET_TYPE.toLowerCase();
+        });
+        if (index != -1) {
+          // found
+          this.cardTypes[index].isSelected = true;
+          this.newForm.patchValue({ isChartSelected: false })
+          this.chartChoosen = false;
+          this.tabIndex = 2;//tab -card
+          this.cdr.detectChanges();
+        }else{
+          // not found check map array
+          const index = _mapTypes.findIndex(x => {
+            return x.name.toLowerCase() === this.data.WIDGET_TYPE.toLowerCase();
+          });
+          if (index != -1) {
+            // found
+            this.mapTypes[index].isSelected = true;
+            this.newForm.patchValue({ isChartSelected: false })
+            this.chartChoosen = false;
+            this.tabIndex = 0;//tab -card
+            this.cdr.detectChanges();
+          }
+        }
+      }
+    } else {
+      // fresh entry
+
+    }
+
+
+
   }
   tabChanged(e: any) {
     // console.log(e)
-    this.tabIndex = e.index;//active tab
-    // this.newForm.patchValue({
-    //   WIDGET_TYPE: e.tab.textLabel,
-
-    // })
-    // console.log(this.Values)
+    this.tabIndex = e.index;//active tab    
     this.resetWidgetSelection();
   }
   resetWidgetSelection() {
@@ -171,7 +220,7 @@ export class WidgetComponent implements OnInit {
     this.newForm.patchValue({
       WIDGET_TYPE: a.name.toUpperCase(),
       WIDGET_IMG: a.file, CHART_NAME: null,
-      isChartSelected:false
+      isChartSelected: false
     })
 
     // console.log(this.Values)
@@ -187,7 +236,7 @@ export class WidgetComponent implements OnInit {
       CHART_NAME: a.name.toLowerCase(),
       WIDGET_IMG: a.file,
       WIDGET_TYPE: 'CHARTS',
-      isChartSelected:true
+      isChartSelected: true
     })
     this.chartChoosen = true;
     console.log(this.Values)
@@ -203,7 +252,7 @@ export class WidgetComponent implements OnInit {
     this.newForm.patchValue({
       WIDGET_TYPE: a.name.toUpperCase(),
       WIDGET_IMG: a.file, CHART_NAME: null,
-      isChartSelected:false
+      isChartSelected: false
     })
     this.chartChoosen = false;
 
@@ -214,37 +263,21 @@ export class WidgetComponent implements OnInit {
       item.isSelected = false;
     })
     a.isSelected = isSelected;
-
     this.newForm.patchValue({
       WIDGET_TYPE: a.name.toUpperCase(),
       WIDGET_IMG: a.file, CHART_NAME: null,
-      isChartSelected:false
+      isChartSelected: false
 
     })
     this.chartChoosen = false;
-    // to check only maps
-    // const isChartSelected = this.cardTypes.filter((item: any, index) => {
-    //   return item.isSelected === true && index == 0;
-    // })
-    // if (isChartSelected.length > 0) {
-    //   this.chartChoosen = true;
-    // } else {
-    //   this.chartChoosen = false;
-    // }
-    // this.newForm.patchValue({
-    //   isChartSelected: this.chartChoosen
-    // })
-    // console.log(this.Values)
   }
   async confirmData() {
     // console.log(this.newForm)
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
-      // this.Values.COMPANY_ID = session.COMPANY_ID;
       this.Values.CREATED_BY = session.PID;
-      // const query = `SELECT * FROM ${this.Values.CHART_TYPE} WHERE PID=${this.Values.CHART_DATA}`;
-      // this.Values.SQL_QUERY = JSON.stringify(query);
-      this.Values.SQL_QUERY = 'sql';
+
+      this.Values.SQL_QUERY = '';
       if (!this.Values.PID) {
         // if  add
         const params: any = {
@@ -285,7 +318,6 @@ export class WidgetComponent implements OnInit {
 
   get chartStatus() {
     const status = this.newForm.controls['isChartSelected'];
-    // console.log(status)
     return status;
   }
   optionSelected(event: any) {
@@ -296,7 +328,7 @@ export class WidgetComponent implements OnInit {
   }
   companiesList: any = [];
   getAllComp() {
-   
+
     const session = this.dataService.getSessionData();
     this.newForm.patchValue({
       COMPANY_ID: session.COMPANY_ID

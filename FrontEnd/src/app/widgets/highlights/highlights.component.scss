@@ -136,17 +136,7 @@
 .mat-card-content{
     position: relative;
 }
-.mat-card-content .abs-content{
-    position: absolute;
-    min-width: 60px;
-    min-height: 60px;
-    z-index: 1;
-    top: -70px;
-    display: flex;
-    justify-content: center;    align-items: center;
-    box-shadow: 0 1px 2px #000;
-    
-}
+
 
 .abs-content{
     padding: 10px;

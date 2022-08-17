@@ -228,8 +228,9 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
       
     });
   }
-  async editRequest(pid: any) {
-    const data = await this.getRequestDetails(pid, 'json');
+  async editRequest(data: any) {
+    console.log()
+    // const data = await this.getRequestDetails(pid, 'json');
 
     this.toEditRequest = data;
     this.openDialog();
@@ -466,7 +467,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   }
   getRequestDetails(PID: any, val: string) {
     if (PID) {
-      // this.WIDGETREQUEST$=
+      
       const value = this.overAllCharts.filter((obj: chartItem) => {
 
         return obj.PID == parseInt(PID);

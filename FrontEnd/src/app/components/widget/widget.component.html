@@ -29,65 +29,67 @@
                 </mat-panel-title>
 
             </mat-expansion-panel-header>
-            <mat-grid-list  cols="6" rowHeight="2:2">
+            <mat-grid-list cols="6" rowHeight="2:2">
 
-                
-                <mat-tab-group [(selectedIndex)]="tabIndex" mat-align-tabs="start" animationDuration="0ms" (selectedTabChange)="tabChanged($event)">
+
+                <mat-tab-group [(selectedIndex)]="tabIndex" mat-align-tabs="start" animationDuration="0ms"
+                    (selectedTabChange)="tabChanged($event)">
                     <mat-tab label="MAPS">
                         <mat-grid-list cols="6">
 
-                            <mat-grid-tile (click)="selectMap(a)" class="chart-type" *ngFor="let a of mapTypes">
-            
+                            <mat-grid-tile (click)="selectMap(a)" class="chart-type" *ngFor="let a of mapTypes$ | async">
+
                                 <mat-card [ngClass]="{'isSelected':a.isSelected==true}">
                                     <mat-card-subtitle>{{a.name}}</mat-card-subtitle>
                                     <mat-card-content>
                                         <img class="" src="assets/{{a.file}}.png" />
                                     </mat-card-content>
                                 </mat-card>
-            
+
                             </mat-grid-tile>
-                           
+
                         </mat-grid-list>
 
-                        </mat-tab>
+                    </mat-tab>
                     <mat-tab label="CHARTS">
                         <mat-grid-list cols="6">
 
-                            <mat-grid-tile (click)="selectChart(a)" class="chart-type" *ngFor="let a of chartTypes">
-            
+                            <mat-grid-tile (click)="selectChart(a)" class="chart-type"
+                                *ngFor="let a of chartTypes$ | async">
+
                                 <mat-card [ngClass]="{'isSelected':a.isSelected==true}">
                                     <mat-card-subtitle>{{a.name}}</mat-card-subtitle>
                                     <mat-card-content>
                                         <img class="" src="assets/{{a.file}}.png" />
                                     </mat-card-content>
                                 </mat-card>
-            
+
                             </mat-grid-tile>
-                           
+
                         </mat-grid-list>
                     </mat-tab>
 
                     <mat-tab label="CARDS">
                         <mat-grid-list cols="6">
 
-                            <mat-grid-tile (click)="selectCard(a)" class="chart-type" *ngFor="let a of cardTypes">
-            
+                            <mat-grid-tile (click)="selectCard(a)" class="chart-type" *ngFor="let a of cardTypes$ | async">
+
                                 <mat-card [ngClass]="{'isSelected':a.isSelected==true}">
                                     <mat-card-subtitle>{{a.name}}</mat-card-subtitle>
                                     <mat-card-content>
                                         <img class="" src="assets/{{a.file}}.png" />
                                     </mat-card-content>
                                 </mat-card>
-            
+
                             </mat-grid-tile>
-                           
+
                         </mat-grid-list>
 
-                        
 
-                        </mat-tab>
 
-                        <!-- <mat-tab label="ALERTS">
+                    </mat-tab>
+
+                    <!-- <mat-tab label="ALERTS">
                             <mat-grid-list cols="6">
     
                                 <mat-grid-tile (click)="selectAlert(a)" class="chart-type" *ngFor="let a of alertTypes">
@@ -104,15 +106,16 @@
                             </mat-grid-list>
                         </mat-tab> -->
 
-                    </mat-tab-group>
+                </mat-tab-group>
 
 
-              
+
 
             </mat-grid-list>
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]="panelOpenState" *ngIf="getChartStatus()==true" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+        <mat-expansion-panel [expanded]="panelOpenState" *ngIf="getChartStatus()==true" (opened)="panelOpenState = true"
+            (closed)="panelOpenState = false">
             <!-- <mat-expansion-panel-header>
                 <mat-panel-title>
                     Select Chart Type
@@ -133,7 +136,7 @@
                 </mat-grid-tile>
                
             </mat-grid-list> -->
-           
+
             <!-- <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Select X-Axis</mat-label>
 
@@ -148,7 +151,7 @@
             </mat-form-field> -->
         </mat-expansion-panel>
 
-        <mat-expansion-panel  (opened)="panelOpenState2 = true" (closed)="panelOpenState2 = false">
+        <mat-expansion-panel (opened)="panelOpenState2 = true" (closed)="panelOpenState2 = false">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     Select Data Source
@@ -223,9 +226,9 @@
         </mat-expansion-panel> -->
 
         <mat-grid-list class="btn-cnt" cols="10">
-            <button (click)="confirmData()" mat-raised-button color="primary"> 
+            <button (click)="confirmData()" mat-raised-button color="primary">
                 {{data && data.PID?'Update Widget':'Create Widget'}}
-                </button>
+            </button>
 
             <button mat-raised-button (click)="confirmClose()" color="warn">Cancel</button>
 

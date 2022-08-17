@@ -742,6 +742,7 @@ router.post('/addDeviceHistory', (req, res) => {
 router.post('/getDeviceHistory', async (req, res) => {
     let sql;
     let sql2;
+    let sql4;
     let data;
     let todo2;
     // console.log(req.body.LOCATION)

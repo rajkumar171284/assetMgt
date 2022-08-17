@@ -1,9 +1,9 @@
-<div  class="inner-panel" #plotly [style.top.px]="service.getProp('t',WIDGET_REQUEST)"
+<div class="inner-panel" #plotly [style.top.px]="service.getProp('t',WIDGET_REQUEST)"
     [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
     [style.height.px]="service.getProp('H',WIDGET_REQUEST)">
 
 
-    <mat-card   [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
         [style.height.px]="service.getProp('H',WIDGET_REQUEST)" #Item class="my-card bg11 overflow-hidden">
 
         <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
@@ -33,19 +33,20 @@
 
             <div [appToHide]="isDataFound">
 
-                <app-common-chart1 [isThreshold]="isThreshold" (_sendToParent)="getFromChild2($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"
-                    [totalDevice]="widgetResponse.totalDevice" [chartHeight]="chartHeight" [chartWidth]="chartWidth">
+                <app-common-chart1 [isThreshold]="isThreshold" (_sendToParent)="getFromChild2($event)"
+                    [WIDGET_REQUEST]="WIDGET_REQUEST" [totalDevice]="widgetResponse.totalDevice"
+                    [chartHeight]="chartHeight" [chartWidth]="chartWidth">
 
                 </app-common-chart1>
 
 
             </div>
             <!-- <div *ngIf="filterShow2">
-    <app-x-axis (xaxis)="getXaxis($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-x-axis>
-</div> -->
+                <app-x-axis (xaxis)="getXaxis($event)" [WIDGET_REQUEST]="WIDGET_REQUEST"></app-x-axis>
+            </div> -->
             <!-- <ng-container *ngIf="showGuage">
-                <app-guage [name]="widgetResponse.totalDevice"></app-guage>
-            </ng-container> -->
+                            <app-guage [name]="widgetResponse.totalDevice"></app-guage>
+                        </ng-container> -->
             <div *ngIf="loading" class="overlay">
                 <mat-spinner></mat-spinner>
             </div>

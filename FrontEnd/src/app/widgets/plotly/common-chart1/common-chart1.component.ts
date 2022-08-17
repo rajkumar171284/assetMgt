@@ -50,7 +50,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
     this.behavSubject.currWidgetRequest.subscribe((message: any) => {
       // 
       if (message.PID == this.WIDGET_REQUEST.PID) {
-        console.log(message)
+        // console.log(message)
         this.WIDGET_REQUEST = message;
         const newSize = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE);
         this.chartWidth = newSize.width;
@@ -83,11 +83,11 @@ export class CommonChart1Component implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.chartWidth, this.chartHeight, this.WIDGET_REQUEST.CHART_NAME)
+    // console.log(this.chartWidth, this.chartHeight, this.WIDGET_REQUEST.CHART_NAME)
     this.loadChart()
   }
   loadChart() {
-    console.log('this.totalDevice', this.totalDevice)
+    // console.log('this.totalDevice', this.totalDevice)
     if (this.totalDevice && this.totalDevice.length > 0) {
       // console.log('this.totalDevice',this.totalDevice)
       if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {

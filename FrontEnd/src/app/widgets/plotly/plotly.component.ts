@@ -211,16 +211,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
 
   }
   ngOnInit(): void {
-
-
-    // this.service.currentPosition.subscribe((message: any) => {
-    //   console.log('currentPosition', message)
-    //   if (message.PID == this.WIDGET_REQUEST.PID) {
-
-    //     this.updateRequest(message);
-    //   }
-
-    // });
     if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
       this.filterShow2 = true;
       this.filterShow1 = false;
@@ -228,7 +218,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
     } else {
       this.filterShow1 = true;
       this.filterShow2 = true;
-
     }
 
   }
@@ -237,7 +226,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes, this.positionLeft, this.positionTop)
+    // console.log(changes, this.positionLeft, this.positionTop)
     // 
     if (this.WIDGET_REQUEST) {
       this.widgetResponse = new widgetResponse();
