@@ -247,11 +247,11 @@ export class AuthService {
       return response;
     }))
   }
-  uploadfile(params: any): Observable<any> {
-    return this.http.post(`${environment.url}/users/uploadfile`, params, opt).pipe(map(response => {
-      return response;
-    }))
-  }
+  // uploadfile(params: any): Observable<any> {
+  //   return this.http.post(`${environment.url}/users/uploadfile`, params, opt).pipe(map(response => {
+  //     return response;
+  //   }))
+  // }
 
   uploadLogo(params: FormData): Observable<any> {
     console.log(params)

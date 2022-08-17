@@ -145,28 +145,7 @@ export class AddCompanyComponent implements OnChanges, OnInit {
 
     })
   }
-  // UploadImages(event: any) {
-  //   var file = event.target.files[0];
-  //   let reader = new FileReader();
-  //   reader.readAsDataURL(file);
-  //   var imageSrc;
-  //   reader.onload = function () {
-  //     // imageSrc = reader.result.toString();
-  //   };
 
-  //   var image_data = {
-  //     fileToUpload: imageSrc,
-  //     attachable_type: "Photo"
-  //   };
-
-  //   // this.server.photo_Upload(image_data).subscribe(response => {
-  //   //   if (response["success"]) {
-  //   //     console.log(response);
-  //   //   } else {
-  //   //     console.log(response);
-  //   //   }
-  //   // });
-  // }
   enableClick() {
     const btnid = document.getElementById("fileID");
     if (btnid) {

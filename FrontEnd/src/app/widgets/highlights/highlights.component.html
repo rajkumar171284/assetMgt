@@ -39,7 +39,40 @@
             <!-- <img class="" src="assets/ip.png" /> -->
         </mat-card-content>
     </div>
-    <div class="card activecard" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
+
+    <div style="display:flex;flex-direction: row;">
+
+
+    <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'" class="card1">
+
+        <mat-card-subtitle>TOTAL active</mat-card-subtitle>
+        <mat-card-content>
+            <div class="abs-content abs1">
+                <mat-icon>av_timer</mat-icon>
+
+            </div>
+            {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.activeCount:''}}
+
+        </mat-card-content>
+
+       
+    </mat-card>
+    <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'" class="card2">
+
+        <mat-card-subtitle>TOTAL inactive</mat-card-subtitle>
+        <mat-card-content>
+            <div class="abs-content abs1">
+                <mat-icon>av_timer</mat-icon>
+
+            </div>
+            {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.inactiveCount:''}}
+
+        </mat-card-content>
+
+       
+    </mat-card>
+</div>
+    <div class="card activecard" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS1'">
 
         <div class="flexpanel">
             <div>
@@ -54,7 +87,7 @@
                   
     </div>
 
-    <div class="card activecard2 mt-2" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
+    <div class="card activecard2 mt-2" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS1'">
 
         <div class="flexpanel">
             <div>

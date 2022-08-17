@@ -123,7 +123,7 @@ router.get('/getAllThresholdAlerts/:ASSET_CONFIG_ID', (req, res) => {
             })
     })
 })
-// mac add
+// DEVICE add
 router.post('/addMACByConfigID', (req, res) => {
     let sql;
     let todo;
@@ -158,8 +158,6 @@ router.post('/updateDeviceByID', (req, res) => {
     let todo;
     const MAC_DETAILS = req.body.MAC_DETAILS;
     let errMessage = 'updated';
-
-
     sql = "UPDATE mac_tbl SET MAC_NAME=?,MAC_ADDRESS=?, MAC_STATUS=?, LOCATION=?,LATITUDE=?,LONGITUDE=?, MODIFY_BY=?, MODIFY_DATE=? WHERE PID=?";
     todo = [MAC_DETAILS[0].MAC_NAME, MAC_DETAILS[0].MAC_ADDRESS, MAC_DETAILS[0].MAC_STATUS, MAC_DETAILS[0].LOCATION, MAC_DETAILS[0].LATITUDE, MAC_DETAILS[0].LONGITUDE, req.body.CREATED_BY, new Date(), MAC_DETAILS[0].PID];
     db.query(sql, todo, (err, result) => {
@@ -199,7 +197,7 @@ router.post('/getAllMACdetails', (req, res) => {
 })
 
 router.post('/getLocationsByConfigID', (req, res) => {
-    let sql3;
+    let sql;
     sql = `SELECT DISTINCT LOCATION FROM mac_tbl WHERE ASSET_CONFIG_ID=?`
 
     let todo = [req.body.PID]
@@ -345,7 +343,7 @@ router.post('/deleteConnection/:PID', (req, res) => {
 // sensor starts
 
 router.get('/getAllSensors', (req, res) => {
-    const COMPANY_ID = req.params.COMPANY_ID;
+    
     let sql = `SELECT * FROM sensor_type_tbl`;
     db.query(sql, (err, result) => {
         if (err) throw err;
@@ -362,12 +360,11 @@ router.post('/addSensor', (req, res) => {
     let errMessage;
     if (req.body.PID) {
         // update
-        // console.log('update')
         sql = 'UPDATE sensor_type_tbl SET NAME = ?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
         todo = [req.body.NAME, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = 'Record updated,successfully'
     } else {
-        // console.log('add')
+       
         // add new
         sql = `INSERT INTO sensor_type_tbl(PID, NAME, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?)`;
         todo = ['', req.body.NAME, req.body.CREATED_BY, new Date()];
@@ -399,9 +396,9 @@ router.post('/addSensorSubCatg', (req, res) => {
     const todo = ['', req.body.SENSOR_TYPE_ID, req.body.CATEGORY_NAME, req.body.CREATED_BY, new Date()];
 
     db.query(sql, todo, (err, result) => {
-        // console.log(result)
+      
         if (err) {
-            throw err;
+            // throw err;
             return res.status(400).send({
                 msg: err
             });
@@ -431,7 +428,7 @@ router.get('/getSubCatgSensorByID/:SENSOR_TYPE_ID', (req, res) => {
 
 // assets starts
 router.get('/getAllAssets', (req, res) => {
-    const COMPANY_ID = req.params.COMPANY_ID;
+    // const COMPANY_ID = req.params.COMPANY_ID;
     let sql = `SELECT * FROM asset_tbl`;
     db.query(sql, (err, result) => {
         if (err) throw err;
@@ -457,7 +454,6 @@ router.post('/addAsset', (req, res) => {
         // add new
         sql = `INSERT INTO asset_tbl(PID, NAME,ASSET_TYPE,COMPONENTS, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?)`;
         todo = ['', req.body.NAME, req.body.ASSET_TYPE, req.body.COMPONENTS, req.body.CREATED_BY, new Date()];
-
         errMessage = ' added';
 
     }
@@ -494,7 +490,7 @@ router.post('/deleteAssetByID', (req, res) => {
             })
     })
 })
-// chart request
+// widget request
 router.post('/addChartRequest', (req, res) => {
 
     let sql;
@@ -682,67 +678,67 @@ router.post('/addDeviceHistory', (req, res) => {
         }
     })
 })
-async function getDataByLocation() {
-    const sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND LOCATION=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
-    let todo2 = [req.body.ASSET_CONFIG_ID, req.body.LOCATION, req.body.DEVICE_ID, req.body.START_DATE, req.body.END_DATE]
-    db.query(sql, todo2, (err, result) => {
-        if (err) throw err;
-        else
-            res.send({
-                data: result,
-                status: 200,
-            })
-    })
-}
-async function getDataByAllLocation() {
-    const sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
-    let todo2 = [req.body.ASSET_CONFIG_ID, req.body.DEVICE_ID, req.body.START_DATE, req.body.END_DATE]
-    db.query(sql, todo2, (err, result) => {
-        if (err) throw err;
-        else
-            res.send({
-                data: result,
-                status: 200,
-            })
-    })
-}
+// async function getDataByLocation() {
+//     const sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND LOCATION=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
+//     let todo2 = [req.body.ASSET_CONFIG_ID, req.body.LOCATION, req.body.DEVICE_ID, req.body.START_DATE, req.body.END_DATE]
+//     db.query(sql, todo2, (err, result) => {
+//         if (err) throw err;
+//         else
+//             res.send({
+//                 data: result,
+//                 status: 200,
+//             })
+//     })
+// }
+// async function getDataByAllLocation() {
+//     const sql = `SELECT device_history_tbl.* FROM device_history_tbl WHERE ASSET_CONFIG_ID=? AND DEVICE_ID=? AND LAST_UPDATE_TIME>=? AND LAST_UPDATE_TIME<=?`
+//     let todo2 = [req.body.ASSET_CONFIG_ID, req.body.DEVICE_ID, req.body.START_DATE, req.body.END_DATE]
+//     db.query(sql, todo2, (err, result) => {
+//         if (err) throw err;
+//         else
+//             res.send({
+//                 data: result,
+//                 status: 200,
+//             })
+//     })
+// }
 // filter
-router.post('/getDeviceHistoryOld', async (req, res) => {
-    let sql;
-    let sql2;
-    let data;
-    console.log(req.body.LOCATION)
-    if (req.body.LOCATION) {
-        data = await getDataByLocation();
+// router.post('/getDeviceHistoryOld', async (req, res) => {
+//     let sql;
+//     let sql2;
+//     let data;
+//     console.log(req.body.LOCATION)
+//     if (req.body.LOCATION) {
+//         data = await getDataByLocation();
 
-    } else {
-        // get all loc
-        data = await getDataByAllLocation();
-        // console.log(data)
-    }
-    let todo = [req.body.ASSET_CONFIG_ID]
+//     } else {
+//         // get all loc
+//         data = await getDataByAllLocation();
+//         // console.log(data)
+//     }
+//     let todo = [req.body.ASSET_CONFIG_ID]
 
-    sql2 = `SELECT DISTINCT DEVICE_ID FROM device_history_tbl WHERE ASSET_CONFIG_ID=?`
-    db.query(sql2, todo, (err2, deviceResult) => {
-        if (err2) throw err2;
-        else
-            sql4 = `SELECT asset_config_tbl.CONFIG_NAME,asset_config_tbl.COMPANY_ID,asset_connection_type_tbl.CONN_NAME,asset_connection_type_tbl.IP FROM asset_config_tbl LEFT JOIN asset_connection_type_tbl ON asset_connection_type_tbl.PID=asset_config_tbl.CONNECTION_TYPE WHERE asset_config_tbl.PID=?`
-        let todo = [req.body.ASSET_CONFIG_ID]
+//     sql2 = `SELECT DISTINCT DEVICE_ID FROM device_history_tbl WHERE ASSET_CONFIG_ID=?`
+//     db.query(sql2, todo, (err2, deviceResult) => {
+//         if (err2) throw err2;
+//         else
+//             sql4 = `SELECT asset_config_tbl.CONFIG_NAME,asset_config_tbl.COMPANY_ID,asset_connection_type_tbl.CONN_NAME,asset_connection_type_tbl.IP FROM asset_config_tbl LEFT JOIN asset_connection_type_tbl ON asset_connection_type_tbl.PID=asset_config_tbl.CONNECTION_TYPE WHERE asset_config_tbl.PID=?`
+//         let todo = [req.body.ASSET_CONFIG_ID]
 
-        db.query(sql4, todo, (err4, protocolResult) => {
-            if (err4) throw err4;
-            else
-                res.send({
-                    data: data,
-                    status: 200,
-                    totalDevice: deviceResult,
-                    protocol: protocolResult
-                })
-        })
+//         db.query(sql4, todo, (err4, protocolResult) => {
+//             if (err4) throw err4;
+//             else
+//                 res.send({
+//                     data: data,
+//                     status: 200,
+//                     totalDevice: deviceResult,
+//                     protocol: protocolResult
+//                 })
+//         })
 
-    })
+//     })
 
-})
+// })
 router.post('/getDeviceHistory', async (req, res) => {
     let sql;
     let sql2;

@@ -12,65 +12,65 @@ var path = require("path");
 const url = require("url");
 
 // img upload
-const multer = require('multer');
-var fileExtension = require('file-extension')
+// const multer = require('multer');
+// var fileExtension = require('file-extension')
 
 // Configure Storage
-const DIR = '../public';
-var storage = multer.diskStorage({
+// const DIR = '../public';
+// var storage = multer.diskStorage({
 
-    // Setting directory on disk to save uploaded files
-    destination: function (req, file, cb) {
-        cb(null, DIR)
-    },
+//     // Setting directory on disk to save uploaded files
+//     destination: function (req, file, cb) {
+//         cb(null, DIR)
+//     },
 
-    // Setting name of file saved
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + '.' + fileExtension(file.originalname))
-    }
-})
+//     // Setting name of file saved
+//     filename: function (req, file, cb) {
+//         cb(null, file.fieldname + '-' + Date.now() + '.' + fileExtension(file.originalname))
+//     }
+// })
 
-var upload = multer({
-    storage: storage,
-    limits: {
-        // Setting Image Size Limit to 2MBs
-        fileSize: 20000
-    },
-    fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-            //Error 
-            cb(new Error('Please upload JPG and PNG images only!'))
-        }
-        //Success 
-        cb(undefined, true)
-    }
-})
+// var upload = multer({
+//     storage: storage,
+//     limits: {
+//         // Setting Image Size Limit to 2MBs
+//         fileSize: 20000
+//     },
+//     fileFilter(req, file, cb) {
+//         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+//             //Error 
+//             cb(new Error('Please upload JPG and PNG images only!'))
+//         }
+//         //Success 
+//         cb(undefined, true)
+//     }
+// })
 
-const storageFile = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, DIR)
-    },
-    filename: (req, file, cb) => {
-        console.log(file)
-        let fileName = file.originalname.toLowerCase().split(' ').join('-');
-        fileName = fileName.replace(/(\.[\w\d_-]+)$/i, '_' + Date.now() + '$1');
-        cb(null, file)
-    }
-});
-const uploadFile = multer({
-    storage: storageFile, limits: {
-        fileSize: 1024 * 1024 * 5
-    },
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype == 'image/png' || file.mimetype == 'image/jpg' || file.mimetype == 'image/jpeg') {
-            cb(null, true);
-        } else {
-            req.fileTypeErr = 'Only png,jpeg,jpg';
-            // cb(null,false);
-            return cb(null, false, req.fileTypeErr);
-        }
-    }
-});
+// const storageFile = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, DIR)
+//     },
+//     filename: (req, file, cb) => {
+//         console.log(file)
+//         let fileName = file.originalname.toLowerCase().split(' ').join('-');
+//         fileName = fileName.replace(/(\.[\w\d_-]+)$/i, '_' + Date.now() + '$1');
+//         cb(null, file)
+//     }
+// });
+// const uploadFile = multer({
+//     storage: storageFile, limits: {
+//         fileSize: 1024 * 1024 * 5
+//     },
+//     fileFilter: (req, file, cb) => {
+//         if (file.mimetype == 'image/png' || file.mimetype == 'image/jpg' || file.mimetype == 'image/jpeg') {
+//             cb(null, true);
+//         } else {
+//             req.fileTypeErr = 'Only png,jpeg,jpg';
+//             // cb(null,false);
+//             return cb(null, false, req.fileTypeErr);
+//         }
+//     }
+// });
 
 
 router.post('/getCompanyByID', (req, res) => {
@@ -114,31 +114,30 @@ router.get('/getAllCompanies', (req, res) => {
     })
 })
 
-const uploadNew = multer({ dest: DIR });
+// const uploadNew = multer({ dest: DIR });
 
-router.post('/uploadfile', uploadNew.single('logo'), function (req, res) {
-    console.log(req);
-    const file = req.file
-    //
-    if (!file) {
-        const error = new Error('Please upload a file')
-        error.httpStatusCode = 400
-        return error
-    }
-    res.status(200).send({
-        statusCode: 200,
-        status: 'success',
-        uploadedFile: file
-    })
+// router.post('/uploadfile', uploadNew.single('logo'), function (req, res) {
+//     console.log(req);
+//     const file = req.file
+//     //
+//     if (!file) {
+//         const error = new Error('Please upload a file')
+//         error.httpStatusCode = 400
+//         return error
+//     }
+//     res.status(200).send({
+//         statusCode: 200,
+//         status: 'success',
+//         uploadedFile: file
+//     })
 
-}, (error, req, res, next) => {
-    res.status(400).send({
-        error: error.message
-    })
-})
+// }, (error, req, res, next) => {
+//     res.status(400).send({
+//         error: error.message
+//     })
+// })
 
 router.post('/addCompanyLogo', function (req, res) {
-
 
     if (!req.files) {
         return res.status(400).send('No file uploaded..');
