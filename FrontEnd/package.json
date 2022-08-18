@@ -37,6 +37,7 @@
     "ng-push-notification": "^2.0.0",
     "ng-table-virtual-scroll": "^1.4.0",
     "ngx-bootstrap": "^8.0.0",
+    "ngx-skeleton-loader": "^5.0.0",
     "plotly.js-dist-min": "^2.12.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

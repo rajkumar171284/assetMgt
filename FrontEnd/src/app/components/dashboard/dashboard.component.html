@@ -1,8 +1,10 @@
 <div class="container-fluid">
 
-  <div *ngIf="loader" class="overlay">
+  <!-- <div *ngIf="loader" class="overlay">
     <mat-spinner></mat-spinner>
-</div>
+</div> -->
+<ngx-skeleton-loader [theme]="{ height: '80px' }" *ngIf="loader" count="6" appearance="line" animation="progress"></ngx-skeleton-loader>
+
   <span *appAccessrights="false" (click)="closePanel();isWidgetOpen=true"  class="openWidget">
     <mat-icon color="primary">open_with</mat-icon>
 

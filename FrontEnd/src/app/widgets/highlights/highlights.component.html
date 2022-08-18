@@ -1,32 +1,33 @@
+<div #highlights [style.top.px]="service.getProp('t',WIDGET_REQUEST)"
+    [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+    [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="inner-panel">
 
-<div #highlights  [style.top.px]="service.getProp('t',WIDGET_REQUEST)" [style.left.px]="service.getProp('l',WIDGET_REQUEST)" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
-[style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="inner-panel">
-
-<mat-card [ngClass]="{'resizable':dataService.getAccess()}"  [style.width.px]="service.getProp('W',WIDGET_REQUEST)" [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="overflow-hidden my-card bg11">
-    <!-- <div class="my-card-footer theme2">
+    <mat-card [ngClass]="{'resizable':dataService.getAccess()}" [style.width.px]="service.getProp('W',WIDGET_REQUEST)"
+        [style.height.px]="service.getProp('H',WIDGET_REQUEST)" class="overflow-hidden my-card bg11">
+        <!-- <div class="my-card-footer theme2">
         <mat-card-header class="text-uppercase">
           HIGHLIGHTS OF {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.CONFIG_NAME:''}}
         </mat-card-header>
       </div> -->
-      <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
+        <app-header-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
-    </app-header-widget>
+        </app-header-widget>
 
-    <!-- 
+        <!-- 
     <app-footer-widget appWidgetAccessIf [REQUEST]="WIDGET_REQUEST">
 
     </app-footer-widget> -->
 
 
 
-    <!-- <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
+        <!-- <ng-container *ngIf="!WIDGET_REQUEST.LOADED">
         <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
     </ng-container> -->
 
-    <ng-container *ngIf="WIDGET_REQUEST.LOADED">
+        <ng-container *ngIf="WIDGET_REQUEST.LOADED">
 
 
-    <!-- <div *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'COUNT'">
+            <!-- <div *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'COUNT'">
         <mat-card-header class="text-dark sub-hdr">
             Total Count
         </mat-card-header>
@@ -39,56 +40,70 @@
         </mat-card-content>
     </div> -->
 
-    <div style="display:flex;flex-direction: row;">
+            <div style="display:flex;flex-direction: row;">
 
 
-    <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'" class="card1">
+                <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'" class="card1">
 
-        <mat-card-subtitle>TOTAL active</mat-card-subtitle>
-        <mat-card-content>
-            <div class="abs-content abs1">
-                <mat-icon>notifications_active</mat-icon>
+                    <mat-card-subtitle> active device</mat-card-subtitle>
+                    <mat-card-content>
+                        <div class="abs-content abs1">
+                            <mat-icon>notifications_active</mat-icon>
+
+                        </div>
+                        <!-- <ngx-skeleton-loader *ngIf="loading" count="1" appearance="line" animation="progress"></ngx-skeleton-loader> -->
+
+                        {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.activeCount:''}}
+
+                    </mat-card-content>
+
+
+                </mat-card>
+                <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'" class="card2">
+                    <ng-container *ngIf="loading">
+                        <ngx-skeleton-loader *ngIf="loading" count="1" appearance="line" animation="progress">
+                        </ngx-skeleton-loader>
+                    </ng-container>
+
+                    <ng-container *ngIf="!loading">
+                        <mat-card-subtitle> inactive device</mat-card-subtitle>
+                        <mat-card-content>
+                            <div class="abs-content abs1">
+                                <mat-icon>notifications_off</mat-icon>
+    
+                            </div>
+                            <!-- -->
+    
+                            {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.inactiveCount:''}}
+    
+                        </mat-card-content>
+                    </ng-container>
+
+                    
+
+
+                </mat-card>
+
+
+
+                <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'COUNT'" class="card3">
+
+                    <mat-card-subtitle>TOTAL device count</mat-card-subtitle>
+                    <mat-card-content>
+                        <div class="abs-content abs1">
+                            <mat-icon>important_devices</mat-icon>
+
+                        </div>
+                        <!-- <ngx-skeleton-loader *ngIf="loading" count="1" appearance="line" animation="progress"></ngx-skeleton-loader> -->
+
+                        {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.MAC_COUNT:''}}
+                    </mat-card-content>
+
+
+                </mat-card>
 
             </div>
-            {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.activeCount:''}}
-
-        </mat-card-content>
-
-       
-    </mat-card>
-    <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'" class="card2">
-
-        <mat-card-subtitle>TOTAL inactive</mat-card-subtitle>
-        <mat-card-content>
-            <div class="abs-content abs1">
-                <mat-icon>notifications_off</mat-icon>
-
-            </div>
-            {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.inactiveCount:''}}
-
-        </mat-card-content>
-
-       
-    </mat-card>
-
-
-
-    <mat-card *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'COUNT'" class="card3">
-
-        <mat-card-subtitle>TOTAL device count</mat-card-subtitle>
-        <mat-card-content>
-            <div class="abs-content abs1">
-                <mat-icon>important_devices</mat-icon>
-
-            </div>
-            {{WIDGET_REQUEST && WIDGET_REQUEST?WIDGET_REQUEST.MAC_COUNT:''}}
-        </mat-card-content>
-
-       
-    </mat-card>
-
-</div>
-    <!-- <div class="card activecard" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
+            <!-- <div class="card activecard" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
 
         <div class="flexpanel">
             <div>
@@ -103,7 +118,7 @@
                   
     </div> -->
 
-    <!-- <div class="card activecard2 mt-2" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
+            <!-- <div class="card activecard2 mt-2" *ngIf="WIDGET_REQUEST.WIDGET_DATA == 'STATUS'">
 
         <div class="flexpanel">
             <div>
@@ -118,8 +133,8 @@
                   
     </div> -->
 
-  
-    </ng-container>
-</mat-card>
+
+        </ng-container>
+    </mat-card>
 
 </div>

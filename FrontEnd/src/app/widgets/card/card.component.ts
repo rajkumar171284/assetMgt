@@ -247,7 +247,7 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;
 
     console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
-    // this.getDeviceLog();
+   
   }
   getLoader(data: boolean) {
     this.loading = data;
@@ -256,8 +256,8 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
     // loader
     this.errMessage = '';
     // console.log(result)
-    const set = false;
-    if (result && result.data.length > 0 && !set) {
+ 
+    if (result && result.data.length > 0) {
 
       this.widgetResponse.data = result.data;
       this.widgetResponse.protocol = result.protocol;

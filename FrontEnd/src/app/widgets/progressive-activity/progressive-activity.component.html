@@ -22,7 +22,10 @@
         (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">
       </app-history-filter>
 
-      <div *ngIf="errMessage" class="pos-flex">
+      <ngx-skeleton-loader [theme]="{ height: '80px' }" *ngIf="loading" count="2" appearance="line" animation="progress"></ngx-skeleton-loader>
+
+
+      <div *ngIf="errMessage && !loading" class="pos-flex">
         <div class="text-center text-danger text-uppercase">
             {{errMessage?errMessage:''}}
         </div>

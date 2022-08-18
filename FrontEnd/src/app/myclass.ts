@@ -36,8 +36,9 @@ export const _dateFilters = [
         key: 'Last 24 hrs', state: 'hours', step: 24
     }
     , { key: 'Last 2 days', state: 'days', step: 2 }, {
-        key: 'Last 7 days', state: 'days', step: 7
-    }
+        key: 'Last 7 days', state: 'days', step: 7},
+        {
+            key: 'Last 1 month', state: 'month', step: 1}
 ]
 
 export const _xAxes = [{ key: 'DATE-WISE', state: false },

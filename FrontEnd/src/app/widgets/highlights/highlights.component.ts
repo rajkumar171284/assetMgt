@@ -4,7 +4,7 @@ import { XAxisService } from '../../services/x-axis.service';
 import { WidgetComponent } from '../../components/widget/widget.component';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ResizedEvent } from 'angular-resize-event';
-import { filter, from, map, of,tap } from 'rxjs';
+import { filter, from, map, of, tap } from 'rxjs';
 import { delay } from "rxjs/operators";
 
 
@@ -15,7 +15,7 @@ declare let $: any;
   styleUrls: ['./highlights.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HighlightsComponent implements OnInit, OnChanges, DoCheck ,AfterViewInit{
+export class HighlightsComponent implements OnInit, OnChanges, DoCheck, AfterViewInit {
   @Input() WIDGET_REQUEST: any;
   @Input() widgetIndex: any;
 
@@ -25,6 +25,8 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck ,AfterVie
   deviceType: string = '';
   public height: any;
   public width: any;
+  loading = true;
+
   // @ViewChild('Item', { read: ViewContainerRef }) Item: any;
   @ViewChild("highlights") divBoard!: ElementRef;
   chartWidth: number = 0;
@@ -40,14 +42,14 @@ export class HighlightsComponent implements OnInit, OnChanges, DoCheck ,AfterVie
       this.watchSize();
     }
   }
-ngAfterViewInit(): void {
-  this.divElement = this.divBoard.nativeElement;
-}
-onResized(event: ResizedEvent) {
-  console.log(event.newRect)
-  // this.width = event.newRect.width;
-  // this.height = event.newRect.height;
-}
+  ngAfterViewInit(): void {
+    this.divElement = this.divBoard.nativeElement;
+  }
+  onResized(event: ResizedEvent) {
+    // console.log(event.newRect)
+    // this.width = event.newRect.width;
+    // this.height = event.newRect.height;
+  }
   watchSize() {
     // const id = this.widgetIndex.toString();
     let that = this;
@@ -67,7 +69,7 @@ onResized(event: ResizedEvent) {
 
         that.chartWidth = width;
         that.chartHeight = height;
-        
+
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
 
         // sending/emitting data to parent-dashboard.ts for saving into api
@@ -100,15 +102,15 @@ onResized(event: ResizedEvent) {
   ngOnInit(): void {
 
   }
-  
+
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log('highlights:', this.WIDGET_REQUEST)
-  
+
     if (this.WIDGET_REQUEST) {
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
       // console.log('highlights:', this.WIDGET_REQUEST)
-      this.getAllMACAddress();      
+      this.getAllMACAddress();
 
     }
   }
@@ -118,7 +120,7 @@ onResized(event: ResizedEvent) {
       // console.log('highlights', res)
       // this.ref.detectChanges();
       if (res && res.data) {
-        
+
         if (res.data.length > 0) {
           this.deviceType = res.data[0].MAC_NAME;
 
@@ -131,36 +133,37 @@ onResized(event: ResizedEvent) {
           } else if (this.WIDGET_REQUEST.WIDGET_DATA == "STATUS") {
             this.labelMessage = `Active`;
             this.labelMessage2 = `InActive`;
-            this.WIDGET_REQUEST.activeCount=0;
-            this.WIDGET_REQUEST.inactiveCount =0;
+            this.WIDGET_REQUEST.activeCount = 0;
+            this.WIDGET_REQUEST.inactiveCount = 0;
             // get total active
             this.getTotalActive(res.data);
-           
+
             // get total inactive
-            this.getTotalInActive(res.data);           
+            this.getTotalInActive(res.data);
           }
         }
+        this.loading=false;
       }
 
     })
   }
 
-  getTotalDeviceCount(data:any){
-    from(data).pipe(delay(3000),map((a:any)=>a)).subscribe((response)=>{
+  getTotalDeviceCount(data: any) {
+    from(data).pipe(delay(1000), map((a: any) => a)).subscribe((response) => {
       this.WIDGET_REQUEST.MAC_COUNT++;
     })
   }
-  getTotalActive(data:any){
-    from(data).pipe(delay(3000),map((a:any)=>a),filter((item)=>{              
-      return item.MAC_STATUS===1;
-    })).subscribe((response)=>{
+  getTotalActive(data: any) {
+    from(data).pipe(delay(1000), map((a: any) => a), filter((item) => {
+      return item.MAC_STATUS === 1;
+    })).subscribe((response) => {
       this.WIDGET_REQUEST.activeCount++;
     })
   }
-  getTotalInActive(data:any){
-    from(data).pipe(delay(3000),map((a:any)=>a),filter((item)=>{              
-      return item.MAC_STATUS===0;
-    })).subscribe((response)=>{
+  getTotalInActive(data: any) {
+    from(data).pipe(delay(1000), map((a: any) => a), filter((item) => {
+      return item.MAC_STATUS === 0;
+    })).subscribe((response) => {
       this.WIDGET_REQUEST.inactiveCount++;
     })
   }

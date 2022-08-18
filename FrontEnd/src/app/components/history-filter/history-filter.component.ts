@@ -93,7 +93,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       filterStep: ['']
     })
     this.newForm.patchValue({
-      filterStep: this.dateFilters[8]
+      filterStep: this.dateFilters[10]
     })
 
   }
@@ -217,13 +217,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   
           // get formatt edhistory 
           this.formattedHistory();
-        })
-        
-        
-        // 
-
-
-       
+        })        
 
       } else {
         // console.log('result not found',this.WIDGET_REQUEST.PID)

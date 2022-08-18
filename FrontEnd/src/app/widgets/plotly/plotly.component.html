@@ -24,8 +24,10 @@
                 (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">
             </app-history-filter>
 
+            <ngx-skeleton-loader [theme]="{ height: '80px' }" *ngIf="loading" count="2" appearance="line" animation="progress"></ngx-skeleton-loader>
 
-            <div *ngIf="errMessage" class="pos-flex">
+
+            <div *ngIf="errMessage && !loading" class="pos-flex">
                 <div class="text-center text-danger text-uppercase">
                     {{errMessage?errMessage:''}}
                 </div>
@@ -47,9 +49,7 @@
             <!-- <ng-container *ngIf="showGuage">
                             <app-guage [name]="widgetResponse.totalDevice"></app-guage>
                         </ng-container> -->
-            <div *ngIf="loading" class="overlay">
-                <mat-spinner></mat-spinner>
-            </div>
+            <!-- <di > -->
 
         </ng-container>
     </mat-card>

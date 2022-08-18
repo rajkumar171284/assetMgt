@@ -20,7 +20,12 @@
             <app-mask-widget [mask]="WIDGET_REQUEST"></app-mask-widget>
         </ng-container> -->
         <ng-container>
-            <div *ngIf="errMessage" class="pos-flex">
+            <app-history-filter [reLoad]="WIDGET_REQUEST.LOADED" [xAxisName]="WIDGET_REQUEST.XAXES"
+                (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">
+            </app-history-filter>
+            <ngx-skeleton-loader *ngIf="loading" count="4" appearance="line" animation="progress"></ngx-skeleton-loader>
+
+            <div *ngIf="errMessage && !loading" class="pos-flex">
                 <div class="text-center text-danger text-uppercase">
                     {{errMessage?errMessage:''}}
                 </div>
@@ -31,6 +36,8 @@
             <!-- <app-history-filter [reLoad]="WIDGET_REQUEST.LOADED" [xAxisName]="WIDGET_REQUEST.XAXES"
                 (setLoader)="getLoader($event)" (sendToParent)="getFromChild($event)" [WIDGET_REQUEST]="WIDGET_REQUEST">
             </app-history-filter> -->
+            <ngx-skeleton-loader *ngIf="!widgetResponse.totalDevice" count="1" appearance="line" animation="pulse"></ngx-skeleton-loader>
+
             <div class="" *ngIf="widgetResponse.totalDevice">
 
                 <div [ngClass]="{'parent':item.units && item.units.length>0}"
@@ -40,13 +47,24 @@
                     </div>
                     <div *ngIf="item.units.length>0" class="g-flex">
 
+                        <!-- <mat-tab-group  mat-align-tabs="start">
+                            <mat-tab label="{{sensor.key}}" *ngFor="let sensor of item.units">
+                                <mat-card class="tcard mybg">
+                                    <div>{{sensor.key}}</div>
+    
+                                    <div>{{sensor.value | number:'1.2-2'}}</div>
+                                </mat-card>
+                            </mat-tab>
+                          </mat-tab-group> -->
+
                         <div *ngFor="let sensor of item.units">
-                            <mat-card class="tcard">
+                            <!-- <mat-grid-list class="thresh" cols="2" rowHeight="2:1"> -->
+                            <mat-card class="tcard mybg1">
                                 <div>{{sensor.key}}</div>
 
                                 <div>{{sensor.value | number:'1.2-2'}}</div>
                             </mat-card>
-
+                        <!-- </mat-grid-list> -->
 
                         </div>
                     </div>
