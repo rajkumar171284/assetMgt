@@ -212,7 +212,8 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
           const protocol = result.protocol;
           if (protocol && protocol[0].CONN_NAME == 'MQTT') {
             // written api for tat power data
-            this.getMQTTdata()
+            console.log(protocol)
+            this.getMQTTdata(protocol[0])
           }
   
           // get formatt edhistory 
@@ -257,7 +258,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
         } catch (err) {
           const newVALUE = JSON.stringify(VALUE);
           const parsed = JSON.parse(newVALUE);
-          console.log(parsed)
+          // console.log(parsed)
           let newJSON: any = {};
           newJSON = parsed;
           newJSON.LAST_UPDATE_TIME = '';
@@ -291,6 +292,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
             object.key = key;
             object.totalValue = 0;
             object.data = [];
+            object.selected=false;
             device.unitsArr.push(object);
 
           }
@@ -298,7 +300,11 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       }
 
       // get total units value
+      let j=0;
       for (let unit of device.unitsArr) {
+        if(j==0){
+          unit.selected=true;
+        }
         device.history.forEach((Item: any) => {
           let vIndex = 0;
           for (let v of Object.keys(Item)) {
@@ -310,6 +316,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
             vIndex++;
           }
         })
+        j++;
       }
 
 
@@ -322,10 +329,12 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
 
 
-  getMQTTdata() {
-    const time = interval(600000);
+  getMQTTdata(protocol:any) {
+    const time = interval(3000);
+    const params=protocol;
     this.myInterval = time.subscribe(() => {
-      this.dataService.getMqtt({}).subscribe(response => {
+
+      this.dataService.getMqtt(params).subscribe(response => {
         // console.log('getMqtt',)
         if (response) {
 

@@ -246,7 +246,7 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
     this.WIDGET_REQUEST.END_DATE = moment(this.VALUES.END_DATE).format("YYYY-MM-DD 23:59:00").toString();
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;
 
-    console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
+    // console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
    
   }
   getLoader(data: boolean) {
@@ -591,7 +591,7 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
   getFromChild(data: any) {
     // this.loading = false;
     this.widgetResponse = new widgetResponse();
-    console.log('getFromChild', data)
+    // console.log('getFromChild', data)
     if (data && data.totalDevice.length > 0) {
       this.errMessage = '';
 
@@ -611,7 +611,7 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
       this.loading = false;
       this.ref.detectChanges();
     }
-    console.log(this.loading, this.errMessage)
+    // console.log(this.loading, this.errMessage)
   }
   saveWidget(status: boolean) {
     // save widget only

@@ -1,10 +1,12 @@
-var mqtt = require('mqtt')
+var mqtt = require('mqtt');
 const express = require('express');
 const router = express.Router();
-
+var protocol={};
 var options = {
-    port: 1883,
-    host: 'mqtt://13.126.193.19',
+    // port: 1883,
+    // host: 'mqtt://13.126.193.19',
+    port:protocol.PORT,
+    host:`mqtt://${protocol.IP}`,
     clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
     username: 'isliot',
     password: 'Isl@iot',
@@ -185,7 +187,9 @@ function mqtt_pub() {
 
 mqtt_pub()
 var dataF = setInterval(mqtt_pub, 3000);
-router.get('/tatapower', (req, res) => {
+router.get('/:IP', (req, res) => {
+    // console.log(req.params)
+    protocol.IP=req.params.IP;
     finalData = sensor_data()
     finalData = JSON.stringify(finalData)
     client.publish('tatapower', finalData);

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('./dbConnection');
 // const { signupValidation, loginValidation } = require('./validation');
-const { validationResult } = require('express-validator');
+const { validationResult, body } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -284,15 +284,14 @@ router.post('/addConnection', (req, res) => {
     let errMessage;
     if (req.body.PID) {
         // console.log('update')
-        sql = 'UPDATE asset_connection_type_tbl SET CONN_NAME = ?,IP = ?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.CONN_NAME, req.body.IP, req.body.CREATED_BY, new Date(), req.body.PID];
-        errMessage = 'Record updated,successfully'
+        sql = 'UPDATE asset_connection_type_tbl SET CONN_NAME = ?,IP = ?,PORT=?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
+        todo = [req.body.CONN_NAME, req.body.IP,req.body.PORT, req.body.CREATED_BY, new Date(), req.body.PID];
+        errMessage = 'Record updated,successfully';
     } else {
         // add new
-        sql = `INSERT INTO asset_connection_type_tbl(PID, CONN_NAME,IP, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?)`;
-        todo = ['', req.body.CONN_NAME, req.body.IP, req.body.CREATED_BY, new Date()];
+        sql = `INSERT INTO asset_connection_type_tbl(PID, CONN_NAME,IP,PORT, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?)`;
+        todo = ['', req.body.CONN_NAME,req.body.IP,req.body.PORT,req.body.CREATED_BY, new Date()];
         errMessage = 'Record added,successfully';
-
     }
 
     db.query(sql, todo, (err, result) => {

@@ -19,11 +19,14 @@ export class AddConnectionComponent implements OnInit {
     this.newForm = this.fb.group({
       PID: [''],
       CONN_NAME: ['', Validators.required],
-      IP:['', Validators.required]
+      IP:['', Validators.required],
+      PORT:['', Validators.required],
+      // END_POINT:['', Validators.required],
+      // END_POINT_PORT:['', Validators.required]
     })
-    console.log(data)
+    // console.log(data)
     if (data && !data.PID) {
-      console.log(data)
+      // console.log(data)
       // add
      
      
@@ -49,7 +52,7 @@ export class AddConnectionComponent implements OnInit {
       this.Values.CREATED_BY = session.PID;
       // console.log(this.Values)
       this.dataService.addConnection(this.Values).subscribe(res => {
-        console.log(res)
+        // console.log(res)
         this.dialogClose.emit(true);
         this.confirmClose();
       })

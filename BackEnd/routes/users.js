@@ -11,66 +11,6 @@ const config = require('../config');
 var path = require("path");
 const url = require("url");
 
-// img upload
-// const multer = require('multer');
-// var fileExtension = require('file-extension')
-
-// Configure Storage
-// const DIR = '../public';
-// var storage = multer.diskStorage({
-
-//     // Setting directory on disk to save uploaded files
-//     destination: function (req, file, cb) {
-//         cb(null, DIR)
-//     },
-
-//     // Setting name of file saved
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname + '-' + Date.now() + '.' + fileExtension(file.originalname))
-//     }
-// })
-
-// var upload = multer({
-//     storage: storage,
-//     limits: {
-//         // Setting Image Size Limit to 2MBs
-//         fileSize: 20000
-//     },
-//     fileFilter(req, file, cb) {
-//         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-//             //Error 
-//             cb(new Error('Please upload JPG and PNG images only!'))
-//         }
-//         //Success 
-//         cb(undefined, true)
-//     }
-// })
-
-// const storageFile = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, DIR)
-//     },
-//     filename: (req, file, cb) => {
-//         console.log(file)
-//         let fileName = file.originalname.toLowerCase().split(' ').join('-');
-//         fileName = fileName.replace(/(\.[\w\d_-]+)$/i, '_' + Date.now() + '$1');
-//         cb(null, file)
-//     }
-// });
-// const uploadFile = multer({
-//     storage: storageFile, limits: {
-//         fileSize: 1024 * 1024 * 5
-//     },
-//     fileFilter: (req, file, cb) => {
-//         if (file.mimetype == 'image/png' || file.mimetype == 'image/jpg' || file.mimetype == 'image/jpeg') {
-//             cb(null, true);
-//         } else {
-//             req.fileTypeErr = 'Only png,jpeg,jpg';
-//             // cb(null,false);
-//             return cb(null, false, req.fileTypeErr);
-//         }
-//     }
-// });
 
 
 router.post('/getCompanyByID', (req, res) => {

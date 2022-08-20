@@ -1,10 +1,10 @@
-import { Component,ElementRef, DoCheck, AfterViewInit, Output, EventEmitter, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, DoCheck, AfterViewInit, Output, EventEmitter, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
-import { Subject, BehaviorSubject, Subscription } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription, Observable, of, map, filter, from } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { __addAssetDevice, plotly_small_layout } from '../../myclass';
+import { __addAssetDevice, plotly_small_layout,plotlyColors } from '../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment'
 import { XAxisComponent } from '../../components/x-axis/x-axis.component';
@@ -14,8 +14,7 @@ import { XAxisService } from '../../services/x-axis.service';
 import { ResizedEvent } from 'angular-resize-event';
 
 declare let $: any;
-const colors = ["(255,165,0)", "(255,105,180)", "(124,252,0)", "(0,128,0)", "(100,149,237)", "(64,224,208)", "(0,255,127)",
-  "(138,43,226)", "(153,50,204)", "(255,105,180)", "(0,191,255)", "(255,105,180)", "(210,105,30)", "(148,0,211)", "(65,105,225)", "(100,149,237)", "(255,105,180)", "(72,209,204)", "(0,128,128)"]
+const colors = plotlyColors;
 interface _device {
   DEVICE_ID: any
 }
@@ -35,7 +34,7 @@ class widgetResponse {
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,AfterViewInit {
+export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck, AfterViewInit {
   @ViewChild('xAxis', { static: true }) xAxis!: XAxisComponent;
   @Input() WIDGET_REQUEST: any;
   @Input() widgetIndex: any;
@@ -105,9 +104,10 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
   expandFilter: boolean = false;
   @Output() _widgetData = new EventEmitter();
   @Output() _widgetRemoved = new EventEmitter();
-  isThreshold:any;
+  isThreshold: any;
   leftPos: number = 0;
-
+  totalDevice$!: Observable<any[]>;
+  chartData$!: Observable<any[]>;
 
   todayStartDate: any = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss").toString();
   todayEndDate: any = moment().endOf('day').toString();
@@ -117,7 +117,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
   singleView: any = [];
   toEditRequest: any;
   divElement!: any;
-
+  chartData: any = [];
   constructor(public service: XAxisService, public dialog: MatDialog, private fb: FormBuilder, public dataService: AuthService, private ref: ChangeDetectorRef) {
 
     this.newForm = this.fb.group({
@@ -144,7 +144,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
   ngAfterViewInit(): void {
 
     this.divElement = this.divBoard.nativeElement;
-      
+
   }
   ngDoCheck(): void {
     const status = this.dataService.getAccess();
@@ -174,8 +174,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
         that.WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
         that.service.updateWidgetReq(that.WIDGET_REQUEST);
 
-        // sending/emitting data to parent-dashboard.ts for saving into api
-        // that._widgetData.emit(that.WIDGET_REQUEST)
       }
     });
 
@@ -211,6 +209,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
 
   }
   ngOnInit(): void {
+
     if (this.WIDGET_REQUEST.CHART_NAME == "gauge" || this.WIDGET_REQUEST.CHART_NAME == "line") {
       this.filterShow2 = true;
       this.filterShow1 = false;
@@ -233,7 +232,6 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
 
       this.WIDGET_REQUEST.WIDGET_DATA = this.WIDGET_REQUEST.WIDGET_DATA.toUpperCase();
       const size = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE);
-      // console.log('size', size, this.WIDGET_REQUEST.CHART_NAME)
       this.chartWidth = size.width;
       this.chartHeight = size.height;
       this.getAlertsByAssetConfigID()
@@ -254,14 +252,49 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
     this.loading = data;
   }
   getFromChild(data: any) {
-    // this.loading = false;
     this.widgetResponse = new widgetResponse();
-    // console.log('getFromChild', data)
     if (data && data.totalDevice.length > 0) {
       this.errMessage = '';
 
       this.isDataFound = true;
       this.widgetResponse.totalDevice = data.totalDevice;
+     
+
+      this.totalDevice$ = of(this.widgetResponse.totalDevice);
+      
+      
+      // this.totalDevice$.subscribe((x: any) => {
+      //   console.log(x)
+      // if (x.history.length > 0) {
+      //   return x.unitsArr.filter((z: any) => {
+      //     return z.selected == true;
+      //   }).map((result: any) => {
+      //     // console.log(result)
+      //     this.chartData.push(result)
+      //     return result
+
+      //   });
+      // }
+      // })
+      this.getFilteredData();
+      this.chartData$=of(this.chartData);
+      console.log(this.chartData)
+      // this.totalDevice$.pipe(map(z => z), filter((x: any) => {
+      //   if (x.history.length > 0) {
+      //     return x.unitsArr.filter((z: any) => {
+      //       return z.selected == true;
+      //     }).map((result: any) => {
+      //       console.log(result)
+      //       this.chartData.push(result)
+      //       return result
+
+      //     });
+      //   }
+      // })).subscribe(resp => {
+      //   console.log(this.chartData)
+      //   this.chartData$=of(this.chartData);
+
+      // })
 
       this.service.sendTotalDevice(data.totalDevice)
       this.loading = false;
@@ -320,14 +353,40 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck,Af
   }
 
   getAlertsByAssetConfigID() {
-    
+
     let params = {}
-      params = { ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID };
+    params = { ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID };
     this.dataService.getThresholdAlertByAssetConfigID(params).subscribe(res => {
-      this.isThreshold = res.data && res.data[0]?res.data[0]:null;
-      console.log('this.isThreshold',this.isThreshold)
+      this.isThreshold = res.data && res.data[0] ? res.data[0] : null;
+      // console.log('this.isThreshold', this.isThreshold)
       this.loading = false;
 
     });
+  }
+  getFilteredData(){
+    this.chartData = [];
+      this.totalDevice$.pipe(map((x: any) => {
+        x.filter((list: any) => {       
+          return list.history.length > 0;
+        }).map((resp: any) => {
+         
+          return resp.unitsArr.filter((obj: any) => {
+            return obj.selected == true;
+          }).map((data:any)=>{
+            this.chartData.push(data)
+            return data;
+          })
+        })
+
+
+      })).subscribe(res => {
+        // console.log(res)
+      })
+  }
+  selectLegend(i: number, j: number) {
+    if (this.widgetResponse.totalDevice[i].history.length > 0) {            
+      this.widgetResponse.totalDevice[i].unitsArr[j].selected = !this.widgetResponse.totalDevice[i].unitsArr[j].selected;
+      this.getFilteredData();      
+    }
   }
 }

@@ -1,22 +1,33 @@
 import { Component, DoCheck, Output, EventEmitter, OnInit, Input, ViewChild, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Plotly from 'plotly.js-dist-min';
 import { Config, Data, Layout } from 'plotly.js';
-import { Subject, BehaviorSubject, Subscription } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription, Observable, of, map } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { __addAssetDevice, plotly_small_layout } from '../../../myclass';
+import { __addAssetDevice, plotly_small_layout,plotlyColors } from '../../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment'
 // import { XAxisComponent } from '../../components/x-axis/x-axis.component';
 // import { WidgetComponent } from '../../components/widget/widget.component';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { XAxisService } from '../../../services/x-axis.service';
+import { forEach } from '@angular-devkit/schematics';
 
 
 declare let $: any;
-const colors = ["(255,165,0)", "(255,105,180)", "(124,252,0)", "(0,128,0)", "(100,149,237)", "(64,224,208)", "(0,255,127)",
-  "(138,43,226)", "(153,50,204)", "(255,105,180)", "(0,191,255)", "(255,105,180)", "(210,105,30)", "(148,0,211)", "(65,105,225)", "(100,149,237)", "(255,105,180)", "(72,209,204)", "(0,128,128)"]
+const colors = plotlyColors;
 
+
+// interface _totalDevice {
+//   history: any[],
+//   unitsArr: any[], DEVICE_ID: string;
+// }
+// interface _units {
+//   key: string;
+//   totalValue: number;
+//   data: any[];
+//   selected: boolean;
+// }
 
 @Component({
   selector: 'app-common-chart1',
@@ -28,11 +39,14 @@ export class CommonChart1Component implements OnInit, OnChanges {
   @Input('chartWidth') chartWidth!: number;
   @Input('chartHeight') chartHeight!: number;
   @Input('totalDevice') totalDevice: any[] = [];
+  @Input() chartData!: any;
+
   @Input() WIDGET_REQUEST: any;
   @Input() isThreshold: any;
+
   @Output() _sendToParent = new EventEmitter();
   result: any = [];
-  singleView: any = [];
+  totalDevice$!: Observable<any[]>;
   public data: any;
 
   constructor(public behavSubject: XAxisService, private ref: ChangeDetectorRef) { }
@@ -83,13 +97,24 @@ export class CommonChart1Component implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(this.chartWidth, this.chartHeight, this.WIDGET_REQUEST.CHART_NAME)
+    // console.log(changes,this.chartData)
+
+    this.totalDevice$ = of(this.totalDevice);
     this.loadChart()
   }
   loadChart() {
-    // console.log('this.totalDevice', this.totalDevice)
+
     if (this.totalDevice && this.totalDevice.length > 0) {
-      // console.log('this.totalDevice',this.totalDevice)
+      this.totalDevice.forEach((item, index) => {
+        if (item.history.length > 0) {
+          item.unitsArr.forEach((obj: any, j: number) => {
+            obj.color = `rgb${colors[j]}`
+
+          })
+          console.log(item.unitsArr)
+        }
+
+      })
       if (this.WIDGET_REQUEST.CHART_NAME.toLowerCase() == 'gauge') {
         this.guageChart();
       }
@@ -116,12 +141,9 @@ export class CommonChart1Component implements OnInit, OnChanges {
   lineChart() {
     if (this.totalDevice && this.totalDevice.length > 0) {
       let layout: any = {};
-
-      // console.log(this.WIDGET_REQUEST.CHART_NAME.toLowerCase(), this.WIDGET_REQUEST.CONFIG_NAME)
       let linedata: any = [];
-      let newVALUE: any = [], xArray: any = [];
+      let xArray: any = [];
       let index = 0;
-      this.singleView = []
       for (let a of this.totalDevice) {
         if (a.history.length > 0) {
 
@@ -131,27 +153,25 @@ export class CommonChart1Component implements OnInit, OnChanges {
           });
           // const unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
 
-          // y value
+          let j = 0;
           for (let units of a.unitsArr) {
             // format VALUE json as key & value
+            if (units.selected == true) {
+              let trace = {
+                x: xArray,
+                y: units.data,
+                mode: 'scatter+points',
+                type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
+                name: units.key,
+                line: {
+                  color: units.colors,
+                  width: 2
+                },
 
-            let trace = {
-              x: xArray,
-              // y: yArray, 
-              y: units.data,
-              mode: 'scatter+points',
-              type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
-              // name: a.DEVICE_ID,
-              name: units.key
-            };
-            linedata.push(trace);
-            // loop view
-            this.singleView.push({
-              data: [trace],
-              layout: new plotly_small_layout(),
-              useResize: true,
-              autosize: true
-            })
+              };
+              linedata.push(trace);
+            }
+            j++;
           }
         }
         index++;
@@ -160,9 +180,9 @@ export class CommonChart1Component implements OnInit, OnChanges {
       // // Define Layout
       layout = {
         yaxis: { autorange: true, title: "" },
-        showlegend: true,
+        showlegend: false,
         autosize: true,
-        width: this.chartWidth,
+        // width: this.chartWidth,
         height: this.chartHeight,
         margin: {
           l: 50,
@@ -176,7 +196,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
         // plot_bgcolor: '#c7c7c7'
       };
       if (this.isThreshold) {
-        console.log('this.isThreshold',this.isThreshold)
+        console.log('this.isThreshold', this.isThreshold)
         layout.shapes = [
           {
             type: 'line',
@@ -198,35 +218,16 @@ export class CommonChart1Component implements OnInit, OnChanges {
       // Display using Plotly
       this.graph1.data = linedata;
       this.graph1.layout = layout;
-      console.log(linedata)
-      // Plotly.newPlot('myDiv', linedata, layout);
-      //   window.onresize = function() {
-      //     Plotly.relayout('myDiv', {
-      //         'xaxis.autorange': true,
-      //         'yaxis.autorange': true
-      //     });
-      // };
+      // console.log(linedata)
+
       this.ref.detectChanges();
 
     }
   }
 
-  // getProp(type: string) {
-  //   const prop = JSON.parse(this.WIDGET_REQUEST.WIDGET_SIZE)
-  //   if (type == 'W') {
-  //     return prop.width
-  //   }
-  //   if (type == 'H') {
-  //     return prop.height
-  //   } else if (type == 't') {
-  //     return prop.top ? prop.top : 0
-  //   } else if (type == 'l') {
-  //     return prop.left ? prop.left : 0
-  //   }
-  // }
 
   pieChart(result: any) {
-    let unique: any = [];
+
     let data: any = [];
     let labelArr: any = [];
 
@@ -234,13 +235,6 @@ export class CommonChart1Component implements OnInit, OnChanges {
     let xArray: any = [];
     for (let a of this.totalDevice) {
       if (a.history.length > 0) {
-
-        // xArray = a.history.map((z: any) => {
-        //   let dt = new Date(z.LAST_UPDATE_TIME);
-        //   return dt;
-        // });
-
-        // y value
         for (let units of a.unitsArr) {
           // format VALUE json as key & value
           labelArr.push(units.key)
@@ -248,11 +242,9 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
           let trace = {
             x: xArray,
-            // y: yArray, 
             y: units.data,
             mode: 'scatter+points',
             type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
-            // name: a.DEVICE_ID,
             name: units.key
           };
           linedata.push(trace);
@@ -264,8 +256,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
     }
 
-    // console.log('data', data)
-    // console.log('labelArr', labelArr)
+
     var traceA = {
       type: "pie",
       values: data,
@@ -297,10 +288,6 @@ export class CommonChart1Component implements OnInit, OnChanges {
     };
 
     this.data = [traceA];
-
-    var layout = {
-      title: ""
-    };
     this.graph1.data = this.data;
     this.graph1.layout.width = this.chartWidth;
     this.graph1.layout.height = this.chartHeight;
@@ -309,10 +296,8 @@ export class CommonChart1Component implements OnInit, OnChanges {
   }
   barChart(result: any) {
     // console.log('bar', result)
-    let unique: any = [];
-    let data: any = [];
 
-    // let xArray: any = [];
+    let data: any = [];
     let xArray: any = [];
     for (let a of this.totalDevice) {
       if (a.history.length > 0) {
@@ -322,30 +307,21 @@ export class CommonChart1Component implements OnInit, OnChanges {
         });
         let index = 0;
         for (let units of a.unitsArr) {
-          const newData = {
-            x: xArray,
-            y: units.data,
-            type: "bar",
-            name: units.key,
-
-          }
-          const newData2 = {
-            x: xArray,
-            y: units.data,
-            type: "bar",
-            name: units.key,
-            marker: {
-              color: `rgb${colors[index]}`
+          if (units.selected == true) {
+            const newData = {
+              x: xArray,
+              y: units.data,
+              type: "bar",
+              name: units.key,
+              line: {
+                color: units.colors,
+                width: 3
+              },
             }
-          }
-          data.push(newData);
-          // loop view
-          this.singleView.push({
-            data: [newData2],
-            layout: new plotly_small_layout(),
-            useResize: true
 
-          })
+            data.push(newData);
+          }
+
           index++;
         }
       }
@@ -373,14 +349,15 @@ export class CommonChart1Component implements OnInit, OnChanges {
       // ]
     }
     this.graph1.data = data;
-    this.graph1.layout.width = this.chartWidth;
+    this.graph1.layout.width = '100%';
     this.graph1.layout.height = this.chartHeight;
+    this.graph1.layout.showlegend = false;
 
     this.graph1.responsive = true;
 
     this.graph1.layout.title = this.WIDGET_REQUEST.CONFIG_NAME;
-    console.log(this.graph1)
-    // Plotly.newPlot('myDiv', data, this.graph1.layout);
+    // console.log(this.graph1)
+
   }
 
 
@@ -526,7 +503,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
     }
     if (this.isThreshold) {
-      console.log('this.isThreshold',this.isThreshold)
+      console.log('this.isThreshold', this.isThreshold)
       // layout.shapes = [
       //   {
       //     type: 'line',

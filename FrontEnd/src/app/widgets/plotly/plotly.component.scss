@@ -1,3 +1,28 @@
 .abs-card{
     position: absolute;
 }
+.flx{
+    display: flex;  flex-direction: row;
+   
+
+}
+.flx div{
+background: #fff; height: 90vh;
+// border: 1px solid red;
+}
+.flx div:first-child{
+    width: 80%;
+}
+.flx div:nth-child(2){
+    width: 20%;
+}
+.legend{
+    display: flex;
+    text-align: left;
+    justify-content: left;
+    align-items: center;
+    color:gray ;
+}
+.activeLegend{
+    color:#000 !important;    font-weight: 500;
+}

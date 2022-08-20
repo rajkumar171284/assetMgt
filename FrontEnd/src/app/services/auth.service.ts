@@ -261,7 +261,8 @@ export class AuthService {
   }
   // mqtt starts
   getMqtt(params: any): Observable<any> {
-    return this.http.get(`${environment.url}/mqtt/tatapower`, options).pipe(map(response => {
+    params.CONN_NAME=params.CONN_NAME.toLowerCase();
+    return this.http.get(`${environment.url}/${params.CONN_NAME}/${params.IP}`, options).pipe(map(response => {
       return response;
     }))
   }

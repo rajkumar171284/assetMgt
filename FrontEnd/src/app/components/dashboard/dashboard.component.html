@@ -3,13 +3,13 @@
   <!-- <div *ngIf="loader" class="overlay">
     <mat-spinner></mat-spinner>
 </div> -->
-<ngx-skeleton-loader [theme]="{ height: '80px' }" *ngIf="loader" count="6" appearance="line" animation="progress"></ngx-skeleton-loader>
 
-  <span *appAccessrights="false" (click)="closePanel();isWidgetOpen=true"  class="openWidget">
+<ng-container *ngIf="!isWidgetOpen">
+  <span  *appAccessrights="false" (click)="closePanel();isWidgetOpen=true"  class="openWidget">
     <mat-icon color="primary">open_with</mat-icon>
 
   </span>
-
+</ng-container>
 
 
   <div cdkDropListGroup  class="row">
@@ -168,6 +168,8 @@
           <div cdkDropList #widgetList="cdkDropList" [cdkDropListData]="undraggedWidget$" class="example-list2"
             (cdkDropListDropped)="onDrop($event)">
             <div class="Widget-block" [cdkDragData]="List" *ngFor="let List of undraggedWidget$" cdkDrag>
+
+              <ngx-skeleton-loader [theme]="{ height: '80px' }" *ngIf="!List" count="6" appearance="line" animation="progress"></ngx-skeleton-loader>
 
               <mat-card class="listed-charts undraggedBlock" color="primary">
 

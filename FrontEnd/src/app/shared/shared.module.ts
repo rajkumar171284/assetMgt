@@ -113,7 +113,7 @@ import { AngularResizeEventModule } from 'angular-resize-event';
 
 import { PushNotificationModule } from 'ng-push-notification';
 import { RecentActivityComponent } from '../widgets/recent-activity/recent-activity.component';
-import {ProgressiveActivityComponent} from '../widgets/progressive-activity/progressive-activity.component';
+import { ProgressiveActivityComponent } from '../widgets/progressive-activity/progressive-activity.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @NgModule({
@@ -128,7 +128,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     PlotlyComponent, CardComponent,
     MacReportsComponent, ReportsComponent, TableComponent,
     HighlightsComponent, MapComponent, UsersComponent, AddUsersComponent, WidgetAccessDirective, CompanyListComponent, AddCompanyComponent, SanitizePipe, AccessrightsDirective, GuageComponent, HistoryFilterComponent, ToHideDirective, XAxisComponent, WidgetDashboardComponent, CommonChart1Component, BarChartComponent, AdminPanelComponent, AlertPanelComponent, MaskWidgetComponent, HeaderWidgetComponent, FooterWidgetComponent,
-    RecentActivityComponent,ProgressiveActivityComponent
+    RecentActivityComponent, ProgressiveActivityComponent
   ],
   imports: [
     CommonModule, PlotlyModule,
@@ -176,7 +176,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     MatTreeModule,
     OverlayModule,
     PortalModule,
-    ScrollingModule, HttpClientModule,NgxSkeletonLoaderModule,
+    ScrollingModule, HttpClientModule, NgxSkeletonLoaderModule,
     LeafletModule, AngularResizeElementModule, ResizableModule, TableVirtualScrollModule,
     PushNotificationModule.forRoot()
   ],
