@@ -212,7 +212,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
           const protocol = result.protocol;
           if (protocol && protocol[0].CONN_NAME == 'MQTT') {
             // written api for tat power data
-            console.log(protocol)
+            // console.log(protocol)
             this.getMQTTdata(protocol[0])
           }
   

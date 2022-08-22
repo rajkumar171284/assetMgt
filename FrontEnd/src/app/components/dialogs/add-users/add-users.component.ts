@@ -76,8 +76,10 @@ getAllComp() {
   }
   async confirmData() {
 
-    // const msg = await this.findInvalidControls();
-    // console.log(this.newForm)
+    if (!this.newForm.valid) {
+      // validate form
+        const str = this.dataService.formValidation(this.newForm);
+      }
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();

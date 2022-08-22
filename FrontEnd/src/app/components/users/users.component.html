@@ -21,7 +21,7 @@
   <table mat-table [dataSource]="dataSource" class="demo-table">
 
     <ng-container matColumnDef="PID">
-      <th mat-header-cell *matHeaderCellDef> PID </th>
+      <th mat-header-cell *matHeaderCellDef> SNO </th>
       <td mat-cell *matCellDef="let element"> {{element.PID}} </td>
     </ng-container>
 
@@ -46,7 +46,7 @@
     </ng-container>
 
     <ng-container matColumnDef="WIDGETS_RIGHTS">
-      <th mat-header-cell *matHeaderCellDef> WIDGETS_RIGHTS </th>
+      <th mat-header-cell *matHeaderCellDef> WIDGETS RIGHTS </th>
       <td mat-cell *matCellDef="let element">
         <mat-icon matTooltip="{{element.WIDGETS_RIGHTS?'Widget (READ/WRITE):YES':'Widget (READ/WRITE):NO'}}" [color]="element.WIDGETS_RIGHTS?'primary':'warn'">
 

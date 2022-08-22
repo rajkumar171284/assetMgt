@@ -48,7 +48,7 @@ app.use((err, req, res, next) => {
         message: err.message,
     });
 });
-app.use(multer({dest:DIR}).any());
+
 
 // app.listen(PORT, () => {
 //     console.log('server on ',PORT)

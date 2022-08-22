@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import{AddAlertComponent} from '../dialogs/add-alert/add-alert.component';
+import { AddAlertComponent } from '../dialogs/add-alert/add-alert.component';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -13,12 +13,12 @@ export class AlertsListComponent implements OnInit {
   loading = false;
   dataSource = [];
   // assetTypes=[];
-  allAssetConfigTypes:any=[];
+  allAssetConfigTypes: any = [];
   newForm: FormGroup;
   displayedColumns: string[] = [
-    "PID", "ALERT_NAME","THRESHOLD_MIN","THRESHOLD_MAX","THRESHOLD_AVG","PARAMETER","ALERT_TYPE","CREATED_DATE", "actions"];
+    "PID", "ALERT_NAME", "THRESHOLD_MIN", "THRESHOLD_MAX", "THRESHOLD_AVG", "PARAMETER", "ALERT_TYPE", "COLOR", "CREATED_DATE", "actions"];
 
-  constructor(private fb: FormBuilder,private dataService: AuthService, public dialog: MatDialog) { 
+  constructor(private fb: FormBuilder, private dataService: AuthService, public dialog: MatDialog) {
     this.newForm = this.fb.group({
       ASSET_CONFIG_ID: [''],
 
@@ -29,12 +29,12 @@ export class AlertsListComponent implements OnInit {
     //get all asset config types
     this.getAllAssetConfigs()
   }
-  getAssetID(){
+  getAssetID() {
     const pid = this.Values.ASSET_CONFIG_ID;
-    if(pid){
-    this.loading=true;
-    // console.log(pid)
-    this.getAlertsByAssetConfigID()
+    if (pid) {
+      this.loading = true;
+      // console.log(pid)
+      this.getAlertsByAssetConfigID()
     }
   }
   get Values() {
@@ -51,7 +51,7 @@ export class AlertsListComponent implements OnInit {
     }
     this.dataService.getAssetConfig(params).subscribe(res => {
       this.allAssetConfigTypes = res.data;
-      if(this.Values.ASSET_CONFIG_ID){
+      if (this.Values.ASSET_CONFIG_ID) {
         this.getAlertsByAssetConfigID();
       }
 
@@ -59,9 +59,9 @@ export class AlertsListComponent implements OnInit {
     });
   }
   getAlertsByAssetConfigID() {
-    
+
     let params = {}
-      params = { ASSET_CONFIG_ID: this.Values.ASSET_CONFIG_ID };
+    params = { ASSET_CONFIG_ID: this.Values.ASSET_CONFIG_ID };
     this.dataService.getThresholdAlertByAssetConfigID(params).subscribe(res => {
       this.dataSource = res.data;
       this.loading = false;
@@ -69,13 +69,13 @@ export class AlertsListComponent implements OnInit {
     });
   }
   editItem(item: any) {
-    
-    const ref=this.dialog.open(AddAlertComponent, {
+
+    const ref = this.dialog.open(AddAlertComponent, {
       width: '800px',
       data: item
     });
     ref.afterClosed().subscribe(result => {
-    this.getAllAssetConfigs();
+      this.getAllAssetConfigs();
     });
   }
   removeItem(item: any) {

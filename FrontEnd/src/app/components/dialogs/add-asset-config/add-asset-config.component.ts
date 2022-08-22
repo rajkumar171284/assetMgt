@@ -89,12 +89,12 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       // console.log(data)
       if (data.PARAMETERS) {
         data.PARAMETERS = JSON.parse(data.PARAMETERS);
-        
+
         for (let a of data.PARAMETERS) {
           const item = this.fb.group({
             PID: '',
-            INPUT_NAME: [a.INPUT_NAME,Validators.required],
-            ZONE:a.ZONE,UNIT:a.UNIT,
+            INPUT_NAME: [a.INPUT_NAME, Validators.required],
+            ZONE: a.ZONE, UNIT: a.UNIT,
             INPUT_STATUS: a.INPUT_STATUS,
           })
           this.PARAMETERS_DETAILS.push(item)
@@ -106,10 +106,10 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
       this.newForm.patchValue({
         SENSOR: parseInt(data.SENSOR),
         ASSET_TYPE: parseInt(data.ASSET_TYPE),
-        STATIC_COORDS: data.STATIC_COORDS == 1 ? true : false,      
+        STATIC_COORDS: data.STATIC_COORDS == 1 ? true : false,
 
       })
-     
+
     } else {
       // add new- logic if any
 
@@ -117,24 +117,10 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
 
 
   }
-  // pushParameters(data: any) {
-  //   const params = JSON.parse(data.PARAMETERS);
+  
 
-  //   for (let a of params) {
-  //     let item = this.newForm.get('PARAMETERS') as FormGroup;
-
-  //     item = this.fb.group({
-  //       PID: '',
-  //       INPUT_NAME: a.INPUT_NAME,
-  //       INPUT_STATUS: a.INPUT_STATUS
-  //     })
-  //     this.PARAMETERS_DETAILS.push(item)
-  //   }
-    
-  // }
-
-  removeParameters(i:number){
-   this.PARAMETERS_DETAILS.removeAt(i)
+  removeParameters(i: number) {
+    this.PARAMETERS_DETAILS.removeAt(i)
   }
   get PARAMETERS_DETAILS(): FormArray {
     return this.newForm.get('PARAMETERS') as FormArray;
@@ -226,8 +212,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
   }
   async confirmData() {
 
-    // const msg = await this.findInvalidControls();
-    // console.log(msg)
+
 
     if (this.newForm.get('COMPANY_ID')?.valid && this.newForm.get('CONFIG_NAME')?.valid && this.newForm.get('ASSET_ID')?.valid && this.newForm.get('INDUSTRIAL_TYPE')?.valid && this.newForm.get('INDUSTRIAL_DATA_SOURCE')?.valid && this.newForm.get('CONNECTION_TYPE')?.valid
       && this.newForm.get('TRACKING_DEVICE')?.valid && this.newForm.get('SENSOR')?.valid && this.newForm.get('SENSOR_CATEGORY')?.valid && this.newForm.get('SENSOR_DATA_TYPE')?.valid) {
@@ -322,7 +307,7 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     const item = this.fb.group({
       PID: '',
       INPUT_NAME: ['', Validators.required],
-      UNIT:'',ZONE:'',
+      UNIT: '', ZONE: '',
       INPUT_STATUS: true,
     })
 

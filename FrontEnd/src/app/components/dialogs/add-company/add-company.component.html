@@ -47,20 +47,7 @@
 
             </mat-grid-list>
 
-            <!-- <mat-grid-list cols="1" rowHeight="2:1">
-
-                <mat-form-field>
-                    <mat-label>ROLE</mat-label>
-                    <mat-select formControlName="ROLE">
-
-                        <mat-option *ngFor="let key of roleData" [value]="key">
-                            {{key}}
-                        </mat-option>
-
-                    </mat-select>
-                </mat-form-field>
-
-            </mat-grid-list> -->
+         
 
         </div>
 
@@ -68,7 +55,7 @@
             <mat-grid-list cols="1" rowHeight="2:1">
 
                 <mat-form-field>
-                    <mat-label>APPLICATION SOLUTION NAME</mat-label>
+                    <mat-label>APPLICATION NAME</mat-label>
                     <input formControlName="APP_SOLUTION_NAME" matInput placeholder="" type="text"
                         class="example-right-align">
                 </mat-form-field>
@@ -79,7 +66,6 @@
                 <mat-label>UPLOAD LOGO</mat-label>
 
                 <span *ngIf="bImg" (click)="bImg=null" class="editImg">
-                    <!-- <mat-icon matTooltip="Edit Widget" color="secondary">edit</mat-icon> -->
                     Edit logo
                 </span>
             </mat-grid-list>
@@ -105,12 +91,7 @@
 
                     </div>
                 </div>
-                <!-- <img class="logo-upload" [src]="bImg | sanitize">
-                <input type="file" class="btn-theme2" id="customFile" name="uploadedImage"
-                (change)="onSelectFile($event)" #UploadFileInput>
-                <button mat-raised-button (click)="uploadLogo()">Upload</button> -->
-
-
+    
             </mat-grid-list>
 
         </div>

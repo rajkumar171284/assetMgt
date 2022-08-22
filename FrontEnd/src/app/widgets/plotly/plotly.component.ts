@@ -263,38 +263,10 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck, A
       this.totalDevice$ = of(this.widgetResponse.totalDevice);
       
       
-      // this.totalDevice$.subscribe((x: any) => {
-      //   console.log(x)
-      // if (x.history.length > 0) {
-      //   return x.unitsArr.filter((z: any) => {
-      //     return z.selected == true;
-      //   }).map((result: any) => {
-      //     // console.log(result)
-      //     this.chartData.push(result)
-      //     return result
-
-      //   });
-      // }
-      // })
+    
       this.getFilteredData();
       this.chartData$=of(this.chartData);
-      console.log(this.chartData)
-      // this.totalDevice$.pipe(map(z => z), filter((x: any) => {
-      //   if (x.history.length > 0) {
-      //     return x.unitsArr.filter((z: any) => {
-      //       return z.selected == true;
-      //     }).map((result: any) => {
-      //       console.log(result)
-      //       this.chartData.push(result)
-      //       return result
-
-      //     });
-      //   }
-      // })).subscribe(resp => {
-      //   console.log(this.chartData)
-      //   this.chartData$=of(this.chartData);
-
-      // })
+      
 
       this.service.sendTotalDevice(data.totalDevice)
       this.loading = false;
@@ -308,7 +280,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck, A
       this.loading = false;
       this.ref.detectChanges();
     }
-    console.log(this.loading, this.errMessage)
+    // console.log(this.loading, this.errMessage)
   }
   saveWidget(status: boolean) {
     // save widget only
@@ -357,7 +329,7 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck, A
     let params = {}
     params = { ASSET_CONFIG_ID: this.WIDGET_REQUEST.ASSET_CONFIG_ID };
     this.dataService.getThresholdAlertByAssetConfigID(params).subscribe(res => {
-      this.isThreshold = res.data && res.data[0] ? res.data[0] : null;
+      this.isThreshold = res.data ? res.data : [];
       // console.log('this.isThreshold', this.isThreshold)
       this.loading = false;
 

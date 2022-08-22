@@ -53,14 +53,18 @@
             <td mat-cell *matCellDef="let element"> {{element.ALERT_TYPE}} </td>
         </ng-container>
 
-        <!-- <ng-container matColumnDef="THRESHOLD_MAX">
-            <th mat-header-cell *matHeaderCellDef> STATUS </th>
+        <ng-container matColumnDef="COLOR">
+            <th mat-header-cell *matHeaderCellDef> COLOR </th>
             <td mat-cell *matCellDef="let element">
-                <mat-icon matTooltip="{{element.STATUS?'Active':'In-active'}}"  color="accent">
-                    {{element.STATUS?'check_box':'check_box_outline_blank'}}
+                <mat-icon [style.color]="element.COLOR">
+                    invert_colors
                 </mat-icon>
+                <!-- <mat-icon>invert_colors</mat-icon>
+
+                label -->
+
             </td>
-        </ng-container> -->
+        </ng-container>
         <ng-container matColumnDef="CREATED_DATE">
             <th mat-header-cell *matHeaderCellDef> CREATED DATE </th>
             <td mat-cell *matCellDef="let element"> {{element.CREATED_DATE | date:'short'}} </td>

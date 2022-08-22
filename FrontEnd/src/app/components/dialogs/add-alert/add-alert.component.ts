@@ -76,12 +76,19 @@ export class AddAlertComponent implements OnInit {
       COLOR: [''],
 
     })
-   
+
     this.data = data;
     if (data) {
       // edit
+      console.log(data)
       this.typeName = data;
-      this.newForm.patchValue(data)
+      
+      this.newForm.patchValue(data);
+
+      this.newForm.patchValue({
+        PARAMETER: data.PARAMETER.toUpperCase()
+      })
+
 
     } else {
       // add
@@ -97,7 +104,7 @@ export class AddAlertComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
 
     // this.initCall()
-    
+
   }
   initCall() {
 
@@ -124,65 +131,53 @@ export class AddAlertComponent implements OnInit {
     }
     this.dataService.getAssetConfig(params).subscribe(res => {
       this.assetTypes = res.data;
+      this.parameterTypes = [];
+      // if edit happens
+      if(this.typeName){
+        this.getrespectiveParameters(this.typeName.ASSET_CONFIG_ID);            
+      }
       this.loading = false;
 
     })
   }
+  getrespectiveParameters(ASSET_CONFIG_ID:number){
+    let index = this.assetTypes.map((a: any) => a.PID).indexOf(ASSET_CONFIG_ID);
+    if (index != -1 && this.assetTypes[index].PARAMETERS) {
+      const types = JSON.parse(this.assetTypes[index].PARAMETERS);
+      this.parameterTypes = types.map((item: any) => {
+        if(item.INPUT_NAME){
+          item.INPUT_NAME.toUpperCase();
+        }
+        return item.INPUT_NAME.toUpperCase();
+      })
+    }
+    // console.log(this.parameterTypes)
+  }
   getPARAMETERS() {
     const pid = this.Values.ASSET_CONFIG_ID;
-    // console.log(pid)
-    this.parameterTypes = [];
-    let index = this.assetTypes.map((a: any) => a.PID).indexOf(pid);
-    if (index != -1 && this.assetTypes[index].PARAMETERS) {
-      this.parameterTypes = JSON.parse(this.assetTypes[index].PARAMETERS);
-    }
+    this.getrespectiveParameters(pid);
 
   }
   ngOnInit(): void {
-    
-    // this.setValidate();
+
     this.initCall();
   }
 
-  setValidate(){
-    const value= this.newForm.get('THRESHOLD_RANGE')?.value;
-      console.log(value)
-      if (value) {
-        this.newForm.get('THRESHOLD_MIN')?.setValidators(Validators.required);
-        this.newForm.get('THRESHOLD_MAX')?.setValidators(Validators.required);
-        this.newForm.get('THRESHOLD_AVG')?.clearValidators();
+  getColor(e:any){
+    console.log(e)
 
-        // this.newForm.patchValue({
-
-        //   THRESHOLD_MIN: ['', Validators.required],
-        //   THRESHOLD_MAX: ['', Validators.required],
-        //   THRESHOLD_AVG: [''],
-        // })
-      } else {
-        // absolute value
-        this.newForm.get('THRESHOLD_MIN')?.clearValidators();
-        this.newForm.get('THRESHOLD_MAX')?.clearValidators();
-        this.newForm.get('THRESHOLD_AVG')?.setValidators(Validators.required);
-        // this.newForm.patchValue({
-        //   THRESHOLD_MIN: [''],
-        //   THRESHOLD_MAX: [''],
-        //   THRESHOLD_AVG: ['', Validators.required],
-        // })
-      }
   }
 
   async confirmData() {
 
-    // const msg = await this.findInvalidControls();
-    console.log(this.THRESHOLD_RANGE1)
-    console.log(this.Values)
+  
     if (this.newForm.valid) {
       this.loading = true;
       const session = await this.dataService.getSessionData();
       this.Values.COMPANY_ID = session.COMPANY_ID
       this.Values.CREATED_BY = session.PID;
 
-      console.log(this.Values)
+      // console.log(this.Values)
       this.dataService.addThresholdAlert(this.Values).subscribe(res => {
         // console.log(res)
         this.dialogClose.emit(true);

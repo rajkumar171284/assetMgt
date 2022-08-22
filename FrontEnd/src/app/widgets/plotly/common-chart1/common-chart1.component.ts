@@ -4,7 +4,7 @@ import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription, Observable, of, map } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { __addAssetDevice, plotly_small_layout,plotlyColors } from '../../../myclass';
+import { __addAssetDevice, plotly_small_layout, plotlyColors } from '../../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment'
 // import { XAxisComponent } from '../../components/x-axis/x-axis.component';
@@ -108,10 +108,11 @@ export class CommonChart1Component implements OnInit, OnChanges {
       this.totalDevice.forEach((item, index) => {
         if (item.history.length > 0) {
           item.unitsArr.forEach((obj: any, j: number) => {
+            // console.log(j)
             obj.color = `rgb${colors[j]}`
 
           })
-          console.log(item.unitsArr)
+          // console.log(item.unitsArr)
         }
 
       })
@@ -140,45 +141,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
   }
   lineChart() {
     if (this.totalDevice && this.totalDevice.length > 0) {
-      let layout: any = {};
-      let linedata: any = [];
-      let xArray: any = [];
-      let index = 0;
-      for (let a of this.totalDevice) {
-        if (a.history.length > 0) {
-
-          xArray = a.history.map((z: any) => {
-            let dt = new Date(z.LAST_UPDATE_TIME);
-            return dt;
-          });
-          // const unique = [...new Set(xArray.map((uniq: any) => uniq))];//collect unique dates
-
-          let j = 0;
-          for (let units of a.unitsArr) {
-            // format VALUE json as key & value
-            if (units.selected == true) {
-              let trace = {
-                x: xArray,
-                y: units.data,
-                mode: 'scatter+points',
-                type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
-                name: units.key,
-                line: {
-                  color: units.colors,
-                  width: 2
-                },
-
-              };
-              linedata.push(trace);
-            }
-            j++;
-          }
-        }
-        index++;
-
-      }
-      // // Define Layout
-      layout = {
+      let layout: any = {
         yaxis: { autorange: true, title: "" },
         showlegend: false,
         autosize: true,
@@ -195,31 +158,76 @@ export class CommonChart1Component implements OnInit, OnChanges {
         // paper_bgcolor: '#7f7f7f',
         // plot_bgcolor: '#c7c7c7'
       };
-      if (this.isThreshold) {
-        console.log('this.isThreshold', this.isThreshold)
-        layout.shapes = [
-          {
-            type: 'line',
-            xref: 'paper',
-            x0: 0,
-            y0: 12.0,
-            x1: 1,
-            y1: this.isThreshold.THRESHOLD_AVG,
-            line: {
-              color: 'rgb(255, 0, 0)',
-              width: 4,
-              dash: 'dot'
+      let linedata: any = [];
+      let xArray: any = [];
+      layout.shapes = [];
+      for (let a of this.totalDevice) {
+        if (a.history.length > 0) {
+
+          xArray = a.history.map((z: any) => {
+            let dt = new Date(z.LAST_UPDATE_TIME);
+            return dt;
+          });
+
+          let j = 0;
+          for (let units of a.unitsArr) {
+
+            // format VALUE json as key & value
+            if (units.selected == true) {
+              let trace = {
+                x: xArray,
+                y: units.data,
+                mode: 'scatter+points',
+                type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
+                name: units.key,
+                line: {
+                  color: units.color,
+                  width: 2
+                },
+
+              };
+              linedata.push(trace);
+              
             }
+            j++;
           }
-        ]
+        }
+
       }
+
+
 
 
       // Display using Plotly
       this.graph1.data = linedata;
-      this.graph1.layout = layout;
-      // console.log(linedata)
+      // format threshold
+      if (this.isThreshold) {
+        console.log('this.isThreshold', this.isThreshold)
 
+        this.isThreshold.filter((itemdata:any )=>{
+          if(linedata.find((item:any)=>item.name.toLowerCase()==itemdata.PARAMETER.toLowerCase())){
+            
+            const shapes={
+              type: 'line',
+              xref: 'paper',
+              x0: 0,
+              y0: 12.0,
+              x1: 1,
+              y1: itemdata.THRESHOLD_AVG,
+              line: {
+                color: itemdata.COLOR,
+                width: 3,
+                dash: 'dot'
+              }
+            }
+            layout.shapes.push(shapes)
+          }
+          return false
+        })
+        
+      }
+      this.graph1.layout = layout;
+      console.log(this.graph1)
       this.ref.detectChanges();
 
     }
@@ -296,7 +304,6 @@ export class CommonChart1Component implements OnInit, OnChanges {
   }
   barChart(result: any) {
     // console.log('bar', result)
-
     let data: any = [];
     let xArray: any = [];
     for (let a of this.totalDevice) {
@@ -314,7 +321,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
               type: "bar",
               name: units.key,
               line: {
-                color: units.colors,
+                color: units.color,
                 width: 3
               },
             }
@@ -325,71 +332,50 @@ export class CommonChart1Component implements OnInit, OnChanges {
           index++;
         }
       }
-      // 
 
     }
 
 
     if (this.isThreshold) {
-      // console.log('this.isThreshold',this.isThreshold)
-      // layout.shapes = [
-      //   {
-      //     type: 'line',
-      //     xref: 'paper',
-      //     x0: 0,
-      //     y0: 12.0,
-      //     x1: 1,
-      //     y1: this.isThreshold.THRESHOLD_AVG,
-      //     line: {
-      //       color: 'rgb(255, 0, 0)',
-      //       width: 4,
-      //       dash: 'dot'
-      //     }
-      //   }
-      // ]
+      this.graph1.layout.shapes = [
+        {
+          type: 'line',
+          xref: 'paper',
+          x0: 0,
+          y0: 12.0,
+          x1: 1,
+          y1: this.isThreshold.THRESHOLD_AVG,
+          line: {
+            color: 'rgb(255, 0, 0)',
+            width: 4,
+            dash: 'dot'
+          }
+        }
+      ]
     }
     this.graph1.data = data;
     this.graph1.layout.width = '100%';
     this.graph1.layout.height = this.chartHeight;
     this.graph1.layout.showlegend = false;
-
     this.graph1.responsive = true;
-
     this.graph1.layout.title = this.WIDGET_REQUEST.CONFIG_NAME;
-    // console.log(this.graph1)
+    console.log(this.graph1)
 
   }
 
 
   scatterPlots() {
-    // var xArray = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
-    // var yArray = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
     let xArray: any = [];
     let yArray: any = [];
-    // let unique: any = [];
-    // // let data: any = [];
-    // let labelArr: any = [];
 
-    // let linedata: any = [];
-    // let xArray: any = [];
     for (let a of this.totalDevice) {
       if (a.history.length > 0) {
-
-        // xArray = a.history.map((z: any) => {
-        //   let dt = new Date(z.LAST_UPDATE_TIME);
-        //   return dt;
-        // });
-
-        // y value
         for (let units of a.unitsArr) {
           // format VALUE json as key & value
           xArray.push(units.key)
           yArray.push(units.totalValue)
-
         }
       }
-
-
     }
     // Define Data
     var data = [{
@@ -399,20 +385,11 @@ export class CommonChart1Component implements OnInit, OnChanges {
       type: "scatter"
     }];
 
-    // Define Layout
-    // var layout = {
-    //   xaxis: { range: [40, 160], title: "Square Meters" },
-    //   yaxis: { range: [5, 16], title: "Price in Millions" },
-    //   title: "House Prices vs. Size"
-    // };
     this.graph1.data = data;
     this.graph1.layout.width = this.chartWidth;
     this.graph1.layout.height = this.chartHeight;
-
     this.graph1.responsive = true;
-
     this.graph1.layout.title = this.WIDGET_REQUEST.CONFIG_NAME;
-    // Plotly.newPlot("myPlot", data, layout);
   }
 
 

@@ -4,6 +4,10 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class XAxisService {
+
+  private snackbar =new BehaviorSubject('');
+  currSnackbar =this.snackbar.asObservable();
+
   private WidthHeight = new BehaviorSubject('Foo message');
   currentWidthHeight = this.WidthHeight.asObservable();
 
@@ -26,6 +30,10 @@ export class XAxisService {
   value = new Subject();
   constructor() { }
 
+
+  sendSnackbar(msg:any){
+    this.snackbar.next(msg);
+  }
   updateCompany(msg:any){
     this.company.next(msg)
   }

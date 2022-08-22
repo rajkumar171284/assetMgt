@@ -45,13 +45,13 @@ export class XAxisComponent implements OnInit {
   //   return 'hi'
   // }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.WIDGET_REQUEST)
+    // console.log(this.WIDGET_REQUEST)
     let xvalue = 'DATE-WISE';
     if (this.WIDGET_REQUEST.XAXES) {
       xvalue = this.WIDGET_REQUEST.XAXES;
     }
     const arr = this.xAxesOPTION.filter((z: any) => {
-      console.log(z.key, this.WIDGET_REQUEST.XAXES)
+      // console.log(z.key, this.WIDGET_REQUEST.XAXES)
       return z.key == xvalue;
     });
     // console.log(arr)

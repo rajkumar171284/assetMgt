@@ -79,13 +79,13 @@ router.post('/addThreshold', (req, res) => {
     let errMessage;
     if (req.body.PID) {
         //'update')
-        sql = 'UPDATE threshold_tbl SET ALERT_NAME = ?,ASSET_CONFIG_ID = ?, THRESHOLD_MIN =?,THRESHOLD_MAX=?,THRESHOLD_AVG=?,PARAMETER=?,ALERT_TYPE=?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE, new Date(), req.body.PID];
+        sql = 'UPDATE threshold_tbl SET ALERT_NAME = ?,ASSET_CONFIG_ID = ?, THRESHOLD_MIN =?,THRESHOLD_MAX=?,THRESHOLD_AVG=?,PARAMETER=?,ALERT_TYPE=?,COLOR=?,MODIFY_DATE=? WHERE PID=?';
+        todo = [req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE,req.body.COLOR, new Date(), req.body.PID];
         errMessage = 'Record updated,successfully'
     } else {
         // add new
-        sql = `INSERT INTO threshold_tbl(PID, ALERT_NAME,ASSET_CONFIG_ID,THRESHOLD_MIN,THRESHOLD_MAX, THRESHOLD_AVG, PARAMETER,ALERT_TYPE,CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?)`;
-        todo = ['', req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE, new Date()];
+        sql = `INSERT INTO threshold_tbl(PID, ALERT_NAME,ASSET_CONFIG_ID,THRESHOLD_MIN,THRESHOLD_MAX, THRESHOLD_AVG, PARAMETER,ALERT_TYPE,COLOR,CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+        todo = ['', req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE,req.body.COLOR, new Date()];
         errMessage = 'Record added,successfully';
 
     }
@@ -763,7 +763,7 @@ router.post('/getDeviceHistory', async (req, res) => {
         db.query(sql2, todo, (err2, deviceResult) => {
             if (err2) throw err2;
             else
-                sql4 = `SELECT asset_config_tbl.CONFIG_NAME,asset_config_tbl.COMPANY_ID,asset_connection_type_tbl.CONN_NAME,asset_connection_type_tbl.IP FROM asset_config_tbl LEFT JOIN asset_connection_type_tbl ON asset_connection_type_tbl.PID=asset_config_tbl.CONNECTION_TYPE WHERE asset_config_tbl.PID=?`
+                sql4 = `SELECT asset_config_tbl.CONFIG_NAME,asset_config_tbl.COMPANY_ID,asset_connection_type_tbl.PID,asset_connection_type_tbl.CONN_NAME,asset_connection_type_tbl.IP FROM asset_config_tbl LEFT JOIN asset_connection_type_tbl ON asset_connection_type_tbl.PID=asset_config_tbl.CONNECTION_TYPE WHERE asset_config_tbl.PID=?`
             let todo = [req.body.ASSET_CONFIG_ID]
 
             db.query(sql4, todo, (err4, protocolResult) => {

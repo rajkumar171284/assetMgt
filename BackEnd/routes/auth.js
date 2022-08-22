@@ -38,7 +38,7 @@ router.post('/asset/login', (req, res) => {
                 res.send({
                     data: result,
                     status: 201,
-                    msg: 'No User'
+                    msg: 'No user exists.'
                 })
             }
         }

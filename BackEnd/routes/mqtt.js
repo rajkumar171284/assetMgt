@@ -1,12 +1,14 @@
 var mqtt = require('mqtt');
 const express = require('express');
 const router = express.Router();
-var protocol={};
+const db = require('./dbConnection');
+
+var protocol = {};
 var options = {
     // port: 1883,
     // host: 'mqtt://13.126.193.19',
-    port:protocol.PORT,
-    host:`mqtt://${protocol.IP}`,
+    port: protocol.PORT,
+    host: `mqtt://${protocol.IP}`,
     clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
     username: 'isliot',
     password: 'Isl@iot',
@@ -187,22 +189,29 @@ function mqtt_pub() {
 
 mqtt_pub()
 var dataF = setInterval(mqtt_pub, 3000);
-router.get('/:IP', (req, res) => {
+router.get('/:PID', (req, res) => {
     // console.log(req.params)
-    protocol.IP=req.params.IP;
-    finalData = sensor_data()
-    finalData = JSON.stringify(finalData)
-    client.publish('tatapower', finalData);
-    // 
-    // const value = JSON.parse(JSON.stringify(JSON.parse(finalData)));
-    
-    // res.status(200).json({ data: JSON.parse(finalData), status: 200, })
-    // res.status(500).json({ error: 'message' })
-    res.send({
-        data: JSON.parse(finalData),
-        status: 200,
-        msg: `Record received,successfully`
+    const protocolID = req.params.PID;
+    // get protocol details by passing PID
+    let sql = `SELECT * FROM asset_connection_type_tbl WHERE PID=?`;
+    let todo = [protocolID]
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+        // console.log(result)
+            protocol.IP = result[0].IP;
+            protocol.PORT = result[0].PORT;
+        finalData = sensor_data()
+        finalData = JSON.stringify(finalData)
+        client.publish('tatapower', finalData);
+        res.send({
+            data: JSON.parse(finalData),
+            status: 200,
+            msg: `Record received,successfully`
+        })
     })
+
+
 
 
 });

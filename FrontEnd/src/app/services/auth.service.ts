@@ -3,6 +3,11 @@ import { environment } from 'src/environments/environment';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs';
+import { FormGroup } from '@angular/forms';
+import { XAxisService } from '../services/x-axis.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TooltipComponent } from '../components/tooltip/tooltip.component';
+
 const headers = new HttpHeaders().set('content-type', 'application/json').set('Access-Control-Allow-Origin', '*').set("Access-Control-Allow-Methods", "POST,GET,PUT,PATCH,DELETE,OPTIONS");
 
 // let headers2 = new HttpHeaders().set('Access-Control-Allow-Origin', 'http://10.1.1.139:4200/').set("Content-Type", "multipart/form-data")
@@ -25,7 +30,7 @@ export class AuthService {
   dataService: any;
   elementRef: any;
 
-  constructor(private http: HttpClient) { }
+  constructor(private _snackBar: MatSnackBar, private exchangeData: XAxisService, private http: HttpClient) { }
 
 
   getSessionData() {
@@ -73,8 +78,8 @@ export class AuthService {
       return response;
     }))
   }
-  
-  
+
+
   addMACByConfigID(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/addMACByConfigID`, params, options).pipe(map(response => {
       return response;
@@ -193,7 +198,7 @@ export class AuthService {
     }))
   }
   getAllMACstatus(): Observable<any> {
-    return this.http.get(`${environment.url}/asset/getAllMACstatus`, options).pipe(map((response:any) => {      
+    return this.http.get(`${environment.url}/asset/getAllMACstatus`, options).pipe(map((response: any) => {
       return response;
     }))
   }
@@ -261,8 +266,8 @@ export class AuthService {
   }
   // mqtt starts
   getMqtt(params: any): Observable<any> {
-    params.CONN_NAME=params.CONN_NAME.toLowerCase();
-    return this.http.get(`${environment.url}/${params.CONN_NAME}/${params.IP}`, options).pipe(map(response => {
+    params.CONN_NAME = params.CONN_NAME.toLowerCase();
+    return this.http.get(`${environment.url}/${params.CONN_NAME}/${params.PID}`, options).pipe(map(response => {
       return response;
     }))
   }
@@ -292,7 +297,7 @@ export class AuthService {
     }))
   }
 
-  
+
   getAccess(): Observable<any> {
     const session = this.getSessionData();
     let newLocal: any;
@@ -319,5 +324,32 @@ export class AuthService {
     // WIDGET_REQUEST.LOADED = false;
     WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
     return WIDGET_REQUEST;
+  }
+
+
+
+  formValidation(myform: FormGroup) {
+    console.log('dss')
+    for (let a in myform.controls) {
+      // console.log(a,)
+      if (myform.controls[a].status == "INVALID") {
+        const str = `Please fill ${a}`;
+        this.triggerData(str);
+        return;
+      }
+    }
+  }
+  public triggerData(str: any) {
+    this.exchangeData.sendSnackbar(str);
+    this.openSnackBar(str);
+
+  }
+  openSnackBar(str: any) {
+    this._snackBar.openFromComponent(TooltipComponent, {
+      duration: 5 * 1000,
+      data: '',
+      panelClass: ['blue-snackbar']
+
+    });
   }
 }

@@ -66,19 +66,19 @@ export class AddCompanyComponent implements OnChanges, OnInit {
 
   }
   async confirmData() {
-
+    if (!this.newForm.valid) {
+      // validate form
+        const str = this.dataService.formValidation(this.newForm);
+      }
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();
       this.Values.CREATED_BY = session.PID;
-      // this.Values.LOGO = this.selectedLogo && this.selectedLogo.name?this.selectedLogo.name:this.Values.LOGO;
       this.dataService.createCompany(this.Values).subscribe(res => {
         // console.log(res)
 
         if (res && res.status == 200) {
           if (this.typeName.isProfileChange) {
-            console.log('typeName', this.typeName.isProfileChange ? this.typeName.isProfileChange : '')
-
             // if profile update happend only
             this.transfer.updateCompany(this.Values);
           }

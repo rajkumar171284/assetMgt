@@ -43,8 +43,10 @@ export class AddConnectionComponent implements OnInit {
 
   async confirmData() {
 
-    // const msg = await this.findInvalidControls();
-    // console.log(msg)
+    if (!this.newForm.valid) {
+      // validate form
+        const str = this.dataService.formValidation(this.newForm);
+      }
 
     if (this.newForm.valid) {
       const session = await this.dataService.getSessionData();

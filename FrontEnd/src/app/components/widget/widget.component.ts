@@ -46,7 +46,7 @@ export class WidgetComponent implements OnInit, AfterViewInit {
   chartChoosen = false;
 
   options: any[] = [];
-  options2: any[] = ['STATUS', 'LOCATION', 'COUNT'];
+  options2: any[] = ['STATUS', 'COUNT'];
   newForm: FormGroup = this.fb.group({
     PID: [''], COMPANY_ID: ['', Validators.required],
     WIDGET_TYPE: ['', Validators.required],
@@ -115,7 +115,7 @@ export class WidgetComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.chartTypes$ = of(this.chartTypes);
     this.cardTypes$ = of(this.cardTypes);
-    this.mapTypes$=of(this.mapTypes);
+    this.mapTypes$ = of(this.mapTypes);
 
     this.reformAllWidgetTypes();
     this.getAllAssets();
@@ -152,7 +152,7 @@ export class WidgetComponent implements OnInit, AfterViewInit {
           this.chartChoosen = false;
           this.tabIndex = 2;//tab -card
           this.cdr.detectChanges();
-        }else{
+        } else {
           // not found check map array
           const index = _mapTypes.findIndex(x => {
             return x.name.toLowerCase() === this.data.WIDGET_TYPE.toLowerCase();
