@@ -26,9 +26,7 @@ export class AddConnectionComponent implements OnInit {
     })
     // console.log(data)
     if (data && !data.PID) {
-      // console.log(data)
       // add
-     
      
 
     } else if (data && data.PID) {
