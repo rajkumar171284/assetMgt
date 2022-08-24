@@ -890,7 +890,7 @@ router.post('/setWidgetLayout', (req, res) => {
 
     if (req.body.PID) {
         // update
-        console.log(req.body)
+        // console.log(req.body)
 
         sql = 'UPDATE widget_layout_tbl SET HEIGHT=? WHERE PID=?';
         todo = [req.body.HEIGHT, req.body.PID];

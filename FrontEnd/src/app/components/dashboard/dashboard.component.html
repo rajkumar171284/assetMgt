@@ -24,37 +24,20 @@
           <div style="position:relative" #divBoard cdkDropList  [cdkDropListData]="draggedWidget$ "
             (cdkDropListDropped)="onDrop($event)">
 
-            <!-- <div class="init-text" *ngIf="showEmptyPanel">
-              Drag & drop the Widgets
-            </div> -->
-            <!-- <div (cdkDragStarted)="dragStarted($event)" (cdkDragEnded)="dragEnded($event,List)"
-              (cdkDragMoved)="dragMoved($event,List)" cdkDrag [cdkDragDisabled]="List.dragDisabled||!List.dragDisabled"
-               class="" *ngFor="let List of draggedWidget$;index as idx"> -->
+            
             <div cdkDrag [cdkDragDisabled]="List.dragDisabled"
                class="" *ngFor="let List of draggedWidget$ ;index as idx">
 
               <div  [ngClass]="{'draggedEmpty minWidgetHight':!List}" class=" example-box1  listed-charts">
 
-                <!-- <span class="savewidget" (_widgetData)="saveWidget($event)">
-                  <mat-icon color="accent">save</mat-icon>
-          
-              </span> -->
+                
 
                 <div class="init-text" *ngIf="!List">
                   Drag & drop the Widgets
                 </div>
 
 
-                <!-- <span appWidgetAccessIf *ngIf="List!='0'" class="mapped-close">
-                  <mat-icon color="accent" matTooltip="{{dragDisabledArr[idx].dragDisabled?'Drag disabled':'Drag enabled'}}"
-                   (click)="dragDisabledArr[idx].dragDisabled=!dragDisabledArr[idx].dragDisabled"> 
-                    {{dragDisabledArr[idx].dragDisabled?'layers_clear':'layers'}}</mat-icon>
-
-                  <mat-icon (click)="editRequest(List)" matTooltip="Edit Widget" color="primary">edit</mat-icon>
-
-                  <mat-icon (click)="removeRequest(List)" matTooltip="Remove Widget" color="warn">delete_outline</mat-icon>
-
-                </span> -->
+               
 
                 <div *ngIf="List.WIDGET_TYPE=='HIGHLIGHTS'">
 
@@ -120,12 +103,12 @@
       class="widget-panel ">
 
       <div appWidgetAccessIf *ngIf="newForm.valid" class="footer-container">
-        <button matTooltip="Click to Expand layout" (click)="expandLayout()" mat-raised-button class="btn-theme1">
+        <button matTooltip="Click to Expand layout" (click)="expandLayout('add')" mat-raised-button class="btn-theme1">
           <mat-icon>fullscreen</mat-icon>
 
           </button>
 
-        <button matTooltip="Click to Minimize layout"  (click)="minLayout()" mat-raised-button class="m-3 btn-theme2">
+        <button matTooltip="Click to Minimize layout"  (click)="expandLayout('min')" mat-raised-button class="m-3 btn-theme2">
           <mat-icon>fullscreen_exit</mat-icon>
 
         </button>

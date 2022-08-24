@@ -182,8 +182,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   getMappedChartRequest() {
-    const session =  this.dataService.getSessionData();
-
+    const session = this.dataService.getSessionData();
     const params = { IS_DRAGGED: 1, COMPANY_ID: session.COMPANY_ID };
     this.dataService.getAllChartRequests(params).subscribe(res => {
       if (res) {
@@ -207,7 +206,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
           return item;
         });
-        console.log('draggedWidget',this.draggedWidget$)
+        console.log('draggedWidget', this.draggedWidget$)
         this.loader = false;
       }
 
@@ -224,8 +223,8 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(result => {
       // call all charts  
-        this.getAllChartRequest();
-      
+      this.getAllChartRequest();
+
     });
   }
   async editRequest(data: any) {
@@ -465,7 +464,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
   }
   getRequestDetails(PID: any, val: string) {
     if (PID) {
-      
+
       const value = this.overAllCharts.filter((obj: chartItem) => {
 
         return obj.PID == parseInt(PID);
@@ -508,12 +507,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
   saveWidget(data: any) {
     if (data) {
-      console.log('update', data)
-
-      // const session = this.dataService.getSessionData();
-      // data.CREATED_BY = session.PID;
-
-      // data.SQL_QUERY = 'sql';
+      // console.log('update', data)
 
       // console.log('save params ', data)
       this.dataService.addChartRequest(data).subscribe(res => {
@@ -572,67 +566,48 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     });
   }
 
-  expandLayout() {
+  expandLayout(type: string) {
+    let height: number = 100;
+    if (type == 'add') {
+      this.widgetPanelHeight = this.widgetPanelHeight + height;
+    } else {
+      this.widgetPanelHeight = this.widgetPanelHeight - height;
+    }
 
-    this.widgetPanelHeight = this.widgetPanelHeight + 100;
     const session = this.dataService.getSessionData();
 
     const params = {
       HEIGHT: this.widgetPanelHeight,
-      COMPANY_ID: session.COMPANY_ID, PID: this.widgetPanelDetails && this.widgetPanelDetails.PID?this.widgetPanelDetails.PID:''
+      COMPANY_ID: session.COMPANY_ID, PID: this.widgetPanelDetails && this.widgetPanelDetails.PID ? this.widgetPanelDetails.PID : ''
 
     }
     this.dataService.settingWidgetLayout(params).subscribe(res => res);
   }
-  minLayout() {
-
-    this.widgetPanelHeight = this.widgetPanelHeight - 100;
-    const params = {
-      HEIGHT: this.widgetPanelHeight,
-      COMPANY_ID: this.widgetPanelDetails.COMPANY_ID, PID: this.widgetPanelDetails.PID
-
-    }
-    this.dataService.settingWidgetLayout(params).subscribe(res => res);
-
-  }
+  
   companiesList: any = [];
   showEmptyPanel: boolean = false;
   getAll() {
     const session = this.dataService.getSessionData();
-    if (session && session.COMPANY_TYPE == 'CORP') {
+    if (!this.dataService.isClientAccess()) {
+      // corp company types
 
       this.dataService.getAllCompanies().subscribe(res => {
         this.companiesList = res.data;
         this.loader = false;
-        if (res.data.length > 0) {
-          if (session.ROLE != 'ADMIN') {
-            const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
-            // console.log(val)
-            this.newForm.patchValue({
-              COMPANY_ID: val[0] ? val[0].PID : ''
-            })
-            this.getLayoutHeight()
-          } else {
-            // empty layout
-            // this.showEmptyPanel=true;
-            const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
-            // console.log(val)
-            this.newForm.patchValue({
-              COMPANY_ID: val[0] ? val[0].PID : ''
-            })
-            this.getLayoutHeight()
-          }
-        }
+        this.newForm.patchValue({
+          COMPANY_ID: session.COMPANY_ID
+        })
+        this.getLayoutHeight()
 
       })
     } else {
+      // CLIENT
       let params = { COMPANY_TYPE: session.COMPANY_TYPE };
       this.dataService.getAllCompanyTypes(params).subscribe(res => {
         this.companiesList = res.data;
         // console.log(res)
-        const val = res.data.filter((z: any) => z.COMPANY_TYPE == session.COMPANY_TYPE);
         this.newForm.patchValue({
-          COMPANY_ID: val[0] ? val[0].PID : ''
+          COMPANY_ID: session.COMPANY_ID
         })
         this.getLayoutHeight()
 
@@ -641,9 +616,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     }
 
   }
-  // getRequest() {
-  //   this.getLayoutHeight()
-  // }
+
   get VALUE() {
     return this.newForm.value;
   }
@@ -657,15 +630,15 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
       this.getAllChartRequest();
     });
   }
-  showPush() {
-    this.pushNotification.show(
-      'Show me that message!',
-      {/* any settings, e.g. icon */ },
-      6000, // close delay.
-    );
-    // Or simply this:
-    this.pushNotification.show('And that too!');
-  }
+  // showPush() {
+  //   this.pushNotification.show(
+  //     'Show me that message!',
+  //     {/* any settings, e.g. icon */ },
+  //     6000, // close delay.
+  //   );
+  //   // Or simply this:
+  //   this.pushNotification.show('And that too!');
+  // }
 
   async showAnotherPush() {
     const notification = await this.pushNotification.show('Returns promise with Notification object.');

@@ -318,7 +318,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       // get total units value
       let j = 0;
       for (let unit of device.unitsArr) {
-        if (this.widgetResponse.totalParameters.length > 0){
+        if (this.widgetResponse.totalParameters && this.widgetResponse.totalParameters.length > 0){
           // if parameter onboarded
           this.widgetResponse.totalParameters.find((p: any) => {
             if (p.tag == unit.key) {
