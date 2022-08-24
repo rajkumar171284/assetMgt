@@ -1,8 +1,6 @@
 import { Component, AfterViewInit, DoCheck, ViewChild, ElementRef, ViewContainerRef, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { XAxisService } from '../../services/x-axis.service';
-import { WidgetComponent } from '../../components/widget/widget.component';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ResizedEvent } from 'angular-resize-event';
 import { filter, from, map, of, tap } from 'rxjs';
 import { delay } from "rxjs/operators";

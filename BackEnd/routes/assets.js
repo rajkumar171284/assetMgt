@@ -5,6 +5,7 @@ const db = require('./dbConnection');
 const { validationResult, body } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { parse } = require('path');
 
 
 router.post('/addAssetConfig', (req, res) => {
@@ -80,12 +81,12 @@ router.post('/addThreshold', (req, res) => {
     if (req.body.PID) {
         //'update')
         sql = 'UPDATE threshold_tbl SET ALERT_NAME = ?,ASSET_CONFIG_ID = ?, THRESHOLD_MIN =?,THRESHOLD_MAX=?,THRESHOLD_AVG=?,PARAMETER=?,ALERT_TYPE=?,COLOR=?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE,req.body.COLOR, new Date(), req.body.PID];
+        todo = [req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE, req.body.COLOR, new Date(), req.body.PID];
         errMessage = 'Record updated,successfully'
     } else {
         // add new
         sql = `INSERT INTO threshold_tbl(PID, ALERT_NAME,ASSET_CONFIG_ID,THRESHOLD_MIN,THRESHOLD_MAX, THRESHOLD_AVG, PARAMETER,ALERT_TYPE,COLOR,CREATED_DATE) VALUES (?,?,?,?,?,?,?,?,?,?)`;
-        todo = ['', req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE,req.body.COLOR, new Date()];
+        todo = ['', req.body.ALERT_NAME, req.body.ASSET_CONFIG_ID, req.body.THRESHOLD_MIN, req.body.THRESHOLD_MAX, req.body.THRESHOLD_AVG, req.body.PARAMETER, req.body.ALERT_TYPE, req.body.COLOR, new Date()];
         errMessage = 'Record added,successfully';
 
     }
@@ -285,12 +286,12 @@ router.post('/addConnection', (req, res) => {
     if (req.body.PID) {
         // console.log('update')
         sql = 'UPDATE asset_connection_type_tbl SET CONN_NAME = ?,IP = ?,PORT=?, MODIFY_BY =?,MODIFY_DATE=? WHERE PID=?';
-        todo = [req.body.CONN_NAME, req.body.IP,req.body.PORT, req.body.CREATED_BY, new Date(), req.body.PID];
+        todo = [req.body.CONN_NAME, req.body.IP, req.body.PORT, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = 'Record updated,successfully';
     } else {
         // add new
         sql = `INSERT INTO asset_connection_type_tbl(PID, CONN_NAME,IP,PORT, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?,?,?)`;
-        todo = ['', req.body.CONN_NAME,req.body.IP,req.body.PORT,req.body.CREATED_BY, new Date()];
+        todo = ['', req.body.CONN_NAME, req.body.IP, req.body.PORT, req.body.CREATED_BY, new Date()];
         errMessage = 'Record added,successfully';
     }
 
@@ -342,7 +343,7 @@ router.post('/deleteConnection/:PID', (req, res) => {
 // sensor starts
 
 router.get('/getAllSensors', (req, res) => {
-    
+
     let sql = `SELECT * FROM sensor_type_tbl`;
     db.query(sql, (err, result) => {
         if (err) throw err;
@@ -363,7 +364,7 @@ router.post('/addSensor', (req, res) => {
         todo = [req.body.NAME, req.body.CREATED_BY, new Date(), req.body.PID];
         errMessage = 'Record updated,successfully'
     } else {
-       
+
         // add new
         sql = `INSERT INTO sensor_type_tbl(PID, NAME, CREATED_BY, CREATED_DATE) VALUES (?,?,?,?)`;
         todo = ['', req.body.NAME, req.body.CREATED_BY, new Date()];
@@ -395,7 +396,7 @@ router.post('/addSensorSubCatg', (req, res) => {
     const todo = ['', req.body.SENSOR_TYPE_ID, req.body.CATEGORY_NAME, req.body.CREATED_BY, new Date()];
 
     db.query(sql, todo, (err, result) => {
-      
+
         if (err) {
             // throw err;
             return res.status(400).send({
@@ -555,9 +556,8 @@ router.post('/AssetConfigDetailsByID', (req, res) => {
 })
 router.get('/getLocationsByID/:ASSET_CONFIG_ID', (req, res) => {
 
-    let sql = `SELECT LOCATION ,MAC_ADDRESS ,ASSET_CONFIG_ID FROM mac_tbl WHERE ASSET_CONFIG_ID=?`;
-    let todo = [req.params.ASSET_CONFIG_ID];
-
+    let sql = `SELECT LOCATION ,MAC_ADDRESS ,ASSET_CONFIG_ID FROM mac_tbl WHERE ASSET_CONFIG_ID=? AND MAC_STATUS=?`;
+    let todo = [req.params.ASSET_CONFIG_ID, 1];
     db.query(sql, todo, (err, result) => {
         if (err) throw err;
         else
@@ -566,6 +566,44 @@ router.get('/getLocationsByID/:ASSET_CONFIG_ID', (req, res) => {
                 status: 200
             })
 
+    })
+})
+
+// async function getParameters(arr){
+//     return param.filter( item=>{
+//         // console.log(typeof item.INPUT_STATUS);
+//         return item.INPUT_STATUS==true;
+//     }).map(resp=>{
+
+//         // console.log(resp.INPUT_NAME)
+//         return resp.INPUT_NAME;
+//     });
+// }
+router.get('/getParametersByConfigID/:ASSET_CONFIG_ID', (req, res) => {
+
+    let sql = `SELECT PARAMETERS FROM asset_config_tbl WHERE PID=?`;
+    let todo = [req.params.ASSET_CONFIG_ID];
+    let arr = [];
+    let param;
+    db.query(sql, todo, (err, result) => {
+        if (err) throw err;
+        else
+            if (result.length>0) {
+                // param=result[0].PARAMETERS;
+                // arr = [];
+                // arr= await this.getParameters(param);
+                // console.log(arr)
+                res.send({
+                    data: result[0].PARAMETERS,
+                    status: 200
+                })
+
+            } else {
+                res.send({
+                    data: result,
+                    status: 200
+                })
+            }
     })
 })
 // get all chart requests

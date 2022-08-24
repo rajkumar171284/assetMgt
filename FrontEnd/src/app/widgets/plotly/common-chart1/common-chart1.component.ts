@@ -173,7 +173,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
           for (let units of a.unitsArr) {
 
             // format VALUE json as key & value
-            if (units.selected == true) {
+            if (units.selected == true && units.status) {
               let trace = {
                 x: xArray,
                 y: units.data,
@@ -187,7 +187,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
 
               };
               linedata.push(trace);
-              
+
             }
             j++;
           }
@@ -202,12 +202,12 @@ export class CommonChart1Component implements OnInit, OnChanges {
       this.graph1.data = linedata;
       // format threshold
       if (this.isThreshold) {
-        console.log('this.isThreshold', this.isThreshold)
+        // console.log('this.isThreshold', this.isThreshold)
 
-        this.isThreshold.filter((itemdata:any )=>{
-          if(linedata.find((item:any)=>item.name.toLowerCase()==itemdata.PARAMETER.toLowerCase())){
-            
-            const shapes={
+        this.isThreshold.filter((itemdata: any) => {
+          if (linedata.find((item: any) => item.name.toLowerCase() == itemdata.PARAMETER.toLowerCase())) {
+
+            const shapes = {
               type: 'line',
               xref: 'paper',
               x0: 0,
@@ -224,10 +224,10 @@ export class CommonChart1Component implements OnInit, OnChanges {
           }
           return false
         })
-        
+
       }
       this.graph1.layout = layout;
-      console.log(this.graph1)
+      // console.log(this.graph1)
       this.ref.detectChanges();
 
     }
@@ -244,20 +244,21 @@ export class CommonChart1Component implements OnInit, OnChanges {
     for (let a of this.totalDevice) {
       if (a.history.length > 0) {
         for (let units of a.unitsArr) {
-          // format VALUE json as key & value
-          labelArr.push(units.key)
-          data.push(units.totalValue)
+          if (units.status) {
+            // format VALUE json as key & value
+            labelArr.push(units.key)
+            data.push(units.totalValue)
 
-          let trace = {
-            x: xArray,
-            y: units.data,
-            mode: 'scatter+points',
-            type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
-            name: units.key
-          };
-          linedata.push(trace);
+            let trace = {
+              x: xArray,
+              y: units.data,
+              mode: 'scatter+points',
+              type: this.WIDGET_REQUEST.CHART_NAME.toLowerCase(),
+              name: units.key
+            };
+            linedata.push(trace);
 
-
+          }
         }
       }
 
@@ -314,7 +315,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
         });
         let index = 0;
         for (let units of a.unitsArr) {
-          if (units.selected == true) {
+          if (units.selected == true && units.status) {
             const newData = {
               x: xArray,
               y: units.data,
@@ -359,7 +360,7 @@ export class CommonChart1Component implements OnInit, OnChanges {
     this.graph1.layout.showlegend = false;
     this.graph1.responsive = true;
     this.graph1.layout.title = this.WIDGET_REQUEST.CONFIG_NAME;
-    console.log(this.graph1)
+    // console.log(this.graph1)
 
   }
 
@@ -372,8 +373,10 @@ export class CommonChart1Component implements OnInit, OnChanges {
       if (a.history.length > 0) {
         for (let units of a.unitsArr) {
           // format VALUE json as key & value
-          xArray.push(units.key)
-          yArray.push(units.totalValue)
+          if (units.status) {
+            xArray.push(units.key)
+            yArray.push(units.totalValue)
+          }
         }
       }
     }
@@ -413,9 +416,10 @@ export class CommonChart1Component implements OnInit, OnChanges {
         // y value
         for (let units of a.unitsArr) {
           // format VALUE json as key & value
-          xArray.push(units.key)
-          yArray.push(units.totalValue)
-
+          if (units.status) {
+            xArray.push(units.key)
+            yArray.push(units.totalValue)
+          }
         }
       }
 

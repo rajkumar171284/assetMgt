@@ -21,7 +21,7 @@
 
   <mat-tab label="Asset Configuration">
 
-    <app-config [tabIndex]="updateConfig" (dialogClose)="dialogClose($event)"></app-config>
+    <app-config [state]="tabIndex" [tabIndex]="updateConfig" (dialogClose)="dialogClose($event)"></app-config>
   </mat-tab>
 
 </mat-tab-group>

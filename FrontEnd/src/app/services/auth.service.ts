@@ -73,6 +73,12 @@ export class AuthService {
       return response;
     }))
   }
+  getAllParametersByConfigID(params: any): Observable<any> {
+    return this.http.get(`${environment.url}/asset/getParametersByConfigID/${params.ASSET_CONFIG_ID}`, options).pipe(map(response => {
+      return response;
+    }))
+  }
+  
   getMACByConfigID(params: any): Observable<any> {
     return this.http.post(`${environment.url}/asset/getDeviceDetailsByConfigID`, params, options).pipe(map(response => {
       return response;
@@ -297,11 +303,22 @@ export class AuthService {
     }))
   }
 
+  isClientAccess(): Observable<any> {
+    const session = this.getSessionData();
+    let newLocal: any;
+    if (session  && session.COMPANY_TYPE == 'CLIENT') {
+      newLocal = true;
 
+    } else {
+      newLocal = false;
+    }
+
+    return newLocal
+  }
   getAccess(): Observable<any> {
     const session = this.getSessionData();
     let newLocal: any;
-    if (session && session.ROLE == 'ADMIN' && session.COMPANY_TYPE == 'CORP') {
+    if (session && session.ROLE == 'ADMIN' && (session.COMPANY_TYPE == 'CORP'||session.COMPANY_TYPE == 'CLIENT')) {
       newLocal = true;
 
     } else {
@@ -311,8 +328,9 @@ export class AuthService {
     return newLocal
   }
 
+
   public formWidgetSize(ui: any, WIDGET_REQUEST: any) {
-    console.log(ui)
+    // console.log(ui)
     let top: number = $(ui.position.top)[0];
     let left: number = $(ui.position.left)[0];
     const orgSize = JSON.parse(WIDGET_REQUEST.WIDGET_SIZE);
@@ -329,7 +347,7 @@ export class AuthService {
 
 
   formValidation(myform: FormGroup) {
-    console.log('dss')
+    // console.log('dss')
     for (let a in myform.controls) {
       // console.log(a,)
       if (myform.controls[a].status == "INVALID") {

@@ -37,10 +37,12 @@ export interface PeriodicElement {
 })
 export class ConfigComponent implements OnInit, OnChanges {
   @Input('tabIndex') tabClose: any;
+  @Input() state: any;
+  
   tabIndex = 0;
   configData: config[] = [];
   displayedColumns: string[] = [
-    "COMPANY_NAME",
+    // "COMPANY_NAME",
     "CONFIG_NAME",
     "Asset_Name",
 
@@ -54,7 +56,7 @@ export class ConfigComponent implements OnInit, OnChanges {
   ];
   dataSource: config[] = [];
   constructor(private dataService: AuthService, public dialog: MatDialog, private _snackBar: MatSnackBar) { }
-  expandedElement: PeriodicElement | null | undefined;
+  expandedElement=null ;
 
   ngOnInit(): void {
     // console.log(tabs.config)
@@ -62,6 +64,9 @@ export class ConfigComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('tab',this.state)
+    this.expandedElement=null ;
+
     this.getAllAssetConfig();
   }
   async getAllAssetConfig() {

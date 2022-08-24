@@ -207,7 +207,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
           return item;
         });
-        // console.log(this.draggedObervable$)
+        console.log('draggedWidget',this.draggedWidget$)
         this.loader = false;
       }
 
@@ -229,8 +229,6 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
     });
   }
   async editRequest(data: any) {
-    console.log()
-    // const data = await this.getRequestDetails(pid, 'json');
 
     this.toEditRequest = data;
     this.openDialog();
@@ -581,7 +579,7 @@ export class DashboardComponent implements OnInit, DoCheck, OnDestroy {
 
     const params = {
       HEIGHT: this.widgetPanelHeight,
-      COMPANY_ID: this.widgetPanelDetails.COMPANY_ID, PID: this.widgetPanelDetails.PID
+      COMPANY_ID: session.COMPANY_ID, PID: this.widgetPanelDetails && this.widgetPanelDetails.PID?this.widgetPanelDetails.PID:''
 
     }
     this.dataService.settingWidgetLayout(params).subscribe(res => res);

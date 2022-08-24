@@ -38,20 +38,24 @@
                 <div class="flx">
                     <div>
                         <app-common-chart1 [isThreshold]="isThreshold" (_sendToParent)="getFromChild2($event)"
-                            [WIDGET_REQUEST]="WIDGET_REQUEST" [chartData]="chartData" [totalDevice]="widgetResponse.totalDevice"
-                            [chartHeight]="chartHeight" [chartWidth]="chartWidth">
+                            [WIDGET_REQUEST]="WIDGET_REQUEST" [chartData]="chartData"
+                            [totalDevice]="widgetResponse.totalDevice" [chartHeight]="chartHeight"
+                            [chartWidth]="chartWidth">
 
                         </app-common-chart1>
                     </div>
-                    <div [style.height.px] ="chartHeight" style="overflow:auto;padding: 10px;">
+                    <div [style.height.px]="chartHeight" style="overflow:auto;padding: 10px;">
                         <ng-container *ngFor="let a of this.totalDevice$|async;let i = index">
                             <ng-container *ngIf="a.history.length>0">
                                 <span (click)="selectLegend(i,j)" class="legend"
                                     *ngFor="let b of a.unitsArr;let j = index">
-                                    <mat-icon [ngStyle]="{color:b.color}">crop_square</mat-icon>
-                                    <span [ngClass]="{'activeLegend':b.selected}">
-                                        {{b.key}}
-                                    </span>
+                                    <ng-container *ngIf="b.status">
+                                        <mat-icon [ngStyle]="{color:b.color}">crop_square</mat-icon>
+                                        <span [ngClass]="{'activeLegend':b.selected}">
+                                            {{b.key}}
+                                        </span>
+                                    </ng-container>
+                                    
                                 </span>
                             </ng-container>
 

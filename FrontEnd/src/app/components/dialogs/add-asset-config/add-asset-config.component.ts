@@ -112,6 +112,8 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
 
     } else {
       // add new- logic if any
+      // const isCorp=this.dataService.isCORPAccess();
+      
 
     }
 
@@ -200,6 +202,12 @@ export class AddAssetConfigComponent implements OnInit, OnChanges {
     })
   }
   ngOnInit(): void {
+    if( this.dataService.isClientAccess()){
+      const session = this.dataService.getSessionData();
+      this.newForm.patchValue({
+        COMPANY_ID:session.COMPANY_ID
+      })
+    }
     this.updateMAC();
     this.initCall();
   }

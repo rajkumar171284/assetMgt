@@ -56,7 +56,7 @@ export class XAxisService {
   }
 
   sendValue(data: any) {
-    console.log(data)
+    // console.log(data)
     this.value.next({ data: data })
   }
   getValue(): Observable<any> {

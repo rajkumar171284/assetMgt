@@ -4,7 +4,7 @@ import { Config, Data, Layout } from 'plotly.js';
 import { Subject, BehaviorSubject, Subscription, Observable, of, map, filter, from } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { __addAssetDevice, plotly_small_layout,plotlyColors } from '../../myclass';
+import { __addAssetDevice, plotly_small_layout, plotlyColors } from '../../myclass';
 import { interval } from 'rxjs';
 import * as moment from 'moment'
 import { XAxisComponent } from '../../components/x-axis/x-axis.component';
@@ -254,20 +254,14 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck, A
   getFromChild(data: any) {
     this.widgetResponse = new widgetResponse();
     if (data && data.totalDevice.length > 0) {
+      console.log(data)
       this.errMessage = '';
-
       this.isDataFound = true;
       this.widgetResponse.totalDevice = data.totalDevice;
-     
-
+      this.widgetResponse.totalParameters = data.totalParameters;
       this.totalDevice$ = of(this.widgetResponse.totalDevice);
-      
-      
-    
       this.getFilteredData();
-      this.chartData$=of(this.chartData);
-      
-
+      this.chartData$ = of(this.chartData);
       this.service.sendTotalDevice(data.totalDevice)
       this.loading = false;
       this.ref.detectChanges();
@@ -335,30 +329,41 @@ export class PlotlyComponent implements OnInit, OnChanges, OnDestroy, DoCheck, A
 
     });
   }
-  getFilteredData(){
+  getFilteredData() {
     this.chartData = [];
-      this.totalDevice$.pipe(map((x: any) => {
-        x.filter((list: any) => {       
-          return list.history.length > 0;
-        }).map((resp: any) => {
-         
-          return resp.unitsArr.filter((obj: any) => {
-            return obj.selected == true;
-          }).map((data:any)=>{
-            this.chartData.push(data)
-            return data;
-          })
+    this.totalDevice$.pipe(map((x: any) => {
+      x.filter((list: any) => {
+        return list.history.length > 0;
+      }).map((resp: any) => {
+
+        return resp.unitsArr.filter((obj: any) => {
+          // get only the isusable key or tags
+          // if (this.widgetResponse.totalParameters.length > 0){
+          //   // if parameter onboarded
+          //   this.widgetResponse.totalParameters.find((p: any) => {
+          //     if (p.tag == obj.key) {
+          //       obj.status = true;//is usable flag then
+          //     }
+          //   });
+          // }
+
+
+          return obj.selected == true;
+        }).map((data: any) => {
+          this.chartData.push(data)
+          return data;
         })
-
-
-      })).subscribe(res => {
-        // console.log(res)
       })
+
+
+    })).subscribe(res => {
+      // console.log(res)
+    })
   }
   selectLegend(i: number, j: number) {
-    if (this.widgetResponse.totalDevice[i].history.length > 0) {            
+    if (this.widgetResponse.totalDevice[i].history.length > 0) {
       this.widgetResponse.totalDevice[i].unitsArr[j].selected = !this.widgetResponse.totalDevice[i].unitsArr[j].selected;
-      this.getFilteredData();      
+      this.getFilteredData();
     }
   }
 }

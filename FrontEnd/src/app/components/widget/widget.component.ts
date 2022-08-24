@@ -70,35 +70,6 @@ export class WidgetComponent implements OnInit, AfterViewInit {
 
       this.data = data;
 
-      // set widget selection also by color
-      // this.chartTypes.filter(x => {
-      //   return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
-      // }).map(result => {
-      //   result.isSelected = true;
-      //   return result;
-      // })
-      // this.cardTypes.filter(x => {
-      //   return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
-      // }).map(result => {
-      //   result.isSelected = true;
-      //   return result;
-      // })
-      // this.alertTypes.filter(x => {
-      //   return x.name.toLowerCase() === data.WIDGET_TYPE.toLowerCase();
-      // }).map(result => {
-      //   result.isSelected = true;
-      //   return result;
-      // })
-      // // set size by color
-      // if (data.WIDGET_SIZE) {
-      //   const size = this.widgetSize.filter(x => {
-      //     return x.name.toLowerCase() === data.WIDGET_SIZE.toLowerCase();
-      //   }).map(result => {
-      //     result.isSelected = true;
-      //     return result;
-      //   })
-      // }
-
       this.newForm.patchValue(data);
 
 

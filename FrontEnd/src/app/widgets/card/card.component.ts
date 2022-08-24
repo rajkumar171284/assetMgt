@@ -589,7 +589,7 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
   }
 
   getFromChild(data: any) {
-    // this.loading = false;
+    
     this.widgetResponse = new widgetResponse();
     // console.log('getFromChild', data)
     if (data && data.totalDevice.length > 0) {
@@ -598,7 +598,6 @@ export class CardComponent implements OnChanges, OnDestroy, DoCheck, AfterViewIn
       this.isDataFound = true;
       this.widgetResponse.totalDevice = data.totalDevice;
 
-      // this.service.sendTotalDevice(data.totalDevice)
       this.getDeviceLog(data);
       this.loading = false;
       // this.ref.detectChanges();

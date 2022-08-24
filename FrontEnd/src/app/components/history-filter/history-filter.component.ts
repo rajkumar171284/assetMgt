@@ -24,8 +24,8 @@ class widgetResponse {
   protocol: {} | undefined;
   data: [] | undefined;
   status: '' | undefined;
-  totalDevice: [] | undefined
-
+  totalDevice: [] | undefined;
+  totalParameters: [] | undefined
 };
 @Component({
   selector: 'app-history-filter',
@@ -123,7 +123,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(this.WIDGET_REQUEST, this.reLoad)
+    console.log(this.WIDGET_REQUEST, this.reLoad)
     // 
     if (this.WIDGET_REQUEST && this.reLoad) {
 
@@ -133,7 +133,21 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
         this.dataService.getAllLocationsByConfigID(this.WIDGET_REQUEST).subscribe(locations => {
 
           if (locations && locations.data.length > 0) {
-            // console.log(locations)
+            // console.log(this.WIDGET_REQUEST.CONFIG_NAME)
+            
+            // get active or usable parameters
+            this.dataService.getAllParametersByConfigID(this.WIDGET_REQUEST).subscribe(params => {
+              // console.log(params)
+              if (params.data) {
+                this.widgetResponse.totalParameters = JSON.parse(params.data).filter((item: any) => item).map((x: any) => {
+                  return {
+                    tag:x.INPUT_NAME,status:x.INPUT_STATUS
+                  }
+                });
+              }
+              // console.log(this.widgetResponse)
+            })
+
             this.widgetResponse.totalLocations = locations.data;
             this.newForm.patchValue({
 
@@ -202,10 +216,11 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
     // }
     this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
-      // console.log('result',result)
-      if (result && result.data.length > 0) {
-        // console.log('result found',this.WIDGET_REQUEST.PID)
-        of(result).pipe(map(a=>a)).subscribe(resdata=>{
+      // console.log('history',result)
+      if (result && result.data) {
+        console.log('history result found',this.WIDGET_REQUEST.PID)
+        console.log(this.WIDGET_REQUEST.CONFIG_NAME)
+        of(result).pipe(map(a => a)).subscribe(resdata => {
           this.widgetResponse.data = resdata.data;
           this.widgetResponse.protocol = resdata.protocol;
           this.widgetResponse.totalDevice = result.totalDevice;
@@ -215,10 +230,11 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
             // console.log(protocol)
             this.getMQTTdata(protocol[0])
           }
-  
+
+
           // get formatt edhistory 
           this.formattedHistory();
-        })        
+        })
 
       } else {
         // console.log('result not found',this.WIDGET_REQUEST.PID)
@@ -239,7 +255,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
 
 
- 
+
 
   formattedHistory() {
     for (let device of this.widgetResponse.totalDevice) {
@@ -292,7 +308,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
             object.key = key;
             object.totalValue = 0;
             object.data = [];
-            object.selected=false;
+            object.selected = false;
             device.unitsArr.push(object);
 
           }
@@ -300,10 +316,18 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       }
 
       // get total units value
-      let j=0;
+      let j = 0;
       for (let unit of device.unitsArr) {
-        if(j==0){
-          unit.selected=true;
+        if (this.widgetResponse.totalParameters.length > 0){
+          // if parameter onboarded
+          this.widgetResponse.totalParameters.find((p: any) => {
+            if (p.tag == unit.key) {
+              unit.status = true;//is usable flag then
+            }
+          });
+        }
+        if (j == 0) {
+          unit.selected = true;
         }
         device.history.forEach((Item: any) => {
           let vIndex = 0;
@@ -329,16 +353,18 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
 
 
 
-  getMQTTdata(protocol:any) {
+  getMQTTdata(protocol: any) {
     const time = interval(3000);
-    const params=protocol;
+    const params = protocol;
     this.myInterval = time.subscribe(() => {
 
       this.dataService.getMqtt(params).subscribe(response => {
         // console.log('getMqtt',)
         if (response) {
-
+          // console.log(this.WIDGET_REQUEST.CONFIG_NAME)
+         
           const res = response.data;
+
           const value = JSON.parse(JSON.stringify(response.data));
 
           this.newDevice.ASSET_CONFIG_ID = this.WIDGET_REQUEST.ASSET_CONFIG_ID;
@@ -346,7 +372,7 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
           this.newDevice.STATUS = true;
           this.newDevice.VALUE = JSON.stringify(value);
           this.newDevice.LOCATION = res.location;
-          this.newDevice.LAST_UPDATE_TIME = res.date;          
+          this.newDevice.LAST_UPDATE_TIME = res.date;
 
           this.dataService.saveDeviceHistory(this.newDevice).subscribe(resp => {
             // console.log(resp)
