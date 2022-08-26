@@ -281,7 +281,7 @@ export class AuthService {
   // 
 
   getWidgetlayout(params: any): Observable<any> {
-    // console.log(params)
+  
     return this.http.get(`${environment.url}/asset/getWidgetLayout/${params.COMPANY_ID}`, options).pipe(map(response => {
       return response;
     }))
@@ -329,20 +329,7 @@ export class AuthService {
   }
 
 
-  public formWidgetSize(ui: any, WIDGET_REQUEST: any) {
-    // console.log(ui)
-    let top: number = $(ui.position.top)[0];
-    let left: number = $(ui.position.left)[0];
-    const orgSize = JSON.parse(WIDGET_REQUEST.WIDGET_SIZE);
-    const newSize = {
-      width: orgSize.width,
-      height: orgSize.height,
-      top: top, left: left
-    }
-    // WIDGET_REQUEST.LOADED = false;
-    WIDGET_REQUEST.WIDGET_SIZE = JSON.stringify(newSize);
-    return WIDGET_REQUEST;
-  }
+  
 
 
 

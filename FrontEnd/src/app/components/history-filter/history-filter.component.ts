@@ -204,7 +204,6 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
       })
     }
     this.WIDGET_REQUEST.DEVICE_ID = this.VALUES.DEVICE_ID;
-    // console.log('this.WIDGET_REQUEST-charts', this.WIDGET_REQUEST)
     this.getDeviceLog();
     this.expandFilter = false;
   }
@@ -218,8 +217,8 @@ export class HistoryFilterComponent implements OnInit, OnChanges, OnDestroy, DoC
     this.dataService.getDeviceHistoryByFilter(this.WIDGET_REQUEST).subscribe(result => {
       // console.log('history',result)
       if (result && result.data) {
-        console.log('history result found',this.WIDGET_REQUEST.PID)
-        console.log(this.WIDGET_REQUEST.CONFIG_NAME)
+        // console.log('history result found',this.WIDGET_REQUEST.PID)
+        // console.log(this.WIDGET_REQUEST.CONFIG_NAME)
         of(result).pipe(map(a => a)).subscribe(resdata => {
           this.widgetResponse.data = resdata.data;
           this.widgetResponse.protocol = resdata.protocol;
